@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use function strpos;
+
+final class HttpExceptionListener
+{
+    public function onKernelException(ExceptionEvent $event): void
+    {
+        $exception = $event->getThrowable();
+        if (!$exception instanceof HttpException
+            || false === strpos($event->getRequest()->getRequestUri(), '/api/')
+        ) {
+            return;
+        }
+
+        $response = new JsonResponse(['error' => $exception->getMessage()]);
+        $response->setStatusCode($exception->getStatusCode());
+        $event->setResponse($response);
+    }
+}

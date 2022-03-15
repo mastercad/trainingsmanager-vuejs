@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home page{% endblock %}
+
+{% block body %}
+
+<div id="app" data-is-authenticated="{{ isAuthenticated }}" data-user="{{ user }}" data-token="{{ token }}">
+    <app></app>
+</div>
+{% endblock %}
