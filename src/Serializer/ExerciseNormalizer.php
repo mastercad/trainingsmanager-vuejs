@@ -26,7 +26,7 @@ final class ExerciseNormalizer implements ContextAwareNormalizerInterface, Norma
     public function normalize($object, ?string $format = null, array $context = []) {
         $context[self::ALREADY_CALLED] = true;
 
-        $object->setPreviewPicturePath($this->fileUploader->retrieveUrl($object->getPreviewPicturePath()) ?? '');
+//        $object->setPreviewPicturePath($this->fileUploader->retrieveUrl($object->getPreviewPicturePath()) ?? '');
 
         $content = $this->normalizer->normalize($object, $format, $context);
 

@@ -35,8 +35,12 @@ export default {
   loadImages(id) {
     return axios.get("/api/exercises/"+id+"/images");
   },
-  deleteImage(image) {
-    return axios.delete("/api/exercises/image/"+image, {
+  deleteUploadImage(image) {
+    return axios.delete("/api/uploads/image/"+image, {
+    });
+  },
+  deleteExerciseImage(image, id) {
+    return axios.delete("/api/exercises/"+id+"/image/"+image, {
     });
   }
 };

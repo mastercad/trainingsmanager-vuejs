@@ -21,56 +21,74 @@ import store from "../store";
 
 Vue.use(VueRouter);
 
+const routes = [
+  { path: '/home', title: 'Home', name: 'Home', component: Home },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
+    children: [
+      { path: '/admin/muscle', name: 'Muscle', component: Muscles, meta: { requiresAuth: true }  },
+      { path: '/admin/muscle-groups', name: 'Muscle Groups', component: MuscleGroups, meta: { requiresAuth: true } },
+      { path: '/admin/devices', name: 'Devices', component: Devices, meta: { requiresAuth: true }  },
+      { path: '/admin/device-groups', name: 'Device Groups', component: DeviceGroups, meta: { requiresAuth: true }  },
+      { path: '/admin/device-options', name: 'Device Options', component: DeviceOptions, meta: { requiresAuth: true }  },
+      { path: '/admin/exercise-options', name: 'Exercise Options', component: ExerciseOptions, meta: { requiresAuth: true } },
+      { path: '/admin/permissions', name: 'Permissions', component: Permissions, meta: { requiresAuth: true }  },
+      { path: '/admin/contacts', name: 'Contacts', component: Contacts, meta: { requiresAuth: true }  },
+      { path: '/authentication_token', name: 'Generate Token'},
+      { path: '/api', name: 'API Documentation' }
+    ]
+  },
+  {
+    path: '/exercises',
+    name: 'Exercises',
+    component: Admin,
+    children: [
+      { path: '/exercises/index', name: 'Overview Exercises', component: Exercises, meta: { requiresAuth: true }  },
+      { path: '/exercises/new', name: 'New Exercise', component: ExerciseNew, meta: { requiresAuth: true }  }
+    ]
+  },
+  {
+    path: '/training-plans',
+    name: 'Training Plans',
+    component: Admin,
+    children: [
+      { path: '/training-plans/index', name: 'Overview Training Plans', component: TrainingPlans, meta: { requiresAuth: true }  },
+      { path: '/training-plans/new', name: 'New Training Plan', component: TrainingPlanNew, meta: { requiresAuth: true } },
+      { path: '', name: 'divider' },
+      { path: '/training-plans/archive', name: 'Training Plan Archive', component: TrainingPlansArchive, meta: { requiresAuth: true } }
+    ]
+  }
+];
+
+console.log(store.getters["security/isAuthenticated"]);
+
+//if (true === store.getters["security/isAuthenticated"]) {
+  console.log("LOGOUT!");
+  routes.push({
+    path: '/users',
+    name: 'User',
+    component: Admin,
+    children: [
+      { path: '/logout', name: 'Logout', beforeEnter() { store.dispatch('security/logout'); } }
+    ]
+  });
+//} else {
+  console.log("LOGIN!");
+  routes.push({
+    path: '/users',
+    name: 'User',
+    component: Admin,
+    children: [
+      { path: '/login', name: 'Login', component: Login }
+    ]
+  });
+//}
+
 let router = new VueRouter({
   mode: "history",
-  routes: [
-    { path: '/home', title: 'Home', name: 'Home', component: Home },
-    {
-      path: '/admin',
-      name: 'Admin',
-      component: Admin,
-      children: [
-        { path: '/admin/muscle', name: 'Muscle', component: Muscles, meta: { requiresAuth: true }  },
-        { path: '/admin/muscle-groups', name: 'Muscle Groups', component: MuscleGroups, meta: { requiresAuth: true } },
-        { path: '/admin/devices', name: 'Devices', component: Devices, meta: { requiresAuth: true }  },
-        { path: '/admin/device-groups', name: 'Device Groups', component: DeviceGroups, meta: { requiresAuth: true }  },
-        { path: '/admin/device-options', name: 'Device Options', component: DeviceOptions, meta: { requiresAuth: true }  },
-        { path: '/admin/exercise-options', name: 'Exercise Options', component: ExerciseOptions, meta: { requiresAuth: true } },
-        { path: '/admin/permissions', name: 'Permissions', component: Permissions, meta: { requiresAuth: true }  },
-        { path: '/admin/contacts', name: 'Contacts', component: Contacts, meta: { requiresAuth: true }  },
-        { path: '/authentication_token', name: 'Generate Token'},
-        { path: '/api', name: 'API Documentation' }
-      ]
-    },
-    {
-      path: '/exercises',
-      name: 'Exercises',
-      component: Admin,
-      children: [
-        { path: '/exercises/index', name: 'Overview Exercises', component: Exercises, meta: { requiresAuth: true }  },
-        { path: '/exercises/new', name: 'New Exercise', component: ExerciseNew, meta: { requiresAuth: true }  }
-      ]
-    },
-    {
-      path: '/training-plans',
-      name: 'Training Plans',
-      component: Admin,
-      children: [
-        { path: '/training-plans/index', name: 'Overview Training Plans', component: TrainingPlans, meta: { requiresAuth: true }  },
-        { path: '/training-plans/new', name: 'New Training Plan', component: TrainingPlanNew, meta: { requiresAuth: true } },
-        { path: '', name: 'divider' },
-        { path: '/training-plans/archive', name: 'Training Plan Archive', component: TrainingPlansArchive, meta: { requiresAuth: true } }
-      ]
-    },
-    {
-      path: '/users',
-      name: 'User',
-      component: Admin,
-      children: [
-        { path: '/login', name: 'Login', component: Login }
-      ]
-    }
-  ]
+  routes: routes
 });
 
 router.beforeEach((to, from, next) => {

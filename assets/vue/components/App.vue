@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container style="height: calc(100vh - 120px); position: relative; top: 0; bottom: 0;">
     <b-navbar
       toggleable="lg"
       type="dark"
@@ -89,6 +89,7 @@
     </b-navbar>
 
     <router-view />
+<!--
     <li
       v-if="isAuthenticated==true"
       class="nav-item"
@@ -98,7 +99,7 @@
         href="/logout"
       >Logout</a>
     </li>
-
+-->
     <!--
     <button class="btn">
       Notification
@@ -145,7 +146,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import store from "../store";
+import router from "../router";
 
 export default {
   name: 'App',
@@ -171,13 +173,43 @@ export default {
     */
   },
   created() {
-    let isAuthenticated = this.$parent.$el.attributes["data-is-authenticated"].value,
-      user = JSON.parse(this.$parent.$el.attributes["data-user"].value),
-      token = this.$parent.$el.attributes["data-token"].value;
+    let payload = {
+      isAuthenticated: localStorage.getItem('isAuthenticated'),
+      user: localStorage.getItem('user'),
+      token: localStorage.getItem('token'),
+      refreshToken: localStorage.getItem('refreshToken')
+    };
+    this.$store.dispatch("security/onReload", payload);
 
-    let payload = { isAuthenticated: isAuthenticated, user: user, token: token };
-    this.$store.dispatch("security/onRefresh", payload);
+//    this.$router.push({ name: 'testRoute', path: '/exercises/new' });
 
+    router.addRoutes(
+      [
+        {
+          name: 'Logout1',
+          path: '/users/logout'
+        }
+      ]
+    );
+
+    router.addRoutes(
+      [
+        {
+          name: 'Logout2',
+          path: '/users/logout'
+        }
+      ]
+    );
+
+//    router.beforeEach((to, from, next) => {
+//      if (to.name !== 'Login' && !this.isAuthenticated) next({ name: 'Login' })
+//      else next()
+//    })
+
+    //router.replace(router.currentRoute.value.fullPath)
+
+    console.log(router);
+/*
     axios.interceptors.response.use(undefined, (err) => {
       return new Promise(() => {
         if (401 === err.response.status) {
@@ -190,10 +222,14 @@ export default {
         throw err;
       });
     });
+*/
   },
   methods: {
     incrementCounter() {
       this.counter += 1;
+    },
+    logout() {
+      store.dispatch('security/clearUserData');
     }
   },
 };
@@ -206,4 +242,5 @@ export default {
 .counter {
   color: #f00;
 }
+
 </style>

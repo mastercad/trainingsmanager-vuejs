@@ -82,7 +82,7 @@
         <img
           class="img-thumbnail"
           :src="image"
-          v-bind:class="{ active: previewPictureKey == key }"
+          v-bind:class="{ previewActive: previewPictureKey == key || extractFileName(image) === origPreviewPicturePath }"
           @click="setImageAsPreview(key)"
         >
         <button
@@ -97,12 +97,22 @@
     <div class="row">
       <div class="col-3">
         <button
+          v-if="origId"
           :disabled="origName.length === 0 || origDescription.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateExercise()"
         >
           Update
+        </button>
+        <button
+          v-if="!origId"
+          :disabled="origName.length === 0 || origDescription.length === 0"
+          type="button"
+          class="btn btn-primary"
+          @click="createExercise()"
+        >
+          Create
         </button>
       </div>
       <div class="col-3">
@@ -191,6 +201,24 @@ export default {
     this.reset();
   },
   methods: {
+    async createExercise() {
+      const result = await this.$store.dispatch("exercises/create",
+        {
+          name: this.origName,
+          description: this.origDescription,
+          seoLink: this.origSeoLink,
+          specialFeatures: this.origSpecialFeatures,
+          previewPicturePath: this.origPreviewPicturePath
+        });
+      if (result !== null) {
+        this.$data.id = -9999;
+        this.$data.name = "";
+        this.$data.seoLink = "";
+        this.$data.description = "";
+        this.$data.specialFeatures = "";
+        this.$data.previewPicturePath = "";
+      }
+    },
     async updateExercise() {
       const result = await this.$store.dispatch(
         "exercises/update",
@@ -224,14 +252,22 @@ export default {
       }
     },
     async deleteExerciseImage(key) {
-      const result = await this.$store.dispatch("exercises/deleteImage", this.exerciseImages[key].split('/').reverse()[0]);
+      let imagePath = this.exerciseImages[key];
+      let fileName = btoa(this.extractFileName(imagePath));
+      let result = null;
+
+      if (imagePath.match(/^\/uploads\//)) {
+        result = await this.$store.dispatch("exercises/deleteUploadImage", fileName);
+      } else {
+        result = await this.$store.dispatch("exercises/deleteExerciseImage", {fileName: fileName, id: this.origId});
+      }
 
       if (result !== null) {
         this.$delete(this.exerciseImages, key);
       }
     },
     setImageAsPreview(key) {
-      this.origPreviewPicturePath = this.exerciseImages[key];
+      this.origPreviewPicturePath = this.extractFileName(this.exerciseImages[key]);
       this.previewPictureKey = key;
     },
     reset() {
@@ -244,7 +280,6 @@ export default {
       // upload data to the server
       this.currentStatus = STATUS_SAVING;
       let me = this;
-      console.log(formData.get(this.fieldName));
 
       upload(formData)
         .then(function() {
@@ -252,7 +287,6 @@ export default {
           me.currentStatus = STATUS_SUCCESS;
         })
         .catch(err => {
-          console.log(err);
           me.uploadError = err.response;
           me.currentStatus = STATUS_FAILED;
         });
@@ -267,12 +301,14 @@ export default {
       Array
         .from(Array(fileList.length).keys())
         .map(x => {
-          console.log(fileList[x]);
           formData.append(fieldName+"[]", fileList[x], fileList[x].name);
         });
 
       // save it
       this.save(formData);
+    },
+    extractFileName(fileName) {
+      return fileName.split('/').reverse()[0];
     }
   }
 };
@@ -309,7 +345,7 @@ export default {
     padding: 50px 0;
   }
 
-  .active {
+  .previewActive {
     outline: 2px solid yellow;
   }
 </style>

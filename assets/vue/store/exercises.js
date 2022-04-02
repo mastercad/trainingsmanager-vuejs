@@ -12,6 +12,9 @@ const CREATING_EXERCISE = "CREATING_EXERCISE",
   DELETE_EXERCISE_IMAGE = "DELETE_EXERCISE_IMAGE",
   DELETE_EXERCISE_IMAGE_SUCCESS = "DELETE_EXERCISE_IMAGE_SUCCESS",
   DELETE_EXERCISE_IMAGE_ERROR = "DELETE_EXERCISE_IMAGE_ERROR",
+  DELETE_UPLOAD_IMAGE = "DELETE_UPLOAD_IMAGE",
+  DELETE_UPLOAD_IMAGE_SUCCESS = "DELETE_UPLOAD_IMAGE_SUCCESS",
+  DELETE_UPLOAD_IMAGE_ERROR = "DELETE_UPLOAD_IMAGE_ERROR",
   FETCHING_EXERCISES = "FETCHING_EXERCISES",
   FETCHING_EXERCISES_SUCCESS = "FETCHING_EXERCISES_SUCCESS",
   FETCHING_EXERCISES_ERROR = "FETCHING_EXERCISES_ERROR",
@@ -29,7 +32,7 @@ export default {
   namespaced: true,
   state: {
     isLoading: false,
-    isImageLoading: false,
+    isImagesLoading: false,
     isPanelLoading: false,
     error: null,
     exercises: [],
@@ -73,7 +76,7 @@ export default {
     [CREATING_EXERCISE_SUCCESS](state, exercise) {
       state.isPanelLoading = false;
       state.error = null;
-      //      state.exercises.unshift(exercise);
+//      state.exercises.unshift(exercise);
       state.exercises.push(exercise);
     },
     [CREATING_EXERCISE_ERROR](state, error) {
@@ -111,15 +114,27 @@ export default {
       state.exercises.splice(index, 1);
     },
     [DELETE_EXERCISE_IMAGE](state) {
-      state.isImageLoading = true;
+      state.isImagesLoading = true;
       state.error = null;
     },
     [DELETE_EXERCISE_IMAGE_SUCCESS](state) {
-      state.isImageLoading = false;
+      state.isImagesLoading = false;
       state.error = null;
     },
     [DELETE_EXERCISE_IMAGE_ERROR](state, error) {
-      state.isImageLoading = false;
+      state.isImagesLoading = false;
+      state.error = error;
+    },
+    [DELETE_UPLOAD_IMAGE](state) {
+      state.isImagesLoading = true;
+      state.error = null;
+    },
+    [DELETE_UPLOAD_IMAGE_SUCCESS](state) {
+      state.isImagesLoading = false;
+      state.error = null;
+    },
+    [DELETE_UPLOAD_IMAGE_ERROR](state, error) {
+      state.isImagesLoading = false;
       state.error = error;
     },
     [FETCHING_EXERCISES](state) {
@@ -168,18 +183,17 @@ export default {
       state.exercise = null;
     },
     [FETCHING_EXERCISE_IMAGES](state) {
-      state.isImageLoading = true;
+      state.isImagesLoading = true;
       state.error = null;
       state.exerciseImages = null;
     },
     [FETCHING_EXERCISE_IMAGES_SUCCESS](state, images) {
-      state.isImageLoading = false;
+      state.isImagesLoading = false;
       state.error = null;
       state.exerciseImages = images;
-      console.log(state.exerciseImages);
     },
     [FETCHING_EXERCISE_IMAGES_ERROR](state, error) {
-      state.isImageLoading = false;
+      state.isImagesLoading = false;
       state.error = error;
       state.exerciseImages = null;
     }
@@ -262,10 +276,21 @@ export default {
         return null;
       }
     },
-    async deleteImage({ commit }, image) {
+    async deleteUploadImage({ commit }, image) {
+      commit(DELETE_UPLOAD_IMAGE);
+      try {
+        let response = await ExerciseController.deleteUploadImage(image);
+        commit(DELETE_UPLOAD_IMAGE_SUCCESS, response.data);
+        return response.data;
+      } catch (error) {
+        commit(DELETE_UPLOAD_IMAGE_ERROR, error);
+        return null;
+      }
+    },
+    async deleteExerciseImage({ commit }, payload) {
       commit(DELETE_EXERCISE_IMAGE);
       try {
-        let response = await ExerciseController.deleteImage(image);
+        let response = await ExerciseController.deleteExerciseImage(payload.fileName, payload.id);
         commit(DELETE_EXERCISE_IMAGE_SUCCESS, response.data);
         return response.data;
       } catch (error) {

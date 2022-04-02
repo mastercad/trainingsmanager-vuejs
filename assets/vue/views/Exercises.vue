@@ -1,24 +1,47 @@
 <template>
   <div>
-    <div class="row col">
+    <div class="row">
       <h1>Exercises</h1>
+      <div class="col-3">
+        <button
+          type="button"
+          class="btn btn-primary"
+          @click="editExercise({
+            id: null,
+            name: '',
+            description: '',
+            seoLink: '',
+            specialFeatures: '',
+            previewPicturePath: ''
+          })"
+        >
+          Add
+        </button>
+      </div>
     </div>
 
-    <div class="row col">
+    <div class="row">
       <div class="col-4">
-        <ul>
-          <li
-            v-for="exercise in exercises"
-            :key="exercise.id"
-            class="row"
-            @contextmenu.prevent.stop="handleClick($event, exercise)"
-            @click="showExercise(exercise.id)"
-          >
-            <div class="col list-group-item list-group-item-action">
-              {{ exercise.name }}
-            </div>
-          </li>
-        </ul>
+        <div style="padding-right: 15px; position: absolute; overflow-y: auto; height: 100%; max-height: 100%;">
+          <ul>
+            <li
+              v-for="currentExercise in exercises"
+              :key="currentExercise.id"
+              class="row"
+              @contextmenu.prevent.stop="handleClick($event, currentExercise)"
+              @click="loadExercise($event, currentExercise)"
+            >
+              <div
+                class="list-group-item list-group-item-action"
+                v-bind:class="{ active: exercise && exercise.id === currentExercise.id}"
+                unselectable="on"
+                onselectstart="return false;"
+              >
+                {{ currentExercise.name }}
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="col-8">
         <component
@@ -27,6 +50,10 @@
           v-show="leftPanelVisibility && !isPanelLoading"
 
           :id="exercise.id"
+
+          :key="exercise.id"
+          :ref="'exercisePanel'"
+
           :name="exercise.name"
           :seo-link="exercise.seoLink"
           :description="exercise.description"
@@ -35,12 +62,11 @@
         />
       </div>
     </div>
-    <!-- Make sure you add the `ref` attribute, as that is what gives you the ability
-    to open the menu. -->
+    <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
 
     <vue-simple-context-menu
       :ref="'vueSimpleContextMenu'"
-      :element-id="'myFirstMenu'"
+      :element-id="'contextMenu'"
       :options="options"
       @option-clicked="optionClicked"
     />
@@ -106,70 +132,32 @@ export default {
     }
   },
   created() {
-    console.log("EXERCISES VUE CREATED!");
     this.$store.dispatch("exercises/findAll");
   },
   methods: {
-    async loadExercise(event, id) {
+    async loadExercise(event, exercise) {
       this.clicks++;
       if (this.clicks === 1) {
         this.timer = setTimeout( () => {
-          this.showExercise(id);
+          this.showExercise(exercise);
           this.result.push(event.type);
           this.clicks = 0;
           this.result = [];
         }, this.delay);
       } else {
-        this.editExercise(id);
+        this.editExercise(exercise);
         clearTimeout(this.timer);
         this.result.push('dblclick');
         this.clicks = 0;
         this.result = [];
       }
     },
-    async createExercise() {
-      const result = await this.$store.dispatch("exercises/create", this.$data);
-      if (result !== null) {
-        this.$data.id = -9999;
-        this.$data.name = "";
-        this.$data.seoLink = "";
-        this.$data.description = "";
-        this.$data.specialFeatures = "";
-        this.$data.previewPicturePath = "";
-      }
-    },
-/*
-    async showExercise(id) {
-      this.leftPanelVisibility = false;
-      const result = await this.$store.dispatch("exercises/findExercise", id);
-      if (result !== null) {
-        this.leftPanelVisibility=true;
-        this.currentPanel = 'Exercise';
-      }
-    },
-*/
     async showExercise(exercise) {
-      console.log("SHOW!");
-      console.log(exercise.name);
-      this.leftPanelVisibility=false;
       this.exercise = exercise;
       this.currentPanel = 'Exercise';
       this.leftPanelVisibility=true;
     },
-/*
-    async editExercise(id) {
-      this.leftPanelVisibility = false;
-      const result = await this.$store.dispatch("exercises/findExercise", id);
-      if (result !== null) {
-        this.leftPanelVisibility = true;
-        this.currentPanel = 'ExerciseEdit';
-      }
-    },
-*/
     async editExercise(exercise) {
-      console.log("EDIT!");
-      console.log(exercise.name);
-      this.leftPanelVisibility=false;
       this.exercise = exercise;
       this.currentPanel = 'ExerciseEdit';
       this.leftPanelVisibility = true;
@@ -179,19 +167,20 @@ export default {
     },
     async optionClicked(event) {
       if ('show' === event.option.slug) {
-        console.log("SHOW!");
-        console.log(event.item.name);
         this.showExercise(event.item);
       } else if ('edit' === event.option.slug) {
-        console.log("EDIT!");
-        console.log(event.item.name);
         this.editExercise(event.item);
       } else if ('delete' === event.option.slug) {
         this.id = event.item.id;
         this.deleteExercise();
       }
-//        window.alert(JSON.stringify(event));
     }
   }
 };
 </script>
+
+<style>
+  .col.list-group-item {
+    cursor: pointer;
+  }
+</style>

@@ -13,6 +13,7 @@ use App\Controller\ExercisePreviewPictureController;
 use App\Controller\ExerciseImageController;
 use App\Controller\ExerciseImageUploadController;
 use App\Controller\ExerciseImageDeleteController;
+use App\Controller\UploadImageDeleteController;
 
 /**
  * Exercises
@@ -25,6 +26,7 @@ use App\Controller\ExerciseImageDeleteController;
  *   denormalizationContext={"groups" = {"write"}},
  *   collectionOperations={
  *     "get",
+ *     "post",
  *     "get_images_for_exercise" = {
  *        "method" = "GET",
  *        "path" = "/exercises/{id}/images",
@@ -43,12 +45,17 @@ use App\Controller\ExerciseImageDeleteController;
  *         },
  *       },
  *     },
+ *     "delete_upload_image" = {
+ *       "method" = "DELETE",
+ *       "path" = "/uploads/image/{fileName}",
+ *       "controller" = UploadImageDeleteController::class
+ *     },
  *     "delete_exercise_image" = {
  *       "method" = "DELETE",
- *       "path" = "/exercises/image/{fileName}",
+ *       "path" = "/exercises/{id}/image/{fileName}",
  *       "controller" = ExerciseImageDeleteController::class
  *     },
- *     "post_exercise_images" = {
+ *     "post_upload_images" = {
  *       "method" = "POST",
  *       "path" = "/exercises/images",
  *       "controller" = ExerciseImageUploadController::class,
@@ -73,45 +80,7 @@ use App\Controller\ExerciseImageDeleteController;
  *           },
  *         },
  *       },
- *     },
- *     "post" = {
- *       "controller" = ExercisePreviewPictureController::class,
- *       "deserialize" = false,
- *       "openapi_context" = {
- *         "requestBody" = {
- *           "description" = "File upload to an existing resource (exercise)",
- *           "required" = true,
- *           "content" = {
- *             "multipart/form-data" = {
- *               "schema" = {
- *                 "type" = "object",
- *                 "properties" = {
- *                   "name" = {
- *                     "description" = "The name of the superhero",
- *                     "type" = "string",
- *                     "example" = "Clark Kent",
- *                   },
- *                   "slug" = {
- *                     "description" = "The slug of the superhero",
- *                     "type" = "string",
- *                     "example" = "superman",
- *                   },
- *                   "featured" = {
- *                     "description" = "Whether this superhero should be featured or not",
- *                     "type" = "boolean",
- *                   },
- *                   "file" = {
- *                     "type" = "string",
- *                     "format" = "binary",
- *                     "description" = "Upload a cover image of the superhero",
- *                   },
- *                 },
- *               },
- *             },
- *           },
- *         },
- *       },
- *     },
+ *     }
  *   },
  *   itemOperations={
  *     "get",

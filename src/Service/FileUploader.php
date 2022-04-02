@@ -41,7 +41,12 @@ class FileUploader
 
     public function delete($fileName, $userIdentifier)
     {
-      return unlink($this->getUploadPath().'/'.$userIdentifier.'/'.$fileName);
+      $absoluteFilePath = $this->getUploadPath().'/'.$userIdentifier.'/'.$fileName;
+      if (!file_exists($absoluteFilePath)) {
+        return true;
+      }
+
+      return unlink($absoluteFilePath);
     }
 
     public function getUploadPath()

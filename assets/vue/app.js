@@ -36,6 +36,56 @@ Vue.use(DropdownPlugin);
 
 axios.defaults.withCredentials = true;
 
+axios.interceptors.response.use(
+  function(response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+  },
+  async function(error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    const originalRequest = error.config;
+    if (
+      401 === error.response.status
+      && originalRequest.url.includes("api/token/refresh")
+    ) {
+      store.dispatch("security/clearUserData");
+      router.push("/login");
+      return Promise.reject(error);
+    } else if (401 === error.response.status
+      && !originalRequest._retry
+      && store.getters['security/isAuthenticated']
+    ) {
+      originalRequest._retry = true;
+      await store.dispatch("security/refresh", store.getters['security/refreshToken']);
+
+      if (store.getters['security/isAuthenticated']) {
+        return axios(originalRequest);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.request.use(
+  function(config) {
+    // Do something before request is sent
+    // use getters to retrieve the access token from vuex
+    // store
+    const token = store.getters['security/accessToken'];
+    const refreshToken = store.getters['security/refreshToken'];
+    if (token) {
+      config.headers.Authorization = "Bearer "+token;
+      config.headers['X-Refresh-Token'] = refreshToken;
+    }
+    return config;
+  },
+  function(error) {
+    return Promise.reject(error);
+  }
+);
+
 const app = new Vue({
   components: { App },
   render: h => h(App),

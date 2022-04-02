@@ -26,68 +26,44 @@ security:
 #        users_in_memory: { memory: null }
 
     firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-#        api:
-#            pattern: ^/api/
-#            stateless: true
-#            provider: app_user_provider
-#            provider: jwt
-#            guard:
-#                authenticator:
-#                    - lexik_jwt_authentication.jwt_token_authenticator
-#            jwt: ~
-
-        login:
-            pattern: ^/api/login_check
-            stateless: true
-#            anonymous: true
-            json_login:
-                provider: app_user_provider
-                check_path: /api/login_check
-#                check_path: /api/security/login
-                username_path: email
-                password_path: password
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-                require_previous_session: false
 
         refresh:
             pattern:  ^/api/token/refresh
-            stateless: true
-#            anonymous: true
+            stateless: false
+            refresh_jwt:
+                provider: app_user_provider
 
-        register:
-            pattern: ^/api/register
-            stateless: true
-#            anonymous: true
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
 
         api:
             pattern: ^/api/
-            stateless: true
-#            anonymous: true
+            stateless: false
             provider: jwt
             json_login:
                 provider: app_user_provider
-#                check_path: /api/login_check
-                check_path: /api/security/login
+                check_path: /api/login_check
                 username_path: email
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
-
-            logout:
-                path: logout
-                target: /
 
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
-        main:
+            logout:
+                path: /logout
+                handlers: [App\Service\Authentication\LogoutHandler]
+
+#        register:
+#            pattern: ^/api/register
+#            stateless: true
 #            anonymous: true
+
+        main:
             lazy: true
             #provider: jwt
 
@@ -103,17 +79,16 @@ security:
                 check_path: /login
 
             logout:
-                path: logout
-                target: /
+                path: /logout
+                handlers: [App\Service\Authentication\LogoutHandler]
 
     access_control:
         - { path: ^/authentication_token, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/security/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/logout, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: PUBLIC_ACCESS }
 
