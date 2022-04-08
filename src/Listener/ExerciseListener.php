@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
+use App\Entity\Devices;
+use App\Entity\Exercises;
 use App\Entity\Users;
 use App\Service\FileUploader;
 use DateTime;
@@ -61,14 +63,18 @@ class ExerciseListener implements EventSubscriberInterface
      */
     public function prePersist(LifecycleEventArgs $args)
     {
-      if (method_exists($args->getObject(), 'getCreator') 
+      if (method_exists($args->getObject(), 'getCreator')
         && null === $args->getObject()->getCreator()
       ) {
         if ($args->getObject() instanceof Users) {
             $args->getObject()->setId(Uuid::uuid4());
         }
-//        $args->getObject()->setCreator($this->loadUserByToken($this->tokenStorage->getToken()->getUser()));
-        $args->getObject()->setCreator($this->tokenStorage->getToken()->getUser());
+        $user = $this->tokenStorage->getToken()->getUser() instanceof Users ?
+          $this->tokenStorage->getToken()->getUser() :
+          $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
+
+        $args->getObject()->setCreator($user);
+//        $args->getObject()->setCreator($this->tokenStorage->getToken()->getUser());
         $args->getObject()->setCreated(new DateTime('now'));
       }
     }
@@ -85,8 +91,10 @@ class ExerciseListener implements EventSubscriberInterface
       if (method_exists($args->getObject(), 'setUpdater')
         && method_exists($args->getObject(), 'setUpdated')
       ) {
-//          $user = $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
-          $user = $this->tokenStorage->getToken()->getUser();
+        $user = $this->tokenStorage->getToken()->getUser() instanceof Users ?
+          $this->tokenStorage->getToken()->getUser() :
+          $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
+//          $user = $this->tokenStorage->getToken()->getUser();
           $exercise = $args->getObject();
           $exercise->setUpdater($user);
           $exercise->setUpdated(new DateTime('now'));
@@ -108,23 +116,39 @@ class ExerciseListener implements EventSubscriberInterface
 
     private function moveUploadedImagesToExerciseFolder(LifecycleEventArgs $args)
     {
-//      $user = $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
-      $user = $this->tokenStorage->getToken()->getUser();
-      $exercise = $args->getObject();
-      $uploadDir = __DIR__.'/../../public/uploads/'.$user->getUserIdentifier();
-      $imageDir = __DIR__.'/../../public/images/content/dynamic/exercises/'.$exercise->getId();
+      $object = $args->getObject();
 
-      if (!is_dir($imageDir)) {
-        mkdir($imageDir, 0777, true);
+      if (!$object instanceof Exercises
+        && !$object instanceof Devices
+      ) {
+        return;
       }
 
-      $directoryIterator = new DirectoryIterator($uploadDir);
-      foreach ($directoryIterator as $uploadedFile) {
-        if ($uploadedFile->isFile()) {
-          $file = new File($uploadedFile->getPathname());
-          $file->move($imageDir, $file->getFilename());
+      $user = $this->tokenStorage->getToken()->getUser() instanceof Users ?
+        $this->tokenStorage->getToken()->getUser() :
+        $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
+
+      $targetPathPart = '';
+      if (0 < strpos(get_class($object), 'Exercises')) {
+        $targetPathPart = 'exercises';
+      } else if (0 < strpos(get_class($object), 'Devices')) {
+        $targetPathPart = 'devices';
+      }
+
+        $uploadDir = __DIR__.'/../../public/uploads/'.$user->getUserIdentifier();
+        $imageDir = __DIR__.'/../../public/images/content/dynamic/'.$targetPathPart.'/'.$object->getId();
+
+        if (!is_dir($imageDir)) {
+            mkdir($imageDir, 0777, true);
         }
-      }
+
+        $directoryIterator = new DirectoryIterator($uploadDir);
+        foreach ($directoryIterator as $uploadedFile) {
+            if ($uploadedFile->isFile()) {
+                $file = new File($uploadedFile->getPathname());
+                $file->move($imageDir, $file->getFilename());
+            }
+        }
     }
 
     /**

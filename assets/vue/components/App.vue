@@ -181,8 +181,6 @@ export default {
     };
     this.$store.dispatch("security/onReload", payload);
 
-//    this.$router.push({ name: 'testRoute', path: '/exercises/new' });
-
     router.addRoutes(
       [
         {

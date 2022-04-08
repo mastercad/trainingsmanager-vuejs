@@ -12,4 +12,4 @@ function upload(formData) {
 //      img, { url: `${BASE_URL}/images/${img.id}` })));
 }
 
-export { upload }
+export { upload };

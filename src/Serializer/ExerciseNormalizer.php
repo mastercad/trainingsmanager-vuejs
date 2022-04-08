@@ -20,7 +20,8 @@ final class ExerciseNormalizer implements ContextAwareNormalizerInterface, Norma
     }
 
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool {
-        return !isset($context[self::ALREADY_CALLED]) && $data instanceof Exercises;
+//      return !isset($context[self::ALREADY_CALLED]) && $data instanceof Exercises;
+      return !isset($context[self::ALREADY_CALLED]);
     }
 
     public function normalize($object, ?string $format = null, array $context = []) {

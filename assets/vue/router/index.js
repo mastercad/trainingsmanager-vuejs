@@ -59,11 +59,19 @@ const routes = [
       { path: '', name: 'divider' },
       { path: '/training-plans/archive', name: 'Training Plan Archive', component: TrainingPlansArchive, meta: { requiresAuth: true } }
     ]
+  },
+  {
+    path: '/users',
+    name: 'Users',
+    component: Admin,
+    children: [
+      { path: '/login', name: 'Login', component: Login },
+      { path: '/logout', name: 'Logout', beforeEnter() { store.dispatch('security/logout'); } }
+    ]
   }
 ];
 
-console.log(store.getters["security/isAuthenticated"]);
-
+/*
 //if (true === store.getters["security/isAuthenticated"]) {
   console.log("LOGOUT!");
   routes.push({
@@ -85,6 +93,7 @@ console.log(store.getters["security/isAuthenticated"]);
     ]
   });
 //}
+*/
 
 let router = new VueRouter({
   mode: "history",
