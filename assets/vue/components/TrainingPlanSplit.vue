@@ -1,40 +1,31 @@
-<template>
+<template id="drag-drop">
   <div>
     <div class="row">
-      TrainingPlan Layout Split
       <h1>{{ origName }}</h1>
 
       <div
-        class="drop-zone"
-
-        outlined
-
-        @drop="onDrop($event)"
+        id="sort"
+        class="list-group sort cf"
       >
-        <draggable
-          :list="origChildren"
-          group="trainingPlans"
-          class="list-group"
-          ghost-class="ghost"
-          :move="onMove"
-          @start="drag=true"
-          @end="drag=false"
-        >
-          <training-plan
-            v-for="(child, index) in origChildren"
-            :id="index"
-            :key="child.order"
+        <!--
+          the dynamic key solves the problem that the components are not rerendered after moving,
+          only id does not refresh the components, only order refresh only on first reorder if the order not 0, 1, 2 ...
+        -->
+        <training-plan
+          v-for="(child, index) in sortTrainingPlans"
+          :id="index"
+          :key="child.order+'_'+child.id"
 
-            :ref="child"
+          :ref="child"
 
-            class="list-group-item drag-el"
+          class="list-group-item drag-el training-plan-sort-item"
 
-            :name="child.name"
-            :order="child.order"
-            :user="child.user"
-            :parent="child.parent"
-          />
-        </draggable>
+          :name="child.name"
+          :order="child.order"
+          :user="child.user"
+          :parent="child.parent"
+          :training-plan-exercises="child.trainingPlanExercises"
+        />
       </div>
     </div>
   </div>
@@ -42,13 +33,12 @@
 
 <script>
 import TrainingPlan from './TrainingPlan.vue';
-import draggable from 'vuedraggable'
+import Sortable from 'sortablejs';
 
 export default {
   name: "TrainingPlanSplitView",
   components: {
-    TrainingPlan,
-    draggable
+    TrainingPlan
   },
   props: {
     id: {
@@ -74,19 +64,11 @@ export default {
     children: {
       type: Array,
       default: () => []
+    },
+    trainingPlanExercises: {
+      type: Array(),
+      default: () => []
     }
-  },
-  ready() {
-    var vm = this;
-    Sortable.create(document.getElementById('sort'), {
-      draggable: 'li.sort-item',
-      ghostClass: "sort-ghost",
-      animation: 80,
-      onUpdate: function(evt) {
-        console.log('dropped (Sortable)');
-        vm.reorder(evt.oldIndex, evt.newIndex);
-      }
-    });
   },
   data() {
     return {
@@ -98,33 +80,12 @@ export default {
       origParent: this.parent,
       origOrder: this.order,
       origChildren: this.children,
-      origTrainingPlans: null,
-      futureIndex: 0,
-      origIndex: 0
+      origTrainingPlans: this.trainingPlans,
+      origTrainingPlanExercises: this.trainingPlanExercises
     }
   },
   computed: {
     sortTrainingPlans() {
-      console.log("SORT TRAININGPLANS");
-      /*
-      if (null === this.origTrainingPlans) {
-        this.origTrainingPlans = this.origChildren.sort(
-          (a, b) => { // sort using this.orderBy
-            const first = a[this.orderBy]
-            const next = b[this.orderBy]
-            if (first > next) {
-              return 1
-            }
-            if (first < next) {
-              return -1
-            }
-            return 0
-          }
-        );
-      }
-      return this.origTrainingPlans;
-      */
-
      return this.origChildren.sort(
         (a, b) => { // sort using this.orderBy
           const first = a[this.orderBy]
@@ -140,37 +101,42 @@ export default {
       );
     }
   },
+  mounted() {
+    var me = this;
+    Sortable.create(document.getElementById('sort'), {
+      draggable: '.training-plan-sort-item',
+      ghostClass: "sort-ghost",
+      animation: 80,
+      onUpdate: function(event) {
+        me.reorderTrainingPlans(event.oldIndex, event.newIndex);
+      }
+    });
+    Sortable.create(document.getElementById('sort'), {
+      draggable: '.exercise-sort-item',
+      ghostClass: "sort-ghost",
+      animation: 80,
+      onUpdate: function(event) {
+        me.reorderExercises(event.oldIndex, event.newIndex);
+      }
+    });
+  },
   methods: {
-    onDrop(event) {
-      console.log("ON DROP!");
-      console.log(event);
-
-      this.arrayMove(this.origChildren, this.origIndex, this.futureIndex);
-
-      let newOrder = 0;
-      this.origChildren.forEach(trainingPlanItem => {
-        console.log(trainingPlanItem);
-        console.log(trainingPlanItem.name);
-        console.log(trainingPlanItem.order);
-        trainingPlanItem.order = newOrder;
-        ++newOrder;
+    reorderTrainingPlans(oldIndex, newIndex) {
+      console.log("reorderTrainingPlans");
+      this.origChildren.splice(newIndex, 0, this.origChildren.splice(oldIndex, 1)[0]);
+      this.origChildren.forEach(function(item, index) {
+        item.order = index;
       });
     },
-    onMove: function(e) {
-      this.futureIndex = e.draggedContext.futureIndex;
-      this.origIndex = e.draggedContext.index;
-    },
-    arrayMove: function(arr, oldIndex, newIndex) {
-      if (newIndex >= arr.length) {
-        var k = newIndex - arr.length + 1;
-        while (k--) {
-          arr.push(undefined);
-        }
-      }
-      arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
-      return arr;
+    reorderExercises(oldIndex, newIndex) {
+      console.log("reorderExercises");
+      this.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
+      this.origTrainingPlanExercises.forEach(function(item, index) {
+        item.order = index;
+      });
     }
   },
+  template: '#drag_drop'
 };
 </script>
 
@@ -181,5 +147,24 @@ export default {
 .ghost {
   opacity: 0.5;
   background: #c8ebfb;
+}
+ul.sort {
+  list-style: none;
+  padding: 0;
+  margin: 30px;
+}
+
+li.sort-item {
+  padding: 10px;
+  width: 25%;
+  float: left;
+  margin: 0 10px 10px 0;
+  background: #EFEFEF;
+  border: solid 1px #CCC;
+}
+
+.sort-ghost {
+  opacity: 0.3;
+  transition: all 0.7s ease-out;
 }
 </style>

@@ -1,6 +1,10 @@
 api_platform:
     defaults:
         pagination_enabled: false
+    eager_loading:
+#      max_joins: 300 # only workaround to check the relation problems, has to be removed later!
+      force_eager: false # deactivated now because i got to many join exception in trainingPlanExercise loading
+
     swagger:
         versions: [3]
         api_keys:

@@ -1,8 +1,18 @@
 <template>
   <div>
     <div class="row p-2 border rounded">
-      TrainingPlan Layout Normal
-      <h1>{{ origName }} ({{ origOrder }})</h1>
+      <h1>{{ origName }}</h1>
+      <div
+        v-if="origTrainingPlanExercises"
+      >
+        <div
+          v-for="trainingPlanExercise in origTrainingPlanExercises"
+          :key="trainingPlanExercise.exercise.name"
+          class="exercise-sort-item"
+        >
+          {{ trainingPlanExercise.exercise.name }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -34,6 +44,10 @@ export default {
     children: {
       type: Array,
       default: () => []
+    },
+    trainingPlanExercises: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -44,7 +58,8 @@ export default {
       origOwner: this.user,
       origParent: this.parent,
       origOrder: this.order,
-      origChildren: this.children
+      origChildren: this.children,
+      origTrainingPlanExercises: this.trainingPlanExercises
     }
   }
 };

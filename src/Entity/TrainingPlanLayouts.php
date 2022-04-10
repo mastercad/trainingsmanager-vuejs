@@ -55,9 +55,7 @@ class TrainingPlanLayouts
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
      */
     private $creator;
 
@@ -65,14 +63,12 @@ class TrainingPlanLayouts
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
      */
     private $updater;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\TrainingPlans", mappedBy="trainingPlanLayout", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="TrainingPlans", mappedBy="trainingPlanLayout", cascade={"persist"})
      */
     private $trainingPlans;
 

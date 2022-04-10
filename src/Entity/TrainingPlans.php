@@ -95,6 +95,14 @@ class TrainingPlans
     private $children;
 
     /**
+     * @var Collection|TrainingPlanXExercise[]
+     *
+     * @ORM\OneToMany(targetEntity="TrainingPlanXExercise", mappedBy="trainingPlan", cascade={"persist"})
+     * @Groups({"read"})
+     */
+    private $trainingPlanExercises;
+
+    /**
      * @var TrainingPlanLayouts
      *
      * @ORM\ManyToOne(targetEntity="TrainingPlanLayouts", cascade={"all"}, inversedBy="trainingPlans")
@@ -135,6 +143,7 @@ class TrainingPlans
 
     public function __construct() {
         $this->children = new Collection();
+        $this->exercises = new Collection();
     }
 
     /**
@@ -401,13 +410,25 @@ class TrainingPlans
         return $this;
     }
 
-    // always use this to setup a new parent/child relationship
-    public function addChild(TrainingPlans $trainingPlan) {
+    public function addChild(TrainingPlans $trainingPlan)
+    {
        $this->children[] = $trainingPlan;
        $trainingPlan->setParent($this);
     }
 
-    public function getChildren() {
+    public function getChildren()
+    {
         return $this->children;
+    }
+
+    public function addTrainingPlanExercise(TrainingPlanXExercise $trainingPlanExercises)
+    {
+       $this->trainingPlanExercises[] = $trainingPlanExercises;
+//       $trainingPlanExercises->setTrainingPlan($this);
+    }
+
+    public function getTrainingPlanExercises()
+    {
+        return $this->trainingPlanExercises;
     }
 }

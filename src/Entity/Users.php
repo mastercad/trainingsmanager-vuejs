@@ -175,9 +175,7 @@ class Users implements UserInterface
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
      */
     private $creator;
 
