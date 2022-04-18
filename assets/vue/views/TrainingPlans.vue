@@ -41,24 +41,22 @@
         </div>
       </div>
       <div class="col-8">
-        <div>
-          <b-dropdown
-            split-variant="outline-primary"
-            variant="primary"
-            class="m-md-2"
-            :text="trainingPlanLayoutText"
+        <b-dropdown
+          split-variant="outline-primary"
+          variant="primary"
+          class="m-md-2"
+          :text="trainingPlanLayoutText"
+        >
+          <b-dropdown-item
+            v-for="currentTrainingPlanLayout in trainingPlanLayouts"
+            :id="currentTrainingPlanLayout.id"
+            :key="currentTrainingPlanLayout.name"
+            :active="trainingPlanLayoutText === currentTrainingPlanLayout.name"
+            @click="switchTrainingPlanLayout(currentTrainingPlanLayout)"
           >
-            <b-dropdown-item
-              v-for="currentTrainingPlanLayout in trainingPlanLayouts"
-              :id="currentTrainingPlanLayout.id"
-              :key="currentTrainingPlanLayout.name"
-              :active="trainingPlanLayoutText === currentTrainingPlanLayout.name"
-              @click="switchTrainingPlanLayout(currentTrainingPlanLayout)"
-            >
-              {{ currentTrainingPlanLayout.name }}
-            </b-dropdown-item>
-          </b-dropdown>
-        </div>
+            {{ currentTrainingPlanLayout.name }}
+          </b-dropdown-item>
+        </b-dropdown>
         <component
           :is="currentPanel"
           v-if="trainingPlan"
@@ -159,12 +157,28 @@ export default {
     },
     trainingPlanLayouts() {
       return this.$store.getters["trainingPlanLayouts/trainingPlanLayouts"];
+    },
+    possibleExercises() {
+      return this.$store.getters["exercises/exercises"];
+    },
+    possibleDevices() {
+      return this.$store.getters["devices/devices"];
+    },
+    possibleExerciseOptions() {
+      return this.$store.getters["exerciseOptions/exerciseOptions"];
+    },
+    possibleDeviceOptions() {
+      return this.$store.getters["deviceOptions/deviceOptions"];
     }
   },
   created() {
     console.log(this.$store.getters);
     this.$store.dispatch("trainingPlans/findAll");
     this.$store.dispatch("trainingPlanLayouts/findAll");
+    this.$store.dispatch("exercises/findAll");
+    this.$store.dispatch("devices/findAll");
+    this.$store.dispatch("exerciseOptions/findAll");
+    this.$store.dispatch("deviceOptions/findAll");
   },
   methods: {
     async loadTrainingPlan(event, trainingPlan) {

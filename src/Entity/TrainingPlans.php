@@ -40,7 +40,7 @@ class TrainingPlans
      * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $id;
 
@@ -87,22 +87,6 @@ class TrainingPlans
     private $parent;
 
     /**
-     * @var Collection|TrainingPlans[]
-     *
-     * @ORM\OneToMany(targetEntity="TrainingPlans", mappedBy="parent")
-     * @Groups({"read"})
-     */
-    private $children;
-
-    /**
-     * @var Collection|TrainingPlanXExercise[]
-     *
-     * @ORM\OneToMany(targetEntity="TrainingPlanXExercise", mappedBy="trainingPlan", cascade={"persist"})
-     * @Groups({"read"})
-     */
-    private $trainingPlanExercises;
-
-    /**
      * @var TrainingPlanLayouts
      *
      * @ORM\ManyToOne(targetEntity="TrainingPlanLayouts", cascade={"all"}, inversedBy="trainingPlans")
@@ -115,6 +99,7 @@ class TrainingPlans
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @Groups({"read", "write"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -122,6 +107,7 @@ class TrainingPlans
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $updated;
 
@@ -130,6 +116,7 @@ class TrainingPlans
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
+     * @Groups({"read", "write"})
      */
     private $creator;
 
@@ -138,8 +125,25 @@ class TrainingPlans
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $updater;
+
+    /**
+     * @var Collection|TrainingPlans[]
+     *
+     * @ORM\OneToMany(targetEntity="TrainingPlans", mappedBy="parent", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $children;
+
+    /**
+     * @var Collection|TrainingPlanXExercise[]
+     *
+     * @ORM\OneToMany(targetEntity="TrainingPlanXExercise", mappedBy="trainingPlan", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $trainingPlanExercises;
 
     public function __construct() {
         $this->children = new Collection();
@@ -424,7 +428,7 @@ class TrainingPlans
     public function addTrainingPlanExercise(TrainingPlanXExercise $trainingPlanExercises)
     {
        $this->trainingPlanExercises[] = $trainingPlanExercises;
-//       $trainingPlanExercises->setTrainingPlan($this);
+       $trainingPlanExercises->setTrainingPlan($this);
     }
 
     public function getTrainingPlanExercises()

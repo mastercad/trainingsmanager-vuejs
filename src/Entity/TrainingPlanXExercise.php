@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -36,16 +37,17 @@ class TrainingPlanXExercise
      * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Groups({"read", "write"})
      */
     private $id;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="exercise_order", type="integer", nullable=false, options={"default"="1","comment"="ist gedacht um die reihenfolge der übungen nachträglich noch ändern zu können"})
+     * @ORM\Column(name="exercise_order", type="integer", nullable=false, options={"default"="0","comment"="ist gedacht um die reihenfolge der übungen nachträglich noch ändern zu können"})
      * @Groups({"read", "write"})
      */
-    private $order = 1;
+    private $order = 0;
 
     /**
      * @var string
@@ -54,28 +56,6 @@ class TrainingPlanXExercise
      * @Groups({"read", "write"})
      */
     private $remark;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     */
-    private $created = 'CURRENT_TIMESTAMP';
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
-     */
-    private $updated;
-
-    /**
-     * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creater", referencedColumnName="id")
-     */
-    private $creator;
 
     /**
      * @var Exercises
@@ -99,9 +79,45 @@ class TrainingPlanXExercise
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
+     * @ORM\JoinColumn(name="creater", referencedColumnName="id")
+     */
+    private $creator;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    private $created = 'CURRENT_TIMESTAMP';
+
+    /**
+     * @var Users
+     *
+     * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id")
+     * @Groups({"read", "write"})
      */
     private $updater;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="updated", type="datetime", nullable=true)
+     */
+    private $updated;
+
+    /**
+     * @var Collection|TrainingPlanXExerciseOption[]
+     *
+     * @ORM\OneToMany(targetEntity="TrainingPlanXExerciseOption", mappedBy="trainingPlanXExercise", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $trainingPlanXExerciseOptions;
+
+    public function __construct()
+    {
+      $this->trainingPlanXExerciseOptions = new Collection();
+    }
 
     /**
      * Get the value of id
@@ -317,5 +333,16 @@ class TrainingPlanXExercise
         $this->updater = $updater;
 
         return $this;
+    }
+
+    public function addTrainingXPlanExerciseOption(TrainingPlanXExerciseOption $trainingPlanXExerciseOption)
+    {
+       $this->trainingPlanXExerciseOptions[] = $trainingPlanXExerciseOption;
+       $trainingPlanXExerciseOption->setTrainingPlanXExercise($this);
+    }
+
+    public function getTrainingPlanXExerciseOptions()
+    {
+        return $this->trainingPlanXExerciseOptions;
     }
 }

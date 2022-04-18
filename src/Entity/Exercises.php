@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -116,7 +117,7 @@ class Exercises
      * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $id;
 
@@ -172,6 +173,7 @@ class Exercises
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @Groups({"read", "write"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -179,6 +181,7 @@ class Exercises
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $updated;
 
@@ -186,9 +189,8 @@ class Exercises
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
+     * @Groups({"read", "write"})
      */
     private $creator;
 
@@ -196,11 +198,41 @@ class Exercises
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
+     * @Groups({"read", "write"})
      */
     private $updater;
+
+    /**
+     * @var Collection|ExerciseOption[]
+     *
+     * @ORM\OneToMany(targetEntity="ExerciseXExerciseOption", mappedBy="exercise", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $exerciseXExerciseOptions;
+
+    /**
+     * @var Collection|DeviceOption[]
+     *
+     * @ORM\OneToMany(targetEntity="ExerciseXDeviceOption", mappedBy="exercise", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $exerciseXDeviceOptions;
+
+    /**
+     * @var Collection|Devices[]
+     *
+     * @ORM\OneToOne(targetEntity="ExerciseXDevice", mappedBy="exercise", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $exerciseXDevice;
+
+    public function __construct()
+    {
+      $this->exerciseXDeviceOptions = new Collection();
+      $this->exerciseXExerciseOptions = new Collection();
+      $this->exerciseXDevice = new Collection();
+    }
 
     public function __toString()
     {
@@ -445,5 +477,20 @@ class Exercises
         $this->updater = $updater;
 
         return $this;
+    }
+
+    public function getExerciseXExerciseOptions()
+    {
+        return $this->exerciseXExerciseOptions;
+    }
+
+    public function getExerciseXDeviceOptions()
+    {
+        return $this->exerciseXDeviceOptions;
+    }
+
+    public function getExerciseXDevice()
+    {
+        return $this->exerciseXDevice;
     }
 }

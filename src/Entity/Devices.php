@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\DevicePreviewPictureController;
 use App\Controller\DeviceImageController;
 use App\Controller\DeviceImageUploadController;
 use App\Controller\DeviceImageDeleteController;
 use App\Controller\UploadImageDeleteController;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\Collection;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -146,6 +147,7 @@ class Devices
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @Groups({"read", "write"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -153,6 +155,7 @@ class Devices
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $updated;
 
@@ -160,9 +163,8 @@ class Devices
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
+     * @Groups({"read", "write"})
      */
     private $creator;
 
@@ -170,11 +172,18 @@ class Devices
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
+     * @Groups({"read", "write"})
      */
     private $updater;
+
+    /**
+     * @var Collection|DeviceOption[]
+     *
+     * @ORM\OneToMany(targetEntity="DeviceXDeviceOption", mappedBy="device", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $deviceXDeviceOptions;
 
     public function __toString()
     {
@@ -371,5 +380,10 @@ class Devices
         $this->updater = $updater;
 
         return $this;
+    }
+
+    public function getDeviceXDeviceOptions()
+    {
+        return $this->deviceXDeviceOptions;
     }
 }

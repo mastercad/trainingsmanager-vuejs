@@ -3,9 +3,12 @@
     <div class="row">
       <h1>{{ origName }}</h1>
 
-      <div
-        id="sort"
-        class="list-group sort cf"
+      <draggable
+        :list="origChildren"
+        class="list-group"
+        ghost-class="ghost"
+        :options="{group:'tags'}"
+        @change="onTrainingPlanMove"
       >
         <!--
           the dynamic key solves the problem that the components are not rerendered after moving,
@@ -13,10 +16,11 @@
         -->
         <training-plan
           v-for="(child, index) in sortTrainingPlans"
-          :id="index"
+          :id="child.id"
           :key="child.order+'_'+child.id"
-
           :ref="child"
+
+          :sort="child.order"
 
           class="list-group-item drag-el training-plan-sort-item"
 
@@ -26,19 +30,21 @@
           :parent="child.parent"
           :training-plan-exercises="child.trainingPlanExercises"
         />
-      </div>
+      </draggable>
     </div>
   </div>
 </template>
 
 <script>
 import TrainingPlan from './TrainingPlan.vue';
-import Sortable from 'sortablejs';
+
+import draggable from 'vuedraggable';
 
 export default {
   name: "TrainingPlanSplitView",
   components: {
-    TrainingPlan
+    TrainingPlan,
+    draggable: draggable,
   },
   props: {
     id: {
@@ -72,6 +78,7 @@ export default {
   },
   data() {
     return {
+      display: 'Clone',
       orderBy: 'order',
       origId: this.id,
       origName: this.name,
@@ -81,7 +88,9 @@ export default {
       origOrder: this.order,
       origChildren: this.children,
       origTrainingPlans: this.trainingPlans,
-      origTrainingPlanExercises: this.trainingPlanExercises
+      origTrainingPlanExercises: this.trainingPlanExercises,
+      newIndex: 0,
+      exerciseMoveTarget: null
     }
   },
   computed: {
@@ -101,37 +110,12 @@ export default {
       );
     }
   },
-  mounted() {
-    var me = this;
-    Sortable.create(document.getElementById('sort'), {
-      draggable: '.training-plan-sort-item',
-      ghostClass: "sort-ghost",
-      animation: 80,
-      onUpdate: function(event) {
-        me.reorderTrainingPlans(event.oldIndex, event.newIndex);
-      }
-    });
-    Sortable.create(document.getElementById('sort'), {
-      draggable: '.exercise-sort-item',
-      ghostClass: "sort-ghost",
-      animation: 80,
-      onUpdate: function(event) {
-        me.reorderExercises(event.oldIndex, event.newIndex);
-      }
-    });
-  },
   methods: {
-    reorderTrainingPlans(oldIndex, newIndex) {
+    onTrainingPlanMove(event) {
       console.log("reorderTrainingPlans");
-      this.origChildren.splice(newIndex, 0, this.origChildren.splice(oldIndex, 1)[0]);
+      window.console.log(event.moved);
+      this.origChildren.splice(event.moved.newIndex, 0, this.origChildren.splice(event.moved.oldIndex, 1)[0]);
       this.origChildren.forEach(function(item, index) {
-        item.order = index;
-      });
-    },
-    reorderExercises(oldIndex, newIndex) {
-      console.log("reorderExercises");
-      this.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
-      this.origTrainingPlanExercises.forEach(function(item, index) {
         item.order = index;
       });
     }
@@ -141,30 +125,9 @@ export default {
 </script>
 
 <style scoped>
-.buttons {
-  margin-top: 35px;
-}
 .ghost {
   opacity: 0.5;
   background: #c8ebfb;
-}
-ul.sort {
-  list-style: none;
-  padding: 0;
-  margin: 30px;
-}
-
-li.sort-item {
-  padding: 10px;
-  width: 25%;
-  float: left;
-  margin: 0 10px 10px 0;
-  background: #EFEFEF;
-  border: solid 1px #CCC;
-}
-
-.sort-ghost {
-  opacity: 0.3;
   transition: all 0.7s ease-out;
 }
 </style>

@@ -206,7 +206,6 @@ export default {
 
     //router.replace(router.currentRoute.value.fullPath)
 
-    console.log(router);
 /*
     axios.interceptors.response.use(undefined, (err) => {
       return new Promise(() => {

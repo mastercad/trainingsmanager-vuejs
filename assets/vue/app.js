@@ -15,19 +15,29 @@ import './../styles/app.css';
 import VueJsonLD from 'vue-jsonld';
 // Alert, Button, Carousel, Collapse, Dropdown, Modal, Offcanvas, Popover, ScrollSpy, Tab, Toast, Tooltip
 // import { Button, Dropdown, Modal, Tooltip } from "bootstrap";
-import { BootstrapVue, IconsPlugin, DropdownPlugin } from 'bootstrap-vue'
+import { BootstrapVue, IconsPlugin, DropdownPlugin } from 'bootstrap-vue';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faJs, faVuejs } from '@fortawesome/free-brands-svg-icons';
 import VueSimpleContextMenu from "vue-simple-context-menu";
+import VueFormWizard  from 'vue-form-wizard';
 
 import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import 'vue-form-wizard/dist/vue-form-wizard.min.css';
 import 'vue-simple-context-menu/dist/vue-simple-context-menu.css';
 
+library.add(faPlus, faJs, faVuejs);
+
 Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(VueJsonLD);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(DropdownPlugin);
+Vue.use(VueFormWizard);
 
 //Vue.use(Button);
 //Vue.use(Dropdown);

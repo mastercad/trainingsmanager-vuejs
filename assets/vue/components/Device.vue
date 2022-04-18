@@ -48,15 +48,7 @@ export default {
       type: String,
       required: true
     },
-    description: {
-      type: String,
-      required: true
-    },
     seoLink: {
-      type: String,
-      required: true
-    },
-    specialFeatures: {
       type: String,
       required: true
     },
@@ -69,9 +61,7 @@ export default {
     return {
       origId: this.id,
       origName: this.name,
-      origDescription: this.description,
       origSeoLink: this.seoLink,
-      origSpecialFeatures: this.specialFeatures,
       origPreviewPicturePath: this.previewPicturePath
     }
   },
