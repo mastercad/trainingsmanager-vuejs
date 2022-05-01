@@ -1,7 +1,7 @@
 <template>
   <div class="flex-grid">
     <div
-      v-for="exerciseOption in prepareExerciseOptions"
+      v-for="exerciseOption in prepareOptions"
       :id="exerciseOption.key"
       v-bind:key="exerciseOption.key"
     >
@@ -25,7 +25,7 @@
       <div v-else>
         <span>{{ exerciseOption.name }}</span>:
         <input
-          v-model="exerciseOption.exerciseXExerciseOption.exerciseOptionValue"
+          v-model="currentSelectedTrainingPlanExerciseOptions[option.exerciseOption.id]"
           class="form-control"
           :placeholder="exerciseOption.placeholder"
           type="text"
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import OptionFunctions from "../shared/optionFunctions.js";
+
 export default {
   name: "ExerciseOptions",
   alias: "exercise-options",
@@ -52,7 +54,11 @@ export default {
       type: Array,
       default: () => { return new Array(); }
     },
-    selectedOptions: {
+    selectedTrainingPlanExerciseOptions: {
+      type: Object,
+      default: () => { return {}; }
+    },
+    currentTrainingPlanExerciseOptions: {
       type: Array,
       default: () => { return new Array(); }
     }
@@ -62,88 +68,27 @@ export default {
       currentExerciseOptions: this.existingExerciseOptions,
       currentPossibleExerciseOptions: this.possibleExerciseOptions,
       currentSelectedExercise: this.selectedExercise,
-      currentSelectedOptions: this.selectedOptions
+      origCurrentTrainingPlanExerciseOptions: this.currentTrainingPlanExerciseOptions,
+      currentSelectedTrainingPlanExerciseOptions: this.selectedTrainingPlanExerciseOptions,
     };
   },
   computed: {
-    prepareExerciseOptions () {
-      this.prepareSelectedOptions();
-      return this.createCurrentExerciseOptions();
+    prepareOptions () {
+      let extractIdClosure = function(option) {
+        return option.exerciseOption.id;
+      };
+      let extractValueClosure = function(option) {
+        return option.optionValue;
+      };
+      return OptionFunctions.generateCurrentOptions(
+        this.currentSelectedExercise.id,
+        this.currentPossibleExerciseOptions,
+        this.currentSelectedTrainingPlanExerciseOptions,
+        this.origCurrentTrainingPlanExerciseOptions
+      );
     }
   },
   methods: {
-    createCurrentExerciseOptions() {
-      let exerciseOptions = [];
-
-      this.currentPossibleExerciseOptions.forEach( (possibleExerciseOption, index) => {
-        let value = possibleExerciseOption.defaultValue;
-        let name = possibleExerciseOption.name;
-        let isMultipartOption = this.checkIsMultipartOption(value);
-        let outerKey = this.currentSelectedExercise.id+'_'+possibleExerciseOption.id;
-        let optionInformation = {
-          key: outerKey,
-          name: name,
-          isMultipartOption: isMultipartOption,
-          bindKey: outerKey+'_'+value
-        };
-
-        if (isMultipartOption) {
-          optionInformation.parts = this.splitExerciseOption(value);
-          optionInformation.parts.forEach( (value, index) => {
-            let key = this.generateExerciseOptionPartKey(possibleExerciseOption, index);
-            let partId = possibleExerciseOption.id;
-            let exerciseXExerciseOption = null;
-
-            if((undefined !== this.currentSelectedOptions[partId])) {
-              exerciseXExerciseOption = this.currentSelectedOptions[partId];
-            } else {
-              exerciseXExerciseOption = this.generateEmptyExerciseXExerciseOption(possibleExerciseOption);
-              this.currentSelectedExercise.exerciseXExerciseOptions.push(exerciseXExerciseOption);
-              this.currentSelectedOptions[partId] = exerciseXExerciseOption;
-            }
-            let isActive = (undefined !== this.currentSelectedOptions[partId]) && this.currentSelectedOptions[partId].exerciseOptionValue == value;
-
-            if (isActive) {
-              optionInformation['name'] = optionInformation['name'] + " ("+value+")";
-            }
-
-            optionInformation.parts[index] = {
-              isActive: isActive,
-              value: value,
-              key: key,
-              exerciseXExerciseOption: exerciseXExerciseOption
-            }
-          });
-        } else {
-          optionInformation.value = (undefined !== this.currentSelectedOptions[possibleExerciseOption.id]) ? this.currentSelectedOptions[possibleExerciseOption.id].exerciseOptionValue : null;
-          optionInformation.placeholder = possibleExerciseOption.defaultValue;
-
-          let exerciseXExerciseOption = null;
-
-          if(undefined !== this.currentSelectedOptions[possibleExerciseOption.id]) {
-            exerciseXExerciseOption = this.currentSelectedOptions[possibleExerciseOption.id];
-          } else {
-            exerciseXExerciseOption = this.generateEmptyExerciseXExerciseOption(possibleExerciseOption);
-            this.currentSelectedExercise.exerciseXExerciseOptions.push(exerciseXExerciseOption);
-          }
-
-          optionInformation.exerciseXExerciseOption = exerciseXExerciseOption;
-        }
-
-        exerciseOptions.push(optionInformation);
-      });
-      return exerciseOptions
-    },
-    prepareSelectedOptions() {
-      this.currentSelectedOptions = {};
-
-      this.currentExerciseOptions.forEach(currentExerciseOption => {
-        this.currentSelectedOptions[currentExerciseOption.exerciseOption.id] = currentExerciseOption;
-      });
-    },
-    splitExerciseOption(value) {
-      return value.split('|');
-    },
     saveSelection(option, preparedExerciseOption) {
       preparedExerciseOption.parts.forEach( part => {
         part.isActive = false;
@@ -151,39 +96,9 @@ export default {
       });
 
       option.exerciseXExerciseOption.exerciseOptionValue = option.value;
-      this.currentSelectedOptions[option.exerciseXExerciseOption.exerciseOption.id] = option.exerciseXExerciseOption;
+      this.currentSelectedTrainingPlanExerciseOptions[option.exerciseXExerciseOption.exerciseOption.id] = option.exerciseXExerciseOption;
       option.isActive = true;
       preparedExerciseOption.bindKey = option.key+'_'+option.value;
-    },
-    checkExerciseOptionIsSelected(exerciseOption, index, value) {
-      let key = this.generateExerciseOptionPartKey(exerciseOption, index);
-      this.currentSelectedOptions[key] = value;
-      let result = undefined !== this.currentSelectedOptions[key]
-        && this.currentSelectedOptions[key] === value;
-
-      return result;
-    },
-    checkIsMultipartOption(value) {
-      const regex = /\|/;
-      let regexResult = regex.exec(value);
-      let result = regexResult && 0 < regexResult.length
-
-      return result ? true : false;
-    },
-    generateExerciseOptionPartKey(exerciseOption, index) {
-      return this.currentSelectedExercise.id+'_'+exerciseOption.id+'_'+index;
-    },
-    generateEmptyExerciseXExerciseOption(exerciseOption) {
-      return {
-        created: null,
-        creator: null,
-        exercise: this.selectedExercise.id,
-        exerciseOption: exerciseOption,
-        exerciseOptionValue: null,
-        id: null,
-        updated: null,
-        updater: null
-      }
     }
   }
 }
