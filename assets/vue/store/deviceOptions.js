@@ -158,6 +158,7 @@ export default {
       }
     },
     async findAll({ commit }) {
+      console.log("LOAD ALL DEVICE OPTIONS FROM STORAGE!");
       commit(FETCHING_DEVICE_OPTIONS);
       try {
         let response = await DeviceOptionController.findAll();

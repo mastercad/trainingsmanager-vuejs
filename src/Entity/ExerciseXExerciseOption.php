@@ -10,7 +10,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * ExerciseXExerciseOption
  *
- * @ORM\Table(name="exercise_x_exercise_option", uniqueConstraints={@ORM\UniqueConstraint(name="unique_uebung_x_uebung_option_id", columns={"id"})}, indexes={@ORM\Index(name="exercise_x_exercise_option_creator", columns={"creator"}), @ORM\Index(name="exercise_x_exercise_option_exercise", columns={"exercise"}), @ORM\Index(name="exercise_x_exercise_option_exercise_option", columns={"exercise_option"}), @ORM\Index(name="exercise_x_exercise_option_updater", columns={"updater"})})
+ * @ORM\Table(
+ *    name="exercise_x_exercise_option",
+ *    uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="unique_uebung_x_uebung_option_id", columns={"id"})
+ *    },
+ *    indexes={
+ *      @ORM\Index(name="exercise_x_exercise_option_creator", columns={"creator"}),
+ *      @ORM\Index(name="exercise_x_exercise_option_exercise", columns={"exercise"}),
+ *      @ORM\Index(name="exercise_x_exercise_option_exercise_option", columns={"exercise_option"}),
+ *      @ORM\Index(name="exercise_x_exercise_option_updater", columns={"updater"})
+ *    }
+ * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
@@ -44,7 +55,7 @@ class ExerciseXExerciseOption
      * @var Exercises
      *
      * @ORM\ManyToOne(targetEntity="Exercises", inversedBy="exerciseXExerciseOptions")
-     * @ORM\JoinColumn(name="exercise", referencedColumnName="id")
+     * @ORM\JoinColumn(name="exercise", referencedColumnName="id", onDelete="CASCADE")
      * @Groups({"read", "write"})
      */
     private $exercise;
@@ -52,8 +63,8 @@ class ExerciseXExerciseOption
     /**
      * @var ExerciseOptions
      *
-     * @ORM\ManyToOne(targetEntity="ExerciseOptions", inversedBy="exerciseXExerciseOptions")
-     * @ORM\JoinColumn(name="exercise_option", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="ExerciseOptions")
+     * @ORM\JoinColumn(name="exercise_option", referencedColumnName="id", onDelete="CASCADE")
      * @Groups({"read", "write"})
      */
     private $exerciseOption;
@@ -70,7 +81,7 @@ class ExerciseXExerciseOption
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -78,7 +89,7 @@ class ExerciseXExerciseOption
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -87,7 +98,7 @@ class ExerciseXExerciseOption
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $creator;
 
@@ -96,7 +107,7 @@ class ExerciseXExerciseOption
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updater;
 
@@ -233,11 +244,11 @@ class ExerciseXExerciseOption
     /**
      * Set the value of exercise
      *
-     * @param Exercises $exercise
+     * @param ?Exercises $exercise
      *
      * @return self
      */
-    public function setExercise(Exercises $exercise)
+    public function setExercise(?Exercises $exercise)
     {
         $this->exercise = $exercise;
 
@@ -257,11 +268,11 @@ class ExerciseXExerciseOption
     /**
      * Set the value of exerciseOption
      *
-     * @param ExerciseOptions $exerciseOption
+     * @param ?ExerciseOptions $exerciseOption
      *
      * @return self
      */
-    public function setExerciseOption(ExerciseOptions $exerciseOption)
+    public function setExerciseOption(?ExerciseOptions $exerciseOption)
     {
         $this->exerciseOption = $exerciseOption;
 

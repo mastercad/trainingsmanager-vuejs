@@ -19,6 +19,12 @@ api_platform:
         jsonld: ['application/ld+json']
         html: ['text/html']
         multipart: ['multipart/form-data']
+        jsonhal:  ['application/hal+json']
+        jsonapi:  ['application/vnd.api+json']
+        xml:      ['application/xml', 'text/xml']
+        yaml:     ['application/x-yaml']
+        csv:      ['text/csv']
+#        myformat: ['application/vnd.myformat']
 
     patch_formats:
         jsonld:   ['application/ld+json']

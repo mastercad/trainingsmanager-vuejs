@@ -7,8 +7,10 @@ use App\Controller\DeviceImageController;
 use App\Controller\DeviceImageUploadController;
 use App\Controller\DeviceImageDeleteController;
 use App\Controller\UploadImageDeleteController;
+use App\Entity\DeviceXDeviceOption;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 
@@ -17,15 +19,26 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Devices
  *
- * @ORM\Table(name="devices", uniqueConstraints={@ORM\UniqueConstraint(name="unique_device_name", columns={"name"}), @ORM\UniqueConstraint(name="unique_device_seo_link", columns={"seo_link"})}, indexes={@ORM\Index(name="device_creator", columns={"creator"}), @ORM\Index(name="device_id", columns={"id"}), @ORM\Index(name="device_updater", columns={"updater"})})
+ * @ORM\Table(
+ *    name="devices",
+ *    uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="unique_device_name", columns={"name"}),
+ *      @ORM\UniqueConstraint(name="unique_device_seo_link", columns={"seo_link"})
+ *    },
+ *    indexes={
+ *      @ORM\Index(name="device_creator", columns={"creator"}),
+ *      @ORM\Index(name="device_id", columns={"id"}),
+ *      @ORM\Index(name="device_updater", columns={"updater"})
+ *    }
+ * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}},
+ *   normalizationContext={"groups"={"read"}},
+ *   denormalizationContext={"groups"={"write"}},
  *   collectionOperations={
- *     "get",
- *     "post",
+ *     "get"={"method"="GET"},
+ *     "post"={"method"="POST"},
  *     "get_images_for_device" = {
  *        "method" = "GET",
  *        "path" = "/devices/{id}/images",
@@ -83,7 +96,6 @@ use Doctrine\ORM\Mapping as ORM;
  *   },
  *   itemOperations={
  *     "get",
- *     "patch",
  *     "delete",
  *     "put",
  *     "get_by_slug" = {
@@ -115,7 +127,7 @@ class Devices
      * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $id;
 
@@ -147,7 +159,7 @@ class Devices
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -155,7 +167,7 @@ class Devices
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -164,7 +176,7 @@ class Devices
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $creator;
 
@@ -173,17 +185,22 @@ class Devices
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updater;
 
     /**
      * @var Collection|DeviceOption[]
      *
-     * @ORM\OneToMany(targetEntity="DeviceXDeviceOption", mappedBy="device", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=DeviceXDeviceOption::class, mappedBy="device", cascade={"ALL"}, orphanRemoval=true)
      * @Groups({"read", "write"})
      */
     private $deviceXDeviceOptions;
+
+    public function __construct()
+    {
+        $this->deviceXDeviceOptions = new ArrayCollection();
+    }
 
     public function __toString()
     {
@@ -385,5 +402,28 @@ class Devices
     public function getDeviceXDeviceOptions()
     {
         return $this->deviceXDeviceOptions;
+    }
+
+    public function addDeviceXDeviceOption(DeviceXDeviceOption $deviceXDeviceOption)
+    {
+        if ($this->deviceXDeviceOptions->contains($deviceXDeviceOption)) {
+            return;
+        }
+
+        $this->deviceXDeviceOptions->add($deviceXDeviceOption);
+        $deviceXDeviceOption->setDevice($this);
+    }
+
+    /**
+     * @param DeviceXDeviceOption $deviceXDeviceOption
+     */
+    public function removeDeviceXDeviceOption(DeviceXDeviceOption $deviceXDeviceOption)
+    {
+        if (!$this->deviceXDeviceOptions->contains($deviceXDeviceOption)) {
+            return;
+        }
+
+        $this->deviceXDeviceOptions->removeElement($deviceXDeviceOption);
+        $deviceXDeviceOption->setDevice(null);
     }
 }

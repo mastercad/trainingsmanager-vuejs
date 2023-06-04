@@ -26,6 +26,42 @@
         >
       </div>
     </div>
+
+    <div class="flex-grid">
+      <div
+        v-for="deviceOption in prepareDeviceOptions"
+        :id="deviceOption.key"
+        v-bind:key="deviceOption.key"
+      >
+        <b-dropdown
+          v-if="deviceOption.isMultipartOption"
+          split-variant="outline-primary"
+          variant="primary"
+          class="m-md-2"
+          :text="deviceOption.name"
+        >
+          <b-dropdown-item
+            v-for="option in deviceOption.parts"
+            :id="option.key"
+            v-bind:key="currentSelectedDeviceOption+option.key"
+            :active="option.isActive"
+            @click="saveSelection(option, deviceOption)"
+          >
+            {{ option.value }}
+          </b-dropdown-item>
+        </b-dropdown>
+        <div v-else>
+          <span>{{ deviceOption.name }}</span>:
+          <input
+            v-model="currentSelectedDeviceOptions[deviceOption.origOption.id]"
+            class="form-control"
+            :placeholder="deviceOption.placeholder"
+            type="text"
+          >
+        </div>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-md-4">
         <form
@@ -114,6 +150,8 @@
 
 <script>
 import { upload } from '../controllers/device-file-upload-service.js';
+import deviceOptions from '../controllers/deviceOptions.js';
+import OptionFunctions from "../shared/optionFunctions.js";
 
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
@@ -135,6 +173,18 @@ export default {
       type: String,
       required: true
     },
+    possibleDeviceOptions: {
+      type: Array,
+      required: true
+    },
+    existingDeviceOptions: {
+      type: Array,
+      default: () => { return new Array(); }
+    },
+    selectedDeviceOptions: {
+      type: Object,
+      default: () => { return {}; }
+    }
   },
   data() {
     return {
@@ -147,10 +197,22 @@ export default {
       fileCount: 0,
       origName: this.name,
       origSeoLink: this.seoLink,
-      origPreviewPicturePath: this.previewPicturePath
+      origPreviewPicturePath: this.previewPicturePath,
+      currentDeviceOptions: this.existingDeviceOptions,
+      currentPossibleDeviceOptions: this.possibleDeviceOptions,
+      currentSelectedDeviceOptions: this.selectedDeviceOptions,
+      currentSelectedDeviceOption: 0
     }
   },
   computed: {
+    prepareDeviceOptions () {
+      return OptionFunctions.generateCurrentOptions(
+        this.origId,
+        OptionFunctions.prepareOptionCollection(this.currentPossibleDeviceOptions, function(option) {return option.id;}, function(option) {return option.defaultValue;}),
+        this.currentSelectedDeviceOptions
+//        OptionFunctions.prepareOptionCollection(this.currentDeviceOptions, function(option) {return option.id;}, function(option) {return option.defaultValue;})
+      );
+    },
     isInitial() {
       return this.currentStatus === STATUS_INITIAL;
     },
@@ -169,18 +231,26 @@ export default {
   },
   created() {
     this.$store.dispatch("devices/loadImages", this.id);
+    this.currentSelectedDeviceOptions = {};
+    for (let currentDeviceOptionPosition in this.currentDeviceOptions) {
+      this.currentSelectedDeviceOptions[this.currentDeviceOptions[currentDeviceOptionPosition].deviceOption.id] = this.currentDeviceOptions[currentDeviceOptionPosition].deviceOptionValue;
+    }
   },
   mounted() {
     this.reset();
   },
   methods: {
     async createDevice() {
+      const selectedDeviceOptions = this.generateSelectedDeviceOptionsForSave();
       const result = await this.$store.dispatch("devices/create",
         {
           name: this.origName,
           seoLink: this.origSeoLink,
-          previewPicturePath: this.origPreviewPicturePath
-        });
+          previewPicturePath: this.origPreviewPicturePath,
+          deviceXDeviceOptions: selectedDeviceOptions
+        }
+      );
+
       if (result !== null) {
         this.$data.id = -9999;
         this.$data.name = "";
@@ -189,15 +259,18 @@ export default {
       }
     },
     async updateDevice() {
+      const selectedDeviceOptions = this.generateSelectedDeviceOptionsForSave();
       const result = await this.$store.dispatch(
         "devices/update",
         {
           id: this.id,
           name: this.origName,
           seoLink: this.origSeoLink,
-          previewPicturePath: this.origPreviewPicturePath
+          previewPicturePath: this.origPreviewPicturePath,
+          deviceXDeviceOptions: selectedDeviceOptions
         }
       );
+
       if (result !== null) {
         this.$data.id = -9999;
         this.$data.name = "";
@@ -272,6 +345,60 @@ export default {
     },
     extractFileName(fileName) {
       return fileName.split('/').reverse()[0];
+    },
+    saveSelection(option, preparedDeviceOption) {
+      preparedDeviceOption.parts.forEach( part => {
+        part.isActive = false;
+        preparedDeviceOption.value = null;
+      });
+
+      preparedDeviceOption.value = option.value;
+      this.currentSelectedDeviceOptions[preparedDeviceOption.origOption.id] = option.value;
+      option.isActive = true;
+      preparedDeviceOption.bindKey = option.key+'_'+option.value;
+      preparedDeviceOption.name = preparedDeviceOption.origOption.origEntry.name+" ("+option.value+")";
+      // this setting is important to change the whole key and force refresh of dropdown rendering
+      this.currentSelectedDeviceOption=option.key
+    },
+    generateSelectedDeviceOptionsForSave() {
+      let selectedDeviceOptions = [];
+      let deviceOption = null;
+      for (let currentSelectedDeviceOptionPosition in this.currentSelectedDeviceOptions) {
+        for (let possibleDeviceOptionPosition in this.currentPossibleDeviceOptions) {
+          if (this.currentPossibleDeviceOptions[possibleDeviceOptionPosition]["id"] == currentSelectedDeviceOptionPosition) {
+            deviceOption = this.currentPossibleDeviceOptions[possibleDeviceOptionPosition];
+            break;
+          }
+        }
+        let deviceOptionValue = this.currentSelectedDeviceOptions[currentSelectedDeviceOptionPosition];
+
+        if (deviceOption
+          && "" !== deviceOptionValue
+        ) {
+          let existingDeviceOption = null;
+
+          for (let currentExistingDeviceOptionPosition in this.existingDeviceOptions) {
+            let currentExistingDeviceOption = this.existingDeviceOptions[currentExistingDeviceOptionPosition];
+            if (currentExistingDeviceOption.deviceOption.id === deviceOption.id) {
+              existingDeviceOption = currentExistingDeviceOption;
+            }
+          }
+
+          let selectedDeviceOption = {
+            id: existingDeviceOption ? existingDeviceOption.id : null,
+            deviceOptionValue: deviceOptionValue,
+            deviceOption: '/api/device_options/'+deviceOption.id
+          };
+
+          if (this.origId) {
+            selectedDeviceOption.device = '/api/devices/'+this.origId;
+          }
+
+          selectedDeviceOptions.push(selectedDeviceOption);
+        }
+      }
+
+      return selectedDeviceOptions;
     }
   }
 };

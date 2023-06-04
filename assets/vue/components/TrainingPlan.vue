@@ -244,8 +244,8 @@
 
 <script scoped>
 import draggable from 'vuedraggable';
-import ExerciseOptions from './ExerciseOptions.vue';
-import DeviceOptions from './DeviceOptions.vue';
+import ExerciseOption from './ExerciseOption.vue';
+import DeviceOption from './DeviceOption.vue';
 
 import {v4} from "uuid";
 import OptionFunctions from '../shared/optionFunctions';
@@ -254,8 +254,8 @@ export default {
   name: "TrainingPlanView",
   components: {
     draggable: draggable,
-    ExerciseOptions,
-    DeviceOptions
+    ExerciseOption,
+    DeviceOption
   },
   props: {
     id: {
@@ -355,8 +355,12 @@ export default {
         preparedPossibleOptions[exerciseOption.id] = exerciseOption;
       });
 
+      console.debug(this.selectedTrainingPlanExerciseOptions);
+      console.debug(preparedPossibleOptions);
+
       for (let key in this.selectedTrainingPlanExerciseOptions) {
         if (undefined !== preparedPossibleOptions[key]
+          && null !== this.selectedTrainingPlanExerciseOptions[key]
           && this.selectedTrainingPlanExerciseOptions[key].length
         ) {
           finalExerciseOptions.push({
@@ -524,12 +528,9 @@ export default {
     },
     selectExercise(exercise) {
       if (this.selectedExercise === exercise) {
-        this.currentTrainingPlanExerciseOptions = {};
         this.selectedExercise = null;
         this.selectedDevice = null;
       } else {
-        this.selectedTrainingPlanExerciseOptions = null;
-        this.currentTrainingPlanExerciseOptions = OptionFunctions.generateSelectedOptions(this.selectedExercise.exerciseXExerciseOptions);
         this.selectedExercise = exercise
         this.selectedDevice = exercise.exerciseXDevice.device;
       }
@@ -542,14 +543,28 @@ export default {
       }
     },
     editTrainingPlanExercise(trainingPlanExercise) {
+      console.log("EDIT TRAININGPLAN EXERCISE!");
+      this.selectedTrainingPlanExerciseOptions = {};
+
+      let preparedCurrentExerciseOptions = {};
+      trainingPlanExercise.exercise.exerciseXExerciseOptions.forEach(option => {
+        preparedCurrentExerciseOptions[option.exerciseOption.id] = option;
+      });
+
+      this.$store.getters['exerciseOptions/exerciseOptions'].forEach(option => {
+        if (undefined !== preparedCurrentExerciseOptions[option.id]) {
+          this.selectedTrainingPlanExerciseOptions[option.id] = {value: preparedCurrentExerciseOptions[option.id].optionValue};
+        } else {
+          this.selectedTrainingPlanExerciseOptions[option.id] = {value: null};
+        }
+      });
+
+      console.log("SETZE EXERCISE!");
+
       this.currentTrainingPlanExercise = trainingPlanExercise;
       this.selectedExercise = trainingPlanExercise.exercise;
       this.selectedDevice = null !== trainingPlanExercise.exercise.exerciseXDevice ? trainingPlanExercise.exercise.exerciseXDevice.device : null;
-//      this.currentTrainingPlanExerciseOptions = trainingPlanExercise.trainingPlanXExerciseOptions;
-      this.currentTrainingPlanExerciseOptions = OptionFunctions.generateSelectedOptions(
-        this.$store.getters['exerciseOptions/exerciseOptions'],
-        this.selectedExercise.exerciseXExerciseOptions
-      );
+      this.currentTrainingPlanExerciseOptions = trainingPlanExercise.trainingPlanXExerciseOptions;
 
       this.showModal();
     },

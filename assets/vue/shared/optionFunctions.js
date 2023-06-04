@@ -3,6 +3,11 @@ const OptionFunctions = {
   // current possible options sind alle möglichkeiten die in der db stehen
   // current selected options sind die optionen die bereits gewählt sind (hier für trainingplan und z.b. exercise)
   // alle weiteren übergaben sind, absteigend in priorität, die möglichen optionen als default (exercise_x_device_option, device_option)
+  // übergabe ist:
+  // identifier: name des identifiers der aktuellen option
+  // possibileOptions: mögliche optionen (z.b. deviceOptions)
+  // currentSelectedOptions: aktuell gewählte optionen (z.b. deviceXDeviceOptions)
+  // additionalOptions: weitere mögliche collections in denen sich optionen befinden können (z.b. in den Trainingsplänen, diese werden aber nur als platzhalter angezeigt)
   generateCurrentOptions: (identifier, possibleOptions, currentSelectedOptions, ...additionalOptions) => {
     let resultOptions = [];
 
@@ -10,13 +15,17 @@ const OptionFunctions = {
       return resultOptions;
     }
 
+    if (undefined == currentSelectedOptions) {
+      return resultOptions;
+    }
+
     for (const key in possibleOptions) {
       let possibleOption = possibleOptions[key];
-      let value = undefined !== currentSelectedOptions && undefined !== currentSelectedOptions[possibleOption.id]
-        ? currentSelectedOptions[possibleOption.id].value
+      let value = (undefined !== currentSelectedOptions[possibleOption.id])
+        ? currentSelectedOptions[possibleOption.id]
         : OptionFunctions.investigateCurrentOptionValue(possibleOption.id, false, ...additionalOptions);
 
-      let name = possibleOption.name;
+      let name = possibleOption.origEntry.name;
       let isMultipartOption = OptionFunctions.isMultipartOption(possibleOption.value);
       let outerKey = identifier+'_'+possibleOption.id;
       let optionInformation = {
@@ -30,17 +39,18 @@ const OptionFunctions = {
 
       if (isMultipartOption) {
         optionInformation.parts = OptionFunctions.splitOption(possibleOption.value);
-        optionInformation.parts.forEach( (partValue, index) => {
+        optionInformation.parts.forEach((partValue, index) => {
           let key = OptionFunctions.generateOptionPartKey(identifier, possibleOption.id, index);
           let isActive = partValue == value;
 
           if (isActive) {
-            optionInformation.name = optionInformation.name + " ("+value+")";
+            optionInformation.name = optionInformation.name + " ("+partValue+")";
           }
 
           optionInformation.parts[index] = {
             isActive: isActive,
-            key: key
+            key: key,
+            value: partValue
           };
         });
       } else {
@@ -51,24 +61,6 @@ const OptionFunctions = {
     }
 
     return resultOptions;
-  },
-  generateSelectedOptions(possibleOptions, currentSelectedOptions) {
-    let selectedOptions = [];
-    let preparedCurrentSelectedOptions = {};
-    
-    currentSelectedOptions.forEach(option => {
-      preparedCurrentSelectedOptions[option.exerciseOption.id].value = option.optionValue;
-    });
-
-    for (const key in possibleOptions) {
-      if (undefined !== preparedCurrentSelectedOptions[possibleOptions[key]]) {
-        selectedOptions[possibleOptions[key].id] = preparedCurrentSelectedOptions[possibleOptions[key]].value;
-      } else {
-        selectedOptions[possibleOptions[key].id] = null;
-      }
-    }
-
-    return selectedOptions;
   },
   splitOption(value) {
     return value.split('|');

@@ -59,6 +59,13 @@
           :description="exercise.description"
           :special-features="exercise.specialFeatures"
           :preview-picture-path="exercise.previewPicturePath"
+          :existing-device-options="exercise.exerciseXDeviceOptions"
+          :possible-device-options="deviceOptions"
+          :existing-exercise-options="exercise.exerciseXExerciseOptions"
+          :possible-exercise-options="exerciseOptions"
+          :selected-device="exercise.exerciseXDevices"
+          :selected-exercise-type="exercise.exerciseXExerciseType"
+          :exercise="exercise"
         />
       </div>
     </div>
@@ -67,6 +74,7 @@
     <vue-simple-context-menu
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
+      :id="'exercisesContextMenu'"
       :options="options"
       @option-clicked="optionClicked"
     />
@@ -129,10 +137,26 @@ export default {
     },
     exercises() {
       return this.$store.getters["exercises/exercises"];
+    },
+    exerciseOptions() {
+      return this.$store.getters["exerciseOptions/exerciseOptions"];
+    },
+    deviceOptions() {
+      return this.$store.getters["deviceOptions/deviceOptions"];
+    },
+    muscles() {
+      return this.$store.getters["muscles/muscles"];
     }
   },
   created() {
-    this.$store.dispatch("exercises/findAll");
+    Promise.all([
+      this.$store.dispatch("deviceOptions/findAll"),
+      this.$store.dispatch("exerciseOptions/findAll"),
+      this.$store.dispatch("exercises/findAll"),
+      this.$store.dispatch("muscles/findAll")
+    ]).finally(() => {
+      this.loading = false
+    })
   },
   methods: {
     async loadExercise(event, exercise) {

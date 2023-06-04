@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import TrainingPlan from './TrainingPlan.vue';
+import TrainingPlan from './TrainingPlanRevolution.vue';
 
 import draggable from 'vuedraggable';
 

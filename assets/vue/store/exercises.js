@@ -76,8 +76,21 @@ export default {
     [CREATING_EXERCISE_SUCCESS](state, exercise) {
       state.isPanelLoading = false;
       state.error = null;
-//      state.exercises.unshift(exercise);
-      state.exercises.push(exercise);
+      for (let index = 0; index < state.exercises.length; ++index) {
+        if (state.exercises[index].id === exercise.id) {
+          state.exercises[index].creator = exercise.creator;
+          state.exercises[index].created = exercise.created;
+          state.exercises[index].updated = exercise.updated;
+          state.exercises[index].updater = exercise.updater;
+          state.exercises[index].exerciseXDeviceOptions = exercise.exerciseXDeviceOptions;
+          state.exercises[index].exerciseXExerciseOptions = exercise.exerciseXExerciseOptions;
+          state.exercises[index].name = exercise.name;
+          state.exercises[index].previewPicturePath = exercise.previewPicturePath;
+          state.exercises[index].seoLink = exercise.seoLink;
+          state.exercises[index].exerciseXExerciseType = exercise.exerciseXExerciseType;
+          state.exercises[index].exerciseXDevice = exercise.exerciseXDevice;
+        }
+      }
     },
     [CREATING_EXERCISE_ERROR](state, error) {
       state.isPanelLoading = false;
@@ -202,7 +215,8 @@ export default {
     async create({ commit }, data) {
       commit(CREATING_EXERCISE);
       try {
-        let response = await ExerciseController.create(data.name, data.seoLink, data.description, data.specialFeatures, data.previewPicturePath);
+        console.log(data);
+        let response = await ExerciseController.create(data.name, data.seoLink, data.description, data.specialFeatures, data.previewPicturePath, data.exerciseXDeviceOptions, data.exerciseXExerciseOptions, data.exerciseXDevices, data.exerciseXExerciseType);
         commit(CREATING_EXERCISE_SUCCESS, response.data);
         return response.data;
       } catch (error) {
@@ -213,7 +227,8 @@ export default {
     async update({ commit }, data) {
       commit(UPDATE_EXERCISE);
       try {
-        let response = await ExerciseController.update(data.id, data.name, data.seoLink, data.description, data.specialFeatures, data.previewPicturePath);
+        console.log(data);
+        let response = await ExerciseController.update(data.id, data.name, data.seoLink, data.description, data.specialFeatures, data.previewPicturePath, data.exerciseXDeviceOptions, data.exerciseXExerciseOptions, data.exerciseXDevices, data.exerciseXExerciseType);
         commit(UPDATE_EXERCISE_SUCCESS, response.data);
         return response.data;
       } catch (error) {

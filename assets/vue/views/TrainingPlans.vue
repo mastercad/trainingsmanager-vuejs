@@ -80,6 +80,7 @@
     <vue-simple-context-menu
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
+      :id="'trainingPlansContextMenu'"
       :options="options"
       @option-clicked="optionClicked"
     />
@@ -172,7 +173,6 @@ export default {
     }
   },
   created() {
-    console.log(this.$store.getters);
     this.$store.dispatch("trainingPlans/findAll");
     this.$store.dispatch("trainingPlanLayouts/findAll");
     this.$store.dispatch("exercises/findAll");

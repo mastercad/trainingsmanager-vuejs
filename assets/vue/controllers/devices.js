@@ -1,18 +1,21 @@
 import axios from "axios";
 
 export default {
-  create(name, seoLink, previewPicturePath) {
+  create(name, seoLink, previewPicturePath, deviceXDeviceOptions) {
     return axios.post("/api/devices", {
       name: name,
       seoLink: seoLink,
-      previewPicturePath: previewPicturePath
+      previewPicturePath: previewPicturePath,
+      deviceXDeviceOptions: deviceXDeviceOptions
     });
   },
-  update(id, name, seoLink, previewPicturePath) {
+  update(id, name, seoLink, previewPicturePath, deviceXDeviceOptions) {
     return axios.put("/api/devices/"+id, {
       name: name,
       seoLink: seoLink,
-      previewPicturePath: previewPicturePath
+      previewPicturePath: previewPicturePath,
+      deviceXDeviceOptions: deviceXDeviceOptions,
+      id: id
     });
   },
   delete(id) {

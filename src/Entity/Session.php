@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Session
  *
- * @ORM\Table(name="session")
+ * @ORM\Table(name="sessions")
  * @ORM\Entity
  */
 class Session
@@ -45,9 +46,7 @@ class Session
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="session_update_time", type="datetime", nullable=false, options={"default"="0000-00-00 00:00:00"})
+     * @ORM\Column(name="session_update_time", type="integer", nullable=false)
      */
-    private $sessionUpdateTime = '0000-00-00 00:00:00';
-
-
+    private $sessionUpdateTime;
 }

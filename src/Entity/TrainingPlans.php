@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Entity\TrainingPlanLayouts;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -99,7 +100,7 @@ class TrainingPlans
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -107,7 +108,7 @@ class TrainingPlans
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -116,7 +117,7 @@ class TrainingPlans
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $creator;
 
@@ -125,7 +126,7 @@ class TrainingPlans
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updater;
 
@@ -146,8 +147,8 @@ class TrainingPlans
     private $trainingPlanExercises;
 
     public function __construct() {
-        $this->children = new Collection();
-        $this->exercises = new Collection();
+        $this->children = new ArrayCollection();
+        $this->trainingPlanExercises = new ArrayCollection();
     }
 
     /**
@@ -355,11 +356,11 @@ class TrainingPlans
     /**
      * Set the value of trainingPlanLayout
      *
-     * @param TrainingPlanLayouts $trainingPlanLayout
+     * @param ?TrainingPlanLayouts $trainingPlanLayout
      *
      * @return self
      */
-    public function setTrainingPlanLayout(TrainingPlanLayouts $trainingPlanLayout)
+    public function setTrainingPlanLayout(?TrainingPlanLayouts $trainingPlanLayout)
     {
         $this->trainingPlanLayout = $trainingPlanLayout;
 

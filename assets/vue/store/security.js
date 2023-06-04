@@ -3,6 +3,9 @@ import SecurityAPI from "../controllers/security";
 const AUTHENTICATING = "AUTHENTICATING",
   AUTHENTICATING_SUCCESS = "AUTHENTICATING_SUCCESS",
   AUTHENTICATING_ERROR = "AUTHENTICATING_ERROR",
+  REGISTRATION = "REGISTRATION",
+  REGISTRATION_SUCCESS = "REGISTRATION_SUCCESS",
+  REGISTRATION_ERROR = "REGISTRATION_ERROR",
   PROVIDING_REFRESH_SUCCESS = "PROVIDING_REFRESH_SUCCESS",
   PROVIDING_REFRESH_ERROR = "PROVIDING_REFRESH_ERROR",
   PROVIDING_RELOAD_SUCCESS = "PROVIDING_RELOAD_SUCCESS",
@@ -36,7 +39,7 @@ export default {
     hasRole(state) {
       return role => {
         return state.user.roles.indexOf(role) !== -1;
-      }
+      };
     },
     accessToken(state) {
       return state.token;
@@ -69,6 +72,36 @@ export default {
 //      axios.defaults.headers.common['X-Refresh-Token'] = payload.refresh_token;
     },
     [AUTHENTICATING_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+      state.isAuthenticated = false;
+      state.user = null;
+      state.token = null;
+      state.refreshToken = null;
+    },
+    [REGISTRATION](state) {
+      state.isLoading = true;
+      state.error = null;
+      state.isAuthenticated = false;
+      state.user = null;
+      state.token = null;
+      state.refreshToken = null;
+    },
+    [REGISTRATION_SUCCESS](state, payload) {
+      state.isLoading = false;
+      state.error = null;
+      state.isAuthenticated = true;
+      state.user = payload.user;
+      state.token = payload.token;
+      state.refreshToken = payload.refresh_token;
+      localStorage.setItem('isAuthenticated', true);
+      localStorage.setItem('user', payload.user);
+      localStorage.setItem('token', payload.token);
+      localStorage.setItem('refreshToken', payload.refresh_token);
+//      axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token;
+//      axios.defaults.headers.common['X-Refresh-Token'] = payload.refresh_token;
+    },
+    [REGISTRATION_ERROR](state, error) {
       state.isLoading = false;
       state.error = error;
       state.isAuthenticated = false;
@@ -140,6 +173,17 @@ export default {
     }
   },
   actions: {
+    async register({commit}, payload) {
+      commit(REGISTRATION);
+      try {
+        let response = await SecurityAPI.register(payload.email, payload.login, payload.firstName, payload.lastName, payload.firstPassword, payload.secondPassword);
+        commit(REGISTRATION_SUCCESS, response.data);
+        return response;
+      } catch (error) {
+        commit(REGISTRATION_ERROR, error);
+        return null;
+      }
+    },
     async login({commit}, payload) {
       commit(AUTHENTICATING);
       try {
@@ -150,9 +194,6 @@ export default {
         commit(AUTHENTICATING_ERROR, error);
         return null;
       }
-    },
-    onReload({commit}, payload) {
-      commit(PROVIDING_RELOAD_SUCCESS, payload);
     },
     async refresh({commit}, refreshToken) {
       try {
@@ -166,9 +207,6 @@ export default {
         return null;
       }
     },
-    clearUserData({commit}) {
-      commit('clearUserData');
-    },
     async logout({commit}) {
 //      commit(LOGOUT);
       try {
@@ -179,6 +217,12 @@ export default {
         commit (LOGOUT_FAILED, error);
         return null;
       }
+    },
+    onReload({commit}, payload) {
+      commit(PROVIDING_RELOAD_SUCCESS, payload);
+    },
+    clearUserData({commit}) {
+      commit('clearUserData');
     }
   }
 };

@@ -10,7 +10,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * ExerciseOptions
  *
- * @ORM\Table(name="exercise_options", uniqueConstraints={@ORM\UniqueConstraint(name="exercise_option_name", columns={"name"}), @ORM\UniqueConstraint(name="unique_exercise_option_id", columns={"id"})}, indexes={@ORM\Index(name="exercise_option_creator", columns={"creator"}), @ORM\Index(name="exercise_option_updater", columns={"updater"})})
+ * @ORM\Table(
+ *    name="exercise_options",
+ *    uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="exercise_option_name", columns={"name"}),
+ *      @ORM\UniqueConstraint(name="unique_exercise_option_id", columns={"id"})
+ *    },
+ *    indexes={
+ *      @ORM\Index(name="exercise_option_creator", columns={"creator"}),
+ *      @ORM\Index(name="exercise_option_updater", columns={"updater"})
+ *    }
+ * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
@@ -60,7 +70,7 @@ class ExerciseOptions
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -68,7 +78,7 @@ class ExerciseOptions
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -77,7 +87,7 @@ class ExerciseOptions
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $creator;
 
@@ -85,18 +95,10 @@ class ExerciseOptions
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @ORM\JoinColumn(name="updater", referencedColumnName="id", nullable=true)
+     * @Groups({"read"})
      */
     private $updater;
-
-    /**
-     * @var ExerciseXExerciseOption
-     *
-     * @ORM\OneToMany(targetEntity="ExerciseXExerciseOption", mappedBy="exerciseOption", cascade={"persist"})
-     * @Groups({"read", "write"})
-     */
-    private $exerciseXExerciseOptions;
 
     /**
      * Get the value of id
@@ -259,39 +261,11 @@ class ExerciseOptions
      *
      * @return self
      */
-    public function setUpdater(Users $updater)
+    public function setUpdater(?Users $updater)
     {
         $this->updater = $updater;
 
         return $this;
     }
-
-    /**
-     * Get the value of exercises
-     *
-     * @return Collection|Exercises[]
-     */
-    public function getExercise()
-    {
-        return $this->exercise;
-    }
-
-    /**
-     * Set the value of exercises
-     *
-     * @param Collection|Exercises[] $exercise
-     *
-     * @return self
-     */
-    public function setExercise($exercise)
-    {
-        $this->exercise = $exercise;
-
-        return $this;
-    }
-
-    public function getExerciseOptions()
-    {
-        return $this->exerciseOptions;
-    }
+    
 }

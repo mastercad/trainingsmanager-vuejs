@@ -76,7 +76,6 @@ export default {
     [CREATING_DEVICE_SUCCESS](state, device) {
       state.isPanelLoading = false;
       state.error = null;
-//      state.devices.unshift(device);
       state.devices.push(device);
     },
     [CREATING_DEVICE_ERROR](state, error) {
@@ -93,7 +92,14 @@ export default {
       state.error = null;
       for (let index = 0; index < state.devices.length; ++index) {
         if (state.devices[index].id === device.id) {
-          state.devices[index] = device;
+          state.devices[index].creator = device.creator;
+          state.devices[index].created = device.created;
+          state.devices[index].updated = device.updated;
+          state.devices[index].updater = device.updater;
+          state.devices[index].deviceXDeviceOptions = device.deviceXDeviceOptions;
+          state.devices[index].name = device.name;
+          state.devices[index].previewPicturePath = device.previewPicturePath;
+          state.devices[index].seoLink = device.seoLink;
         }
       }
     },
@@ -202,7 +208,7 @@ export default {
     async create({ commit }, data) {
       commit(CREATING_DEVICE);
       try {
-        let response = await DeviceController.create(data.name, data.seoLink, data.previewPicturePath);
+        let response = await DeviceController.create(data.name, data.seoLink, data.previewPicturePath, data.deviceXDeviceOptions);
         commit(CREATING_DEVICE_SUCCESS, response.data);
         return response.data;
       } catch (error) {
@@ -213,7 +219,7 @@ export default {
     async update({ commit }, data) {
       commit(UPDATE_DEVICE);
       try {
-        let response = await DeviceController.update(data.id, data.name, data.seoLink, data.previewPicturePath);
+        let response = await DeviceController.update(data.id, data.name, data.seoLink, data.previewPicturePath, data.deviceXDeviceOptions);
         commit(UPDATE_DEVICE_SUCCESS, response.data);
         return response.data;
       } catch (error) {

@@ -9,13 +9,15 @@ import Devices from "../views/Devices.vue";
 import Exercises from "../views/Exercises.vue";
 import ExerciseOptions from "../views/ExerciseOptions.vue";
 import ExerciseNew from "../views/ExerciseNew.vue";
+import ExerciseTypes from "../views/ExerciseTypes.vue";
 import Permissions from "../views/Permissions.vue";
 import Muscles from "../views/Muscles.vue";
 import MuscleGroups from "../views/MuscleGroups.vue";
 import TrainingPlans from "../views/TrainingPlans.vue";
-import TrainingPlanNew from "../views/TrainingPlanNew.vue";
+import TrainingPlansRevolution from "../views/TrainingPlansRevolution.vue";
 import Login from "../views/Login.vue";
 import TrainingPlansArchive from "../views/TrainingPlansArchive.vue";
+import Register from "../views/Register.vue";
 
 import store from "../store";
 
@@ -33,11 +35,13 @@ const routes = [
       { path: '/admin/devices', name: 'Devices', component: Devices, meta: { requiresAuth: true }  },
       { path: '/admin/device-groups', name: 'Device Groups', component: DeviceGroups, meta: { requiresAuth: true }  },
       { path: '/admin/device-options', name: 'Device Options', component: DeviceOptions, meta: { requiresAuth: true }  },
+      { path: '/admin/exercises', name: 'Exercises', component: Exercises, meta: { requiresAuth: true }  },
+      { path: '/admin/exercise-types', name: 'Exercise Types', component: ExerciseTypes, meta: { requiresAuth: true }  },
       { path: '/admin/exercise-options', name: 'Exercise Options', component: ExerciseOptions, meta: { requiresAuth: true } },
       { path: '/admin/permissions', name: 'Permissions', component: Permissions, meta: { requiresAuth: true }  },
       { path: '/admin/contacts', name: 'Contacts', component: Contacts, meta: { requiresAuth: true }  },
       { path: '/authentication_token', name: 'Generate Token'},
-      { path: '/api', name: 'API Documentation' }
+      { path: '/api', name: 'API Documentation', meta: {openBlank: true} }
     ]
   },
   {
@@ -55,7 +59,7 @@ const routes = [
     component: Admin,
     children: [
       { path: '/training-plans/index', name: 'Overview Training Plans', component: TrainingPlans, meta: { requiresAuth: true }  },
-      { path: '/training-plans/new', name: 'New Training Plan', component: TrainingPlanNew, meta: { requiresAuth: true } },
+      { path: '/training-plans-revolution/index', name: 'Overview Training Plans Revolution', component: TrainingPlansRevolution, meta: { requiresAuth: true }  },
       { path: '', name: 'divider' },
       { path: '/training-plans/archive', name: 'Training Plan Archive', component: TrainingPlansArchive, meta: { requiresAuth: true } }
     ]
@@ -66,7 +70,8 @@ const routes = [
     component: Admin,
     children: [
       { path: '/login', name: 'Login', component: Login },
-      { path: '/logout', name: 'Logout', beforeEnter() { store.dispatch('security/logout'); } }
+      { path: '/logout', name: 'Logout', beforeEnter() { store.dispatch('security/logout'); } },
+      { path: '/register', name: 'Register', component: Register }
     ]
   }
 ];
@@ -96,9 +101,23 @@ const routes = [
 */
 
 let router = new VueRouter({
+  base: '/', // process.env.BASE_URL,
   mode: "history",
   routes: routes
 });
+
+/*
+Vue.mixin({
+  beforeRouteUpdate(to, from, next) {
+    if (to.matched.some(record => record.meta.openBlank)) {
+      window.open(to.fullPath, '_blank');
+      next(false);
+    } else {
+      next();
+    }
+  }
+});
+*/
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {

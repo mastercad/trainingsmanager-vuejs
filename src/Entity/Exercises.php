@@ -2,24 +2,33 @@
 
 namespace App\Entity;
 
+use App\Controller\ExerciseImageController;
+use App\Controller\ExerciseImageDeleteController;
+use App\Controller\ExerciseImageUploadController;
+use App\Controller\UploadImageDeleteController;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Controller\ExercisePreviewPictureController;
-use App\Controller\ExerciseImageController;
-use App\Controller\ExerciseImageUploadController;
-use App\Controller\ExerciseImageDeleteController;
-use App\Controller\UploadImageDeleteController;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Exercises
  *
- * @ORM\Table(name="exercises", uniqueConstraints={@ORM\UniqueConstraint(name="unique_exercise_name", columns={"name"}), @ORM\UniqueConstraint(name="unique_exercise_seo_link", columns={"seo_link"})}, indexes={@ORM\Index(name="exercise_creator", columns={"creator"}), @ORM\Index(name="exercise_id", columns={"id"}), @ORM\Index(name="exercise_updater", columns={"updater"})})
+ * @ORM\Table(
+ *    name="exercises",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="UN_exercise_name", columns={"name"}),
+ *        @ORM\UniqueConstraint(name="UN_exercise_seo_link", columns={"seo_link"})
+ *    },
+ *    indexes={
+ *        @ORM\Index(name="IDX_exercise_creator", columns={"creator"}),
+ *        @ORM\Index(name="IDX_exercise_id", columns={"id"}),
+ *        @ORM\Index(name="IDX_exercise_updater", columns={"updater"})
+ *    }
+ * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
@@ -173,7 +182,7 @@ class Exercises
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -181,7 +190,7 @@ class Exercises
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -190,23 +199,23 @@ class Exercises
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $creator;
 
     /**
      * @var Users
      *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @ORM\ManyToOne(targetEntity=Users::class)
+     * @ORM\JoinColumn(name="updater", referencedColumnName="id", nullable=true)
+     * @Groups({"read"})
      */
     private $updater;
 
     /**
      * @var Collection|ExerciseOption[]
      *
-     * @ORM\OneToMany(targetEntity="ExerciseXExerciseOption", mappedBy="exercise", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=ExerciseXExerciseOption::class, mappedBy="exercise", cascade={"ALL"}, orphanRemoval=true)
      * @Groups({"read", "write"})
      */
     private $exerciseXExerciseOptions;
@@ -214,24 +223,33 @@ class Exercises
     /**
      * @var Collection|DeviceOption[]
      *
-     * @ORM\OneToMany(targetEntity="ExerciseXDeviceOption", mappedBy="exercise", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=ExerciseXDeviceOption::class, mappedBy="exercise", cascade={"ALL"}, orphanRemoval=true)
      * @Groups({"read", "write"})
      */
     private $exerciseXDeviceOptions;
 
     /**
-     * @var Collection|Devices[]
+     * @var ArrayCollection|Device[]
      *
-     * @ORM\OneToOne(targetEntity="ExerciseXDevice", mappedBy="exercise", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=ExerciseXDevice::class, mappedBy="exercise", cascade={"ALL"}, orphanRemoval=true)
      * @Groups({"read", "write"})
      */
-    private $exerciseXDevice;
+    private $exerciseXDevices;
+
+    /**
+     * @var ArrayCollection|ExerciseType[]
+     *
+     * @ORM\OneToMany(targetEntity=ExerciseXExerciseType::class, mappedBy="exercise", cascade={"ALL"}, orphanRemoval=true)
+     * @Groups({"read", "write"})
+     */
+    private $exerciseXExerciseType;
 
     public function __construct()
     {
-      $this->exerciseXDeviceOptions = new Collection();
-      $this->exerciseXExerciseOptions = new Collection();
-      $this->exerciseXDevice = new Collection();
+      $this->exerciseXDeviceOptions = new ArrayCollection();
+      $this->exerciseXExerciseOptions = new ArrayCollection();
+      $this->exerciseXDevice = new ArrayCollection();
+      $this->exerciseXExerciseType = new ArrayCollection();
     }
 
     public function __toString()
@@ -472,25 +490,122 @@ class Exercises
      *
      * @return  self
      */
-    public function setUpdater(Users $updater)
+    public function setUpdater(?Users $updater)
     {
-        $this->updater = $updater;
+      $this->updater = $updater;
 
-        return $this;
+      return $this;
     }
 
     public function getExerciseXExerciseOptions()
     {
-        return $this->exerciseXExerciseOptions;
+      return $this->exerciseXExerciseOptions;
     }
 
     public function getExerciseXDeviceOptions()
     {
-        return $this->exerciseXDeviceOptions;
+      return $this->exerciseXDeviceOptions;
     }
 
-    public function getExerciseXDevice()
+    public function getExerciseXDevices()
     {
-        return $this->exerciseXDevice;
+      return $this->exerciseXDevices;
+    }
+
+    public function getExerciseXExerciseType()
+    {
+      return $this->exerciseXExerciseType;
+    }
+
+    public function addExerciseXDeviceOption(ExerciseXDeviceOption $exerciseXDeviceOption)
+    {
+        if ($this->exerciseXDeviceOptions->contains($exerciseXDeviceOption)) {
+            return;
+        }
+
+        $this->exerciseXDeviceOptions->add($exerciseXDeviceOption);
+        $exerciseXDeviceOption->setExercise($this);
+    }
+
+    /**
+     * @param ExerciseXDeviceOption $exerciseXDeviceOption
+     */
+    public function removeExerciseXDeviceOption(ExerciseXDeviceOption $exerciseXDeviceOption)
+    {
+        if (!$this->exerciseXDeviceOptions->contains($exerciseXDeviceOption)) {
+            return;
+        }
+
+        $this->exerciseXDeviceOptions->removeElement($exerciseXDeviceOption);
+        $exerciseXDeviceOption->setExercise(null);
+    }
+
+    public function addExerciseXExerciseOption(ExerciseXExerciseOption $exerciseXExerciseOption)
+    {
+        if ($this->exerciseXExerciseOptions->contains($exerciseXExerciseOption)) {
+            return;
+        }
+
+        $this->exerciseXExerciseOptions->add($exerciseXExerciseOption);
+        $exerciseXExerciseOption->setExercise($this);
+    }
+
+    /**
+     * @param ExerciseXExerciseOption $exerciseXExerciseOption
+     */
+    public function removeExerciseXExerciseOption(ExerciseXExerciseOption $exerciseXExerciseOption)
+    {
+        if (!$this->exerciseXExerciseOptions->contains($exerciseXExerciseOption)) {
+            return;
+        }
+
+        $this->exerciseXExerciseOptions->removeElement($exerciseXExerciseOption);
+        $exerciseXExerciseOption->setExercise(null);
+    }
+
+    public function addExerciseXExerciseType(ExerciseXExerciseType $exerciseXExerciseType)
+    {
+      if ($this->exerciseXExerciseType->contains($exerciseXExerciseType)) {
+          return;
+      }
+
+      $this->exerciseXExerciseType->add($exerciseXExerciseType);
+      $exerciseXExerciseType->setExercise($this);
+    }
+
+    /**
+     * @param ExerciseXExerciseType $exerciseXExerciseType
+     */
+    public function removeExerciseXExerciseType(ExerciseXExerciseType $exerciseXExerciseType)
+    {
+      if (!$this->exerciseXExerciseType->contains($exerciseXExerciseType)) {
+          return;
+      }
+
+      $this->exerciseXExerciseType->removeElement($exerciseXExerciseType);
+      $exerciseXExerciseType->setExercise(null);
+    }
+
+    public function addExerciseXDevice(ExerciseXDevice $exerciseXDevice)
+    {
+      if ($this->exerciseXDevices->contains($exerciseXDevice)) {
+          return;
+      }
+
+      $this->exerciseXDevices->add($exerciseXDevice);
+      $exerciseXDevice->setExercise($this);
+    }
+
+    /**
+     * @param ExerciseXDevice $exerciseXDevice
+     */
+    public function removeExerciseXDevice(ExerciseXDevice $exerciseXDevice)
+    {
+      if (!$this->exerciseXDevices->contains($exerciseXDevice)) {
+          return;
+      }
+
+      $this->exerciseXDevices->removeElement($exerciseXDevice);
+      $exerciseXDevice->setExercise(null);
     }
 }

@@ -87,7 +87,7 @@ class TrainingPlanXExerciseOption
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
+     * @ORM\JoinColumn(name="updater", referencedColumnName="id", nullable=true)
      * @Groups({"read", "write"})
      */
     private $updater;
@@ -261,7 +261,7 @@ class TrainingPlanXExerciseOption
      *
      * @return self
      */
-    public function setUpdater(Users $updater)
+    public function setUpdater(?Users $updater)
     {
         $this->updater = $updater;
 

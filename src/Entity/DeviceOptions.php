@@ -4,24 +4,46 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * DeviceOptions
  *
- * @ORM\Table(name="device_options", uniqueConstraints={@ORM\UniqueConstraint(name="device_option_name", columns={"name"})}, indexes={@ORM\Index(name="device_option_create_user_fk", columns={"creator"}), @ORM\Index(name="device_option_id", columns={"id"}), @ORM\Index(name="device_option_update_user_fk", columns={"updater"})})
+ * @ORM\Table(
+ *    name="device_options",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(
+ *            name="UN_device_option_name",
+ *            columns={"name"}
+ *        )
+ *    },
+ *    indexes={
+ *        @ORM\Index(
+ *            name="IDX_device_option_creator",
+ *            columns={"creator"}
+ *        ),
+ *        @ORM\Index(
+ *            name="IDX_device_option_id",
+ *            columns={"id"}
+ *        ),
+ *        @ORM\Index(
+ *            name="IDX_device_option_updater",
+ *            columns={"updater"}
+ *        )
+ *    }
+ * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
+ *   normalizationContext={"groups" = {"read"}, "enable_max_depth"=true},
+ *   denormalizationContext={"groups" = {"write"}},
  *   itemOperations={
  *     "get",
- *     "patch",
  *     "delete",
  *     "put"
  *   },
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}},
  *   collectionOperations={
  *     "get",
  *     "post"
@@ -60,7 +82,7 @@ class DeviceOptions
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -68,7 +90,7 @@ class DeviceOptions
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -77,7 +99,7 @@ class DeviceOptions
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $creator;
 
@@ -86,17 +108,9 @@ class DeviceOptions
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updater;
-
-    /**
-     * @var ExerciseXDeviceOption
-     *
-     * @ORM\OneToMany(targetEntity="ExerciseXDeviceOption", mappedBy="deviceOption", cascade={"persist"})
-     * @Groups({"read", "write"})
-     */
-    private $exerciseXDeviceOptions;
 
     /**
      * Get the value of id
@@ -264,10 +278,5 @@ class DeviceOptions
         $this->updater = $updater;
 
         return $this;
-    }
-
-    public function getDeviceOptions()
-    {
-        return $this->deviceOptions;
     }
 }

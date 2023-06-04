@@ -23,7 +23,6 @@ class Users implements UserInterface
     /**
      * @ORM\Column(name="id", type="uuid", unique=true, nullable=false, options={"unsigned"=true})
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      *
      * @var UuidInterface
      */
@@ -238,7 +237,7 @@ class Users implements UserInterface
      *
      * @return self
      */
-    public function setId(int $id)
+    public function setId(UuidInterface $id)
     {
         $this->id = $id;
 

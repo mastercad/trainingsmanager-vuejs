@@ -1,17 +1,3 @@
 body {
     background-color: lightgray;
 }
-
-.ml-auto, .mx-auto {
-    margin-left: auto !important;
-}
-
-.navbar {
-    position: relative;
-    padding: .5rem 1rem;
-}
-
-.form-inline {
-    display: flex;
-    align-items: center;
-}

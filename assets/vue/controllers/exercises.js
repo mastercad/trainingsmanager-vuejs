@@ -1,22 +1,30 @@
 import axios from "axios";
 
 export default {
-  create(name, seoLink, description, specialFeatures, previewPicturePath) {
+  create(name, seoLink, description, specialFeatures, previewPicturePath, exerciseXDeviceOptions, exerciseXExerciseOptions, exerciseXDevice, exerciseXExerciseType) {
     return axios.post("/api/exercises", {
       name: name,
       seoLink: seoLink,
       description: description,
       specialFeatures: specialFeatures,
-      previewPicturePath: previewPicturePath
+      previewPicturePath: previewPicturePath,
+      exerciseXDeviceOptions: exerciseXDeviceOptions,
+      exerciseXExerciseOptions: exerciseXExerciseOptions,
+      exerciseXDevice: exerciseXDevice,
+      exerciseXExerciseType: exerciseXExerciseType
     });
   },
-  update(id, name, seoLink, description, specialFeatures, previewPicturePath) {
+  update(id, name, seoLink, description, specialFeatures, previewPicturePath, exerciseXDeviceOptions, exerciseXExerciseOptions, exerciseXDevices, exerciseXExerciseType) {
     return axios.put("/api/exercises/"+id, {
       name: name,
       seoLink: seoLink,
       description: description,
       specialFeatures: specialFeatures,
-      previewPicturePath: previewPicturePath
+      previewPicturePath: previewPicturePath,
+      exerciseXDeviceOptions: exerciseXDeviceOptions,
+      exerciseXExerciseOptions: exerciseXExerciseOptions,
+      exerciseXDevices: exerciseXDevices,
+      exerciseXExerciseType: exerciseXExerciseType
     });
   },
   delete(id) {

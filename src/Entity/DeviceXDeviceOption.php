@@ -10,21 +10,31 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * DeviceXDeviceOption
  *
- * @ORM\Table(name="device_x_device_option", uniqueConstraints={@ORM\UniqueConstraint(name="unique_geraet_geraet_option_id", columns={"id"})}, indexes={@ORM\Index(name="device_x_device_option_creator", columns={"creator"}), @ORM\Index(name="device_x_device_option_device", columns={"device"}), @ORM\Index(name="device_x_device_option_device_option", columns={"device_option"}), @ORM\Index(name="device_x_device_option_updater", columns={"updater"})})
+ * @ORM\Table(
+ *    name="device_x_device_option",
+ *    uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="unique_device_x_device_option_name", columns={"id"})
+ *    },
+ *    indexes={
+ *      @ORM\Index(name="device_x_device_option_creator", columns={"creator"}),
+ *      @ORM\Index(name="device_x_device_option_device", columns={"device"}),
+ *      @ORM\Index(name="device_x_device_option_device_option", columns={"device_option"}),
+ *      @ORM\Index(name="device_x_device_option_updater", columns={"updater"})
+ *    }
+ * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
- *   itemOperations={
- *     "get",
- *     "patch",
- *     "delete",
- *     "put"
- *   },
  *   normalizationContext={"groups" = {"read"}},
  *   denormalizationContext={"groups" = {"write"}},
+ *   itemOperations={
+ *     "get"={"method"="GET"},
+ *     "put"={"method"="PUT"},
+ *     "delete"={"method"="DELETE"}
+ *   },
  *   collectionOperations={
- *     "get",
- *     "post"
+ *     "get"={"method"="GET"},
+ *     "post"={"method"="POST"}
  *   }
  * )
  */
@@ -43,8 +53,8 @@ class DeviceXDeviceOption
     /**
      * @var Devices
      *
-     * @ORM\ManyToOne(targetEntity="Devices")
-     * @ORM\JoinColumn(name="device", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Devices", inversedBy="deviceXDeviceOptions")
+     * @ORM\JoinColumn(name="device", nullable=false, referencedColumnName="id", onDelete="CASCADE")
      * @Groups({"read", "write"})
      */
     private $device;
@@ -53,7 +63,7 @@ class DeviceXDeviceOption
      * @var DeviceOptions
      *
      * @ORM\ManyToOne(targetEntity="DeviceOptions")
-     * @ORM\JoinColumn(name="device_option", referencedColumnName="id")
+     * @ORM\JoinColumn(name="device_option", nullable=false, referencedColumnName="id", onDelete="CASCADE")
      * @Groups({"read", "write"})
      */
     private $deviceOption;
@@ -71,7 +81,7 @@ class DeviceXDeviceOption
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $creator;
 
@@ -79,7 +89,7 @@ class DeviceXDeviceOption
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -88,7 +98,7 @@ class DeviceXDeviceOption
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updater;
 
@@ -96,7 +106,7 @@ class DeviceXDeviceOption
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -127,7 +137,7 @@ class DeviceXDeviceOption
     /**
      * Get the value of device
      *
-     * @return Devices
+     * @return ?Devices
      */
     public function getDevice()
     {
@@ -137,11 +147,11 @@ class DeviceXDeviceOption
     /**
      * Set the value of device
      *
-     * @param Devices $device
+     * @param ?Devices $device
      *
      * @return self
      */
-    public function setDevice(Devices $device)
+    public function setDevice(?Devices $device)
     {
         $this->device = $device;
 
@@ -151,7 +161,7 @@ class DeviceXDeviceOption
     /**
      * Get the value of deviceOption
      *
-     * @return DeviceOptions
+     * @return ?DeviceOptions
      */
     public function getDeviceOption()
     {
@@ -161,11 +171,11 @@ class DeviceXDeviceOption
     /**
      * Set the value of deviceOption
      *
-     * @param DeviceOptions $deviceOption
+     * @param ?DeviceOptions $deviceOption
      *
      * @return self
      */
-    public function setDeviceOption(DeviceOptions $deviceOption)
+    public function setDeviceOption(?DeviceOptions $deviceOption)
     {
         $this->deviceOption = $deviceOption;
 

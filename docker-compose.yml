@@ -29,7 +29,7 @@ services:
             MYSQL_USER: "foo"
             MYSQL_PASSWORD: "bar"
         volumes:
-        - ./services/mysql/utf8mb4.cnf:/etc/mysql/conf.d/utf8mb4.cnf:ro
+        - ./.docker/mysql/utf8mb4.cnf:/etc/mysql/conf.d/utf8mb4.cnf:ro
 
     webserver:
         image: 'nginx:alpine'
@@ -50,6 +50,7 @@ services:
         volumes:
             - '.:/application'
             - './.docker/php-fpm/php-ini-overrides.ini:/etc/php/8.1/fpm/conf.d/99-overrides.ini'
+            - './.docker/php-fpm/php-ini-overrides.ini:/etc/php/8.1/cli/conf.d/99-overrides.ini'
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin

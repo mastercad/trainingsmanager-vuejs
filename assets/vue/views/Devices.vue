@@ -55,6 +55,8 @@
           :name="device.name"
           :seo-link="device.seoLink"
           :preview-picture-path="device.previewPicturePath"
+          :existing-device-options="device.deviceXDeviceOptions"
+          :possible-device-options="deviceOptions"
         />
       </div>
     </div>
@@ -63,6 +65,7 @@
     <vue-simple-context-menu
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
+      :id="'devicesContextMenu'"
       :options="options"
       @option-clicked="optionClicked"
     />
@@ -109,7 +112,7 @@ export default {
   },
   computed: {
     isLoading() {
-      return this.$store.getters["devices/isLoading"];
+      return this.$store.getters["devices/isLoading"] || this.$store.getters["deviceOptions/isLoading"];
     },
     isPanelLoading() {
       return this.$store.getters["devices/isPanelLoading"];
@@ -125,15 +128,23 @@ export default {
     },
     devices() {
       return this.$store.getters["devices/devices"];
+    },
+    deviceOptions() {
+      return this.$store.getters["deviceOptions/deviceOptions"];
     }
   },
   created() {
-    this.$store.dispatch("devices/findAll");
+    Promise.all([
+      this.$store.dispatch("deviceOptions/findAll"),
+      this.$store.dispatch("devices/findAll")
+    ]).finally(() => {
+      this.loading = false
+    })
   },
   methods: {
     async loadDevice(event, device) {
       this.clicks++;
-      if (this.clicks === 1) {
+      if (1 === this.clicks) {
         this.timer = setTimeout( () => {
           this.showDevice(device);
           this.result.push(event.type);

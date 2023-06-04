@@ -2,30 +2,37 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * ExerciseXDevice
  *
- * @ORM\Table(name="exercise_x_device", uniqueConstraints={@ORM\UniqueConstraint(name="unique_exercise_x_device_id", columns={"id"})}, indexes={@ORM\Index(name="exercise_x_device_creator", columns={"creator"}), @ORM\Index(name="exercise_x_device_device", columns={"device"}), @ORM\Index(name="exercise_x_device_updater", columns={"updater"}), @ORM\Index(name="index_exercise_x_device_exercise", columns={"exercise"})})
+ * @ORM\Table(
+ *    name="exercise_x_device",
+ *    uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="unique_exercise_x_device_id", columns={"id"})
+ *    },
+ *    indexes={
+ *      @ORM\Index(name="exercise_x_device_creator", columns={"creator"}),
+ *      @ORM\Index(name="exercise_x_device_device", columns={"device"}),
+ *      @ORM\Index(name="exercise_x_device_updater", columns={"updater"}),
+ *      @ORM\Index(name="index_exercise_x_device_exercise", columns={"exercise"})
+ *    }
+ * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
+ *   normalizationContext={"groups" = {"read"}},
+ *   denormalizationContext={"groups" = {"write"}},
  *   itemOperations={
  *     "get",
  *     "patch",
  *     "delete",
  *     "put"
  *   },
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}},
  *   collectionOperations={
  *     "get",
  *     "post"
@@ -45,37 +52,37 @@ class ExerciseXDevice
     private $id;
 
     /**
-     * @var Devices
-     *
-     * @ORM\ManyToOne(targetEntity="Devices")
-     * @ORM\JoinColumn(name="device", referencedColumnName="id")
-     * @Groups({"read", "write"})
-     */
-    private $device;
-
-    /**
      * @var Exercises
      *
-     * @ORM\ManyToOne(targetEntity="Exercises")
-     * @ORM\JoinColumn(name="exercise", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Exercises", inversedBy="exerciseXDevices")
+     * @ORM\JoinColumn(name="exercise", nullable=false, referencedColumnName="id", onDelete="CASCADE")
      * @Groups({"read", "write"})
      */
     private $exercise;
 
     /**
+     * @var Devices
+     *
+     * @ORM\ManyToOne(targetEntity="Devices")
+     * @ORM\JoinColumn(name="device", nullable=false, referencedColumnName="id", onDelete="CASCADE")
+     * @Groups({"read", "write"})
+     */
+    private $device;
+
+    /**
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @ORM\JoinColumn(name="creator", referencedColumnName="id", onDelete="CASCADE")
+     * @Groups({"read"})
      */
     private $creator;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -84,15 +91,15 @@ class ExerciseXDevice
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updater;
 
     /**
-     * @var \DateTime|null
+     * @var DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -161,7 +168,7 @@ class ExerciseXDevice
      *
      * @return self
      */
-    public function setExercise(Exercises $exercise)
+    public function setExercise(?Exercises $exercise)
     {
         $this->exercise = $exercise;
 

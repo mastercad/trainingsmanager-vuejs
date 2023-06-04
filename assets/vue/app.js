@@ -8,13 +8,16 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import axios from "axios";
 import Vue from 'vue';
+
+Vue.config.devtools = true;
+
 import App from './components/App';
 import router from './router';
 import store from "./store";
 import './../styles/app.css';
-import VueJsonLD from 'vue-jsonld';
+//import VueJsonLD from 'vue-jsonld';
 // Alert, Button, Carousel, Collapse, Dropdown, Modal, Offcanvas, Popover, ScrollSpy, Tab, Toast, Tooltip
-// import { Button, Dropdown, Modal, Tooltip } from "bootstrap";
+import { Button, Dropdown, Modal, Tooltip } from "bootstrap";
 import { BootstrapVue, IconsPlugin, DropdownPlugin } from 'bootstrap-vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -26,23 +29,27 @@ import VueFormWizard  from 'vue-form-wizard';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import 'vue-form-wizard/dist/vue-form-wizard.min.css';
-import 'vue-simple-context-menu/dist/vue-simple-context-menu.css';
+//import 'vue-simple-context-menu/dist/vue-simple-context-menu.css';
 
 library.add(faPlus, faJs, faVuejs);
 
 Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
-Vue.use(VueJsonLD);
+// Vue.use(VueJsonLD);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(DropdownPlugin);
 Vue.use(VueFormWizard);
 
-//Vue.use(Button);
-//Vue.use(Dropdown);
-//Vue.use(Modal);
-//Vue.use(Tooltip);
+/*
+Uncaught TypeError: class constructors must be invoked with 'new'
+
+Vue.use(Button);
+Vue.use(Dropdown);
+Vue.use(Modal);
+Vue.use(Tooltip);
+*/
 
 axios.defaults.withCredentials = true;
 

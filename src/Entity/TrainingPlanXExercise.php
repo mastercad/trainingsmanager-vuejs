@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -11,7 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * TrainingPlanXExercise
  *
- * @ORM\Table(name="training_plan_x_exercise", uniqueConstraints={@ORM\UniqueConstraint(name="training_plan_exercise", columns={"exercise", "training_plan"})}, indexes={@ORM\Index(name="training_plan_x_exercise_create_user_fk", columns={"creater"}), @ORM\Index(name="training_plan_x_exercise_id", columns={"id"}), @ORM\Index(name="training_plan_x_exercise_training_plan_fk", columns={"training_plan"}), @ORM\Index(name="training_plan_x_exercise_update_user_fk", columns={"updater"}), @ORM\Index(name="IDX_B83DAAE5AEDAD51C", columns={"exercise"})})
+ * @ORM\Table(name="training_plan_x_exercise", uniqueConstraints={@ORM\UniqueConstraint(name="training_plan_exercise", columns={"exercise", "training_plan"})}, indexes={@ORM\Index(name="training_plan_x_exercise_create_user_fk", columns={"creator"}), @ORM\Index(name="training_plan_x_exercise_id", columns={"id"}), @ORM\Index(name="training_plan_x_exercise_training_plan_fk", columns={"training_plan"}), @ORM\Index(name="training_plan_x_exercise_update_user_fk", columns={"updater"}), @ORM\Index(name="IDX_B83DAAE5AEDAD51C", columns={"exercise"})})
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
@@ -60,7 +61,7 @@ class TrainingPlanXExercise
     /**
      * @var Exercises
      *
-     * @ORM\ManyToOne(targetEntity="Exercises")
+     * @ORM\ManyToOne(targetEntity="Exercises", inversedBy="trainingPlans")
      * @ORM\JoinColumn(name="exercise", referencedColumnName="id", nullable=false)
      * @Groups({"read", "write"})
      */
@@ -79,7 +80,8 @@ class TrainingPlanXExercise
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creater", referencedColumnName="id")
+     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
+     * @Groups({"read"})
      */
     private $creator;
 
@@ -87,6 +89,7 @@ class TrainingPlanXExercise
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @Groups({"read"})
      */
     private $created = 'CURRENT_TIMESTAMP';
 
@@ -95,7 +98,7 @@ class TrainingPlanXExercise
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      */
     private $updater;
 
@@ -103,6 +106,7 @@ class TrainingPlanXExercise
      * @var \DateTime|null
      *
      * @ORM\Column(name="updated", type="datetime", nullable=true)
+     * @Groups({"read"})
      */
     private $updated;
 
@@ -116,7 +120,7 @@ class TrainingPlanXExercise
 
     public function __construct()
     {
-      $this->trainingPlanXExerciseOptions = new Collection();
+      $this->trainingPlanXExerciseOptions = new ArrayCollection();
     }
 
     /**
