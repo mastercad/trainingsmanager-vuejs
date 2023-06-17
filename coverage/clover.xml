@@ -2,7 +2,7 @@
 <coverage generated="1658677408505" clover="3.2.0">
   <project timestamp="1658677408506" name="All files">
     <metrics statements="45" coveredstatements="42" conditionals="24" coveredconditionals="23" methods="9" coveredmethods="9" elements="78" coveredelements="74" complexity="0" loc="45" ncloc="45" packages="1" files="1" classes="1"/>
-    <file name="optionFunctions.js" path="/media/Austausch/Projekte/PHP/trainingsmanager-vuejs/assets/vue/shared/optionFunctions.js">
+    <file name="optionFunctions.js" path="/media/Austausch/Projekte/PHP/trainingsmanager-vuejs/assets/src/shared/optionFunctions.js">
       <metrics statements="45" coveredstatements="42" conditionals="24" coveredconditionals="23" methods="9" coveredmethods="9"/>
       <line num="1" count="1" type="stmt"/>
       <line num="7" count="5" type="stmt"/>

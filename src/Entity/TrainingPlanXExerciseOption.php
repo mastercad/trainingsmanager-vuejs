@@ -185,11 +185,11 @@ class TrainingPlanXExerciseOption
     /**
      * Set the value of trainingPlanXExercise
      *
-     * @param TrainingPlanXExercise $trainingPlanXExercise
+     * @param ?TrainingPlanXExercise $trainingPlanXExercise
      *
      * @return self
      */
-    public function setTrainingPlanXExercise(TrainingPlanXExercise $trainingPlanXExercise)
+    public function setTrainingPlanXExercise(?TrainingPlanXExercise $trainingPlanXExercise)
     {
         $this->trainingPlanXExercise = $trainingPlanXExercise;
 

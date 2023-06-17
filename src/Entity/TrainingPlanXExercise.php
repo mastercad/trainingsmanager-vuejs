@@ -12,7 +12,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * TrainingPlanXExercise
  *
- * @ORM\Table(name="training_plan_x_exercise", uniqueConstraints={@ORM\UniqueConstraint(name="training_plan_exercise", columns={"exercise", "training_plan"})}, indexes={@ORM\Index(name="training_plan_x_exercise_create_user_fk", columns={"creator"}), @ORM\Index(name="training_plan_x_exercise_id", columns={"id"}), @ORM\Index(name="training_plan_x_exercise_training_plan_fk", columns={"training_plan"}), @ORM\Index(name="training_plan_x_exercise_update_user_fk", columns={"updater"}), @ORM\Index(name="IDX_B83DAAE5AEDAD51C", columns={"exercise"})})
+ * @ORM\Table(
+ *    name="training_plan_x_exercise",
+ *    uniqueConstraints={ 
+ *      @ORM\UniqueConstraint(name="training_plan_exercise", columns={"exercise", "training_plan"})
+ *    },
+ *    indexes={
+ *      @ORM\Index(name="training_plan_x_exercise_create_user_fk", columns={"creator"}),
+ *      @ORM\Index(name="training_plan_x_exercise_id", columns={"id"}),
+ *      @ORM\Index(name="training_plan_x_exercise_training_plan_fk", columns={"training_plan"}),
+ *      @ORM\Index(name="training_plan_x_exercise_update_user_fk", columns={"updater"}),
+ *      @ORM\Index(name="IDX_B83DAAE5AEDAD51C", columns={"exercise"})
+ *    }
+ * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
@@ -118,9 +130,18 @@ class TrainingPlanXExercise
      */
     private $trainingPlanXExerciseOptions;
 
+    /**
+     * @var Collection|TrainingPlanXDeviceOption[]
+     *
+     * @ORM\OneToMany(targetEntity="TrainingPlanXDeviceOption", mappedBy="trainingPlanXExercise", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $trainingPlanXDeviceOptions;
+
     public function __construct()
     {
       $this->trainingPlanXExerciseOptions = new ArrayCollection();
+      $this->trainingPlanXDeviceOptions = new ArrayCollection();
     }
 
     /**
@@ -339,14 +360,59 @@ class TrainingPlanXExercise
         return $this;
     }
 
-    public function addTrainingXPlanExerciseOption(TrainingPlanXExerciseOption $trainingPlanXExerciseOption)
-    {
-       $this->trainingPlanXExerciseOptions[] = $trainingPlanXExerciseOption;
-       $trainingPlanXExerciseOption->setTrainingPlanXExercise($this);
-    }
-
     public function getTrainingPlanXExerciseOptions()
     {
         return $this->trainingPlanXExerciseOptions;
+    }
+
+    public function addTrainingXPlanExerciseOption(TrainingPlanXExerciseOption $trainingPlanXExerciseOption)
+    {
+      if ($this->trainingPlanXExerciseOptions->contains($trainingPlanXExerciseOption)) {
+          return;
+      }
+
+      $this->trainingPlanXExerciseOptions->add($trainingPlanXExerciseOption);
+      $trainingPlanXExerciseOption->setTrainingPlanXExercise($this);
+    }
+
+    /**
+     * @param TrainingPlanXExerciseOption $trainingPlanXExerciseOption
+     */
+    public function removeTrainingXPlanExerciseOption(TrainingPlanXExerciseOption $trainingPlanXExerciseOption)
+    {
+      if (!$this->trainingPlanXExerciseOptions->contains($trainingPlanXExerciseOption)) {
+          return;
+      }
+
+      $this->trainingPlanXExerciseOptions->removeElement($trainingPlanXExerciseOption);
+      $trainingPlanXExerciseOption->setTrainingPlanXExercise(null);
+    }
+
+    public function getTrainingPlanXDeviceOptions()
+    {
+        return $this->trainingPlanXDeviceOptions;
+    }
+
+    public function addTrainingXPlanDeviceOption(TrainingPlanXDeviceOption $trainingPlanXDeviceOption)
+    {
+      if ($this->trainingPlanXDeviceOptions->contains($trainingPlanXDeviceOption)) {
+          return;
+      }
+
+      $this->trainingPlanXDeviceOptions->add($trainingPlanXDeviceOption);
+      $trainingPlanXDeviceOption->setTrainingPlanXExercise($this);
+    }
+
+    /**
+     * @param ExerciseXDevice $exerciseXDevice
+     */
+    public function removeTrainingXPlanDeviceOption(TrainingPlanXDeviceOption $trainingPlanXDeviceOption)
+    {
+      if (!$this->trainingPlanXDeviceOptions->contains($trainingPlanXDeviceOption)) {
+          return;
+      }
+
+      $this->trainingPlanXDeviceOptions->removeElement($trainingPlanXDeviceOption);
+      $trainingPlanXDeviceOption->setTrainingPlanXExercise(null);
     }
 }

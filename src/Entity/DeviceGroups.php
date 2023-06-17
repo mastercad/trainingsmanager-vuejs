@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "delete",
  *     "put"
  *   },
- *   normalizationContext={"groups" = {"read"}},
+ *   normalizationContext={"groups" = {"read"}, "enable_max_depth"=true},
  *   denormalizationContext={"groups" = {"write"}},
  *   collectionOperations={
  *     "get",
@@ -66,7 +66,7 @@ class DeviceGroups
     private $seoLink;
 
     /**
-     * @var \Users
+     * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="creator", referencedColumnName="id")
@@ -83,7 +83,7 @@ class DeviceGroups
     private $created = 'CURRENT_TIMESTAMP';
 
     /**
-     * @var \Users
+     * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumn(name="updater", referencedColumnName="id")
@@ -102,7 +102,7 @@ class DeviceGroups
     /**
      * Get the value of id
      *
-     * @return  int
+     * @return int
      */
     public function getId()
     {

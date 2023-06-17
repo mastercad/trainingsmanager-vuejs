@@ -79,6 +79,15 @@ class TrainingPlans
     private $user;
 
     /**
+     * @var TrainingPlanLayouts
+     *
+     * @ORM\ManyToOne(targetEntity="TrainingPlanLayouts", cascade={"all"}, inversedBy="trainingPlans")
+     * @ORM\JoinColumn(name="training_plan_layout", referencedColumnName="id")
+     * @Groups({"read", "write", "items:training_plan_layouts:get"})
+     */
+    private $trainingPlanLayout;
+
+    /**
      * @var TrainingPlans
      *
      * @ORM\ManyToOne(targetEntity="TrainingPlans", inversedBy="children")
@@ -88,13 +97,20 @@ class TrainingPlans
     private $parent;
 
     /**
-     * @var TrainingPlanLayouts
+     * @var Collection|TrainingPlans[]
      *
-     * @ORM\ManyToOne(targetEntity="TrainingPlanLayouts", cascade={"all"}, inversedBy="trainingPlans")
-     * @ORM\JoinColumn(name="training_plan_layout", referencedColumnName="id")
-     * @Groups({"read", "write", "items:training_plan_layouts:get"})
+     * @ORM\OneToMany(targetEntity="TrainingPlans", mappedBy="parent", cascade={"persist"})
+     * @Groups({"read", "write"})
      */
-    private $trainingPlanLayout;
+    private $children;
+
+    /**
+     * @var Collection|TrainingPlanXExercise[]
+     *
+     * @ORM\OneToMany(targetEntity="TrainingPlanXExercise", mappedBy="trainingPlan", cascade={"persist"})
+     * @Groups({"read", "write"})
+     */
+    private $trainingPlanExercises;
 
     /**
      * @var \DateTime
@@ -130,23 +146,8 @@ class TrainingPlans
      */
     private $updater;
 
-    /**
-     * @var Collection|TrainingPlans[]
-     *
-     * @ORM\OneToMany(targetEntity="TrainingPlans", mappedBy="parent", cascade={"persist"})
-     * @Groups({"read", "write"})
-     */
-    private $children;
-
-    /**
-     * @var Collection|TrainingPlanXExercise[]
-     *
-     * @ORM\OneToMany(targetEntity="TrainingPlanXExercise", mappedBy="trainingPlan", cascade={"persist"})
-     * @Groups({"read", "write"})
-     */
-    private $trainingPlanExercises;
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->children = new ArrayCollection();
         $this->trainingPlanExercises = new ArrayCollection();
     }
@@ -284,7 +285,7 @@ class TrainingPlans
     /**
      * Set the value of updated
      *
-     * @param \DateTime|null  $updated
+     * @param \DateTime|null $updated
      *
      * @return self
      */

@@ -9,18 +9,16 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
   Encore.configureRuntimeEnvironment(process.env.NODE_ENV || "dev");
 }
 
-/*
 Encore.configureWatchOptions(function(watchOptions) {
     // enable polling and check for changes every 250ms
     // polling is useful when running Encore inside a Virtual Machine
     watchOptions.poll = 250;
 });
-*/
-/*
+
+
 Encore.configureLoaderRule('eslint', loaderRule => {
-    loaderRule.test = /\.(jsx?|vue)$/
+    loaderRule.test = /\.(jsx?|vue)$/;
 });
-*/
 
 Encore
   // directory where compiled assets will be stored
@@ -37,6 +35,7 @@ Encore
     {
       useBuiltIns: "usage",
       corejs: 3,
+      presets: "@babel/preset-env"
     }
   )
 
@@ -48,7 +47,7 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
    */
-  .addEntry("app", "./assets/vue/app.js")
+  .addEntry("app", "./assets/src/app.js")
 
 // enable ESLint
 /*
@@ -90,6 +89,7 @@ Encore
   .enableVersioning(Encore.isProduction())
 
   .configureBabel((config) => {
+    config.plugins.push("@babel/preset-env");
     config.plugins.push("@babel/plugin-proposal-class-properties");
   })
 
@@ -97,10 +97,11 @@ Encore
   .configureBabelPresetEnv((config) => {
     config.useBuiltIns = "usage";
     config.corejs = 3;
+    presets = ["@babel/preset-env"];
   })
 
 // enables Sass/SCSS support
-  .enableSassLoader()
+  .enableSassLoader();
 
 // uncomment if you use TypeScript
 //.enableTypeScriptLoader()
@@ -180,7 +181,7 @@ if (Encore.isDev()) {
 
   new webpack.DefinePlugin({
     __VUE_OPTIONS_API__: true,
-    __VUE_PROD_DEVTOOLS__: true,
+    __VUE_PROD_DEVTOOLS__: true
   });
 
   Encore.addPlugin(new ESLintPlugin(linterConfig));

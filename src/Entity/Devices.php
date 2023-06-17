@@ -156,22 +156,6 @@ class Devices
     private $previewPicturePath;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read"})
-     */
-    private $created = 'CURRENT_TIMESTAMP';
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read"})
-     */
-    private $updated;
-
-    /**
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
@@ -179,6 +163,14 @@ class Devices
      * @Groups({"read"})
      */
     private $creator;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @Groups({"read"})
+     */
+    private $created = 'CURRENT_TIMESTAMP';
 
     /**
      * @var Users
@@ -190,6 +182,14 @@ class Devices
     private $updater;
 
     /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="updated", type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $updated;
+
+    /**
      * @var Collection|DeviceOption[]
      *
      * @ORM\OneToMany(targetEntity=DeviceXDeviceOption::class, mappedBy="device", cascade={"ALL"}, orphanRemoval=true)
@@ -197,9 +197,18 @@ class Devices
      */
     private $deviceXDeviceOptions;
 
+    /**
+     * @var Collection|DeviceOption[]
+     *
+     * @ORM\OneToMany(targetEntity=DeviceXDeviceGroup::class, mappedBy="device", cascade={"ALL"}, orphanRemoval=true)
+     * @Groups({"read", "write"})
+     */
+    private $deviceXDeviceGroups;
+
     public function __construct()
     {
         $this->deviceXDeviceOptions = new ArrayCollection();
+        $this->deviceXDeviceGroups = new ArrayCollection();
     }
 
     public function __toString()
@@ -364,7 +373,7 @@ class Devices
     /**
      * Set the value of creator
      *
-     * @param Users  $creator
+     * @param Users $creator
      *
      * @return self
      */
@@ -425,5 +434,33 @@ class Devices
 
         $this->deviceXDeviceOptions->removeElement($deviceXDeviceOption);
         $deviceXDeviceOption->setDevice(null);
+    }
+
+    public function getDeviceXDeviceGroups()
+    {
+        return $this->deviceXDeviceGroups;
+    }
+
+    public function addDeviceXDeviceGroup(DeviceXDeviceGroup $deviceXDeviceGroup)
+    {
+        if ($this->deviceXDeviceGroups->contains($deviceXDeviceGroup)) {
+            return;
+        }
+
+        $this->deviceXDeviceGroups->add($deviceXDeviceGroup);
+        $deviceXDeviceGroup->setDevice($this);
+    }
+
+    /**
+     * @param DeviceXDeviceGroup $deviceXDeviceOption
+     */
+    public function removeDeviceXDeviceGroup(DeviceXDeviceGroup $deviceXDeviceGroup)
+    {
+        if (!$this->deviceXDeviceGroups->contains($deviceXDeviceGroup)) {
+            return;
+        }
+
+        $this->deviceXDeviceGroups->removeElement($deviceXDeviceGroup);
+        $deviceXDeviceGroup->setDevice(null);
     }
 }

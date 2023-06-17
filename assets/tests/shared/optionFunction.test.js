@@ -1,4 +1,5 @@
-const OptionFunctions = require("../../vue/shared/optionFunctions");
+const OptionFunctions = require("../../src/shared/optionFunctions.js");
+//import OptionsFunctions from "../../src/shared/optionFunctions.js";
 
 describe("Option function tests", () => {
   test('Split works with empty parameter', () => {
@@ -24,8 +25,8 @@ describe("Option function tests", () => {
           updated: null
         }
       ],
-      identifier = 'id',
-      valueKey = 'currentValue';
+      identifier = function(option) {return option.id;},
+      valueKey = function(option) {return option.currentValue;};
 
     var expectedResult = {
       '1': { id: 1, value: 12, origEntry: { id: 1, currentValue: 12 } },
@@ -192,7 +193,7 @@ describe("Option function tests", () => {
   test('Generate current options without possible options and previous selection', () => {
     var optionId = 121;
     var possibleOptions = null;
-    var result = OptionFunctions.generateCurrentOptions(optionId, possibleOptions);
+    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
 
     expect(result).toMatchObject([]);
   });
@@ -255,12 +256,12 @@ describe("Option function tests", () => {
         value: null,
       },
     ];
-    var result = OptionFunctions.generateCurrentOptions(optionId, possibleOptions);
+    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
 
     expect(result).toMatchObject(expectedResult);
   });
 
-  test('Generate current options with possible options, multipart entry and without previous selection', () => {
+  test('Generate current options with possible options, multipart entry and without previous selection, with named options', () => {
     var optionId = 312;
     var possibleOptions = {
       1: {
@@ -330,12 +331,12 @@ describe("Option function tests", () => {
         value: null,
       },
     ];
-    var result = OptionFunctions.generateCurrentOptions(optionId, possibleOptions);
+    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
 
     expect(result).toMatchObject(expectedResult);
   });
 
-  test('Generate current options with possible options, multipart entry and single previous selection collection in single value', () => {
+  test('Generate current options with possible options, multipart entry and single previous selection collection in single value, with named options', () => {
     var optionId = 312;
     var possibleOptions = {
       1: {
@@ -357,13 +358,13 @@ describe("Option function tests", () => {
     var firstSelectionCollection = {
       1: {
         id: 1,
-        value:21
+        value:"test1"
       }
     };
     var expectedResult =
     [
       {
-        bindKey: "312_1_21",
+        bindKey: "312_1_test1",
         isMultipartOption: false,
         key: "312_1",
         name: 'Test Option 1',
@@ -372,7 +373,7 @@ describe("Option function tests", () => {
           value: 123
         },
         placeholder: 123,
-        value: 21,
+        value: "test1"
       },
       {
         bindKey: "312_2_null",
@@ -409,10 +410,10 @@ describe("Option function tests", () => {
           value: 125
         },
         placeholder: 125,
-        value: null,
+        value: null
       },
     ];
-    var result = OptionFunctions.generateCurrentOptions(optionId, possibleOptions, firstSelectionCollection);
+    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions, firstSelectionCollection);
 
     expect(result).toMatchObject(expectedResult);
   });
@@ -518,7 +519,7 @@ describe("Option function tests", () => {
         value: 2,
       },
     ];
-    var result = OptionFunctions.generateCurrentOptions(optionId, possibleOptions, firstSelectionCollection, secondSelectionCollection, thirdSelectionCollection);
+    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions, firstSelectionCollection, secondSelectionCollection, thirdSelectionCollection);
 
     expect(result).toMatchObject(expectedResult);
   });

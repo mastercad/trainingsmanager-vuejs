@@ -218,7 +218,7 @@ class Exercises
      * @ORM\OneToMany(targetEntity=ExerciseXExerciseOption::class, mappedBy="exercise", cascade={"ALL"}, orphanRemoval=true)
      * @Groups({"read", "write"})
      */
-    private $exerciseXExerciseOptions;
+    private Collection $exerciseXExerciseOptions;
 
     /**
      * @var Collection|DeviceOption[]
@@ -226,7 +226,7 @@ class Exercises
      * @ORM\OneToMany(targetEntity=ExerciseXDeviceOption::class, mappedBy="exercise", cascade={"ALL"}, orphanRemoval=true)
      * @Groups({"read", "write"})
      */
-    private $exerciseXDeviceOptions;
+    private Collection $exerciseXDeviceOptions;
 
     /**
      * @var ArrayCollection|Device[]
@@ -234,7 +234,7 @@ class Exercises
      * @ORM\OneToMany(targetEntity=ExerciseXDevice::class, mappedBy="exercise", cascade={"ALL"}, orphanRemoval=true)
      * @Groups({"read", "write"})
      */
-    private $exerciseXDevices;
+    private Collection $exerciseXDevices;
 
     /**
      * @var ArrayCollection|ExerciseType[]
@@ -242,13 +242,13 @@ class Exercises
      * @ORM\OneToMany(targetEntity=ExerciseXExerciseType::class, mappedBy="exercise", cascade={"ALL"}, orphanRemoval=true)
      * @Groups({"read", "write"})
      */
-    private $exerciseXExerciseType;
+    private Collection $exerciseXExerciseType;
 
     public function __construct()
     {
       $this->exerciseXDeviceOptions = new ArrayCollection();
       $this->exerciseXExerciseOptions = new ArrayCollection();
-      $this->exerciseXDevice = new ArrayCollection();
+      $this->exerciseXDevices = new ArrayCollection();
       $this->exerciseXExerciseType = new ArrayCollection();
     }
 
