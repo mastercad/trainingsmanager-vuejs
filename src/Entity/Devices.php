@@ -12,6 +12,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\Collection;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -34,11 +35,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
+ *   attributes={"validation_groups"={"write"}},
  *   normalizationContext={"groups"={"read"}},
  *   denormalizationContext={"groups"={"write"}},
  *   collectionOperations={
  *     "get"={"method"="GET"},
- *     "post"={"method"="POST"},
+ *     "post"={"method"="POST", "validation_groups"={"write"}},
  *     "get_images_for_device" = {
  *        "method" = "GET",
  *        "path" = "/devices/{id}/images",
@@ -97,7 +99,7 @@ use Doctrine\ORM\Mapping as ORM;
  *   itemOperations={
  *     "get",
  *     "delete",
- *     "put",
+ *     "put"={"method"="PUT", "validation_groups"={"write"}},
  *     "get_by_slug" = {
  *       "method" = "GET",
  *       "path" = "/superhero/{slug}",
@@ -136,6 +138,10 @@ class Devices
      *
      * @ORM\Column(name="name", type="string", length=250, nullable=false)
      * @Groups({"read", "write"})
+     * @Assert\NotBlank(
+     *    message="This value should not be blank",
+     *    groups={"write"}
+     * )
      */
     private $name;
 

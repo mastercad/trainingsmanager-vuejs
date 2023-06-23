@@ -73,12 +73,12 @@
             split-variant="outline-primary"
             variant="primary"
             class="m-md-2"
-            :text="device.deviceXDeviceGroups[0] && device.deviceXDeviceGroups[0].device ? device.deviceXDeviceGroups[0].deviceGroup.name : 'None'"
+            :text="undefined !== device.deviceXDeviceGroups && device.deviceXDeviceGroups[0] && device.deviceXDeviceGroups[0].device ? device.deviceXDeviceGroups[0].deviceGroup.name : 'None'"
           >
             <b-dropdown-item
               :id="'device_group_null'"
               v-bind:key="'device_group_null'"
-              :active="undefined === device.deviceXDeviceGroups[0]"
+              :active="undefined === device.deviceXDeviceGroups || undefined === device.deviceXDeviceGroups[0]"
               @click="saveDeviceGroupSelection(null)"
             >
               None
@@ -88,7 +88,7 @@
               v-for="possibleDeviceGroup in deviceGroups"
               :id="'device_group_'+possibleDeviceGroup.id"
               v-bind:key="'device_group_'+possibleDeviceGroup.id"
-              :active="device.deviceXDeviceGroups[0] && device.deviceXDeviceGroups[0].device && device.deviceXDeviceGroups[0].deviceGroup.id == possibleDeviceGroup.id"
+              :active="undefined !== device.deviceXDeviceGroups && device.deviceXDeviceGroups[0] && device.deviceXDeviceGroups[0].device && device.deviceXDeviceGroups[0].deviceGroup.id == possibleDeviceGroup.id"
               @click="saveDeviceGroupSelection(possibleDeviceGroup)"
             >
               {{ possibleDeviceGroup.name }}
@@ -192,7 +192,7 @@
     <b-card-group deck bg-variant="light" class="mt-2">
       <b-card v-if="isValidId(device.id)" class="shadow p-2 mb-3 bg-white rounded">
         <button
-          v-if="isValidId(device.id)"
+          id="button_save"
           :disabled="device.name.length === 0"
           type="button"
           class="btn btn-primary"
@@ -204,7 +204,7 @@
 
       <b-card v-if="isGenericId(device.id)" class="shadow p-2 mb-3 bg-white rounded">
         <button
-          v-if="isGenericId(device.id)"
+          id="button_save"
           :disabled="device.name.length === 0"
           type="button"
           class="btn btn-primary"
@@ -214,8 +214,9 @@
         </button>
       </b-card>
 
-      <b-card class="shadow p-2 mb-3 bg-white rounded">
+      <b-card v-if="isValidId(device.id)" class="shadow p-2 mb-3 bg-white rounded">
         <button
+          id="button_delete"
           type="button"
           class="btn btn-primary"
           @click="deleteDevice()"
@@ -411,7 +412,7 @@ export default {
       return id && (typeof id === 'number' || !isNaN(id));
     },
     isGenericId(id) {
-      return id && ((typeof id === 'string' || id instanceof String) && id.startsWith('device_'));
+      return id && ((typeof id === 'string' || id instanceof String) && id.startsWith('device'));
     }
   }
 };

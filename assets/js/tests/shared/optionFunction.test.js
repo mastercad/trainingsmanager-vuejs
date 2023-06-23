@@ -1,5 +1,9 @@
-const OptionFunctions = require("../../src/shared/optionFunctions.js");
-//import OptionsFunctions from "../../src/shared/optionFunctions.js";
+const OptionFunctions = require("../../shared/optionFunctions");
+import { TextEncoder } from 'util';
+
+global.TextEncoder = TextEncoder;
+
+//import OptionsFunctions from "../shared/optionFunctions.js";
 
 describe("Option function tests", () => {
   test('Split works with empty parameter', () => {

@@ -2,7 +2,7 @@
   <div class="w-100">
     <div class="row">
       <div class="col-md-12">
-        <h1>{{ device.name }}</h1>
+        <h1 id="device_name">{{ device.name }}</h1>
       </div>
     </div>
     <div class="row">
@@ -99,7 +99,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("devices/loadImages", this.id);
+    this.$store.dispatch("devices/loadImages", this.device.id);
   },
   methods: {
     extractFileName(fileName) {

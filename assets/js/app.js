@@ -17,7 +17,7 @@ import store from "./store/index.js";
 import './../styles/app.css';
 //import VueJsonLD from 'vue-jsonld';
 // Alert, Button, Carousel, Collapse, Dropdown, Modal, Offcanvas, Popover, ScrollSpy, Tab, Toast, Tooltip
-import { Button, Dropdown, Modal, Tooltip } from "bootstrap";
+//import { Button, Dropdown, Modal, Tooltip } from "bootstrap";
 import { BootstrapVue, IconsPlugin, DropdownPlugin } from 'bootstrap-vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';

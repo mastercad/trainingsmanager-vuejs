@@ -12,6 +12,7 @@
 .cache
 .devcontainer
 .vscode
+/coverage
 
 ###< symfony/framework-bundle ###
 

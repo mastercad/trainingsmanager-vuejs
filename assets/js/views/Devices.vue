@@ -183,7 +183,7 @@ export default {
       }
     },
     generateIdentifier() {
-      return IdGenerator.generate('device_')
+      return IdGenerator.generate('device')
     },
     generateNewDevice() {
       let device = this.$store.getters["devices/findOldRegistered"];
@@ -194,7 +194,8 @@ export default {
           name: '',
           seoLink: '',
           previewPicturePath: '',
-          deviceXDeviceOptions: []
+          deviceXDeviceOptions: [],
+          deviceXDeviceGroups: []
         };
 
         this.$store.dispatch("devices/register", device);
@@ -203,7 +204,7 @@ export default {
       return device;
     },
     isGenericId(id) {
-      return id && ((typeof id === 'string' || id instanceof String) && id.startsWith('device_'));
+      return id && ((typeof id === 'string' || id instanceof String) && id.startsWith('device'));
     }
   }
 };

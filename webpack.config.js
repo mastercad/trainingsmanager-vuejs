@@ -1,223 +1,95 @@
-const { join } = require("path");
-const Encore = require("@symfony/webpack-encore");
-const ESLintPlugin = require("eslint-webpack-plugin");
-const webpack = require('webpack');
+const
+//  CopyWebpackPlugin = require('copy-webpack-plugin'),
+  Encore = require('@symfony/webpack-encore'),
+//  UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
+  ESLintPlugin = require("eslint-webpack-plugin"),
+  webpack = require('webpack');
 
-// Manually configure the runtime environment if not already configured yet by the "encore" command.
-// It's useful when you use tools that rely on webpack.config.js file.
 if (!Encore.isRuntimeEnvironmentConfigured()) {
   Encore.configureRuntimeEnvironment(process.env.NODE_ENV || "dev");
 }
 
-Encore.configureWatchOptions(function(watchOptions) {
+Encore
+  .setOutputPath('public/build/')
+  .setPublicPath('/build')
+  .cleanupOutputBeforeBuild()
+  .enableBuildNotifications()
+  .enableSourceMaps(!Encore.isProduction())
+  .enableVersioning(Encore.isProduction())
+  .configureWatchOptions(function(watchOptions) {
     // enable polling and check for changes every 250ms
     // polling is useful when running Encore inside a Virtual Machine
     watchOptions.poll = 250;
-});
-
-
-Encore.configureLoaderRule('eslint', loaderRule => {
-    loaderRule.test = /\.(jsx?|vue)$/;
-});
-
-Encore
-  // directory where compiled assets will be stored
-  .setOutputPath("public/build/")
-  // public path used by the web server to access the output path
-  .setPublicPath("/build")
-  // only needed for CDN's or sub-directory deploy
-  //.setManifestKeyPrefix('build/')
-
-  .configureBabel(
-    (babelConfig) => {
-      babelConfig.plugins.push("@babel/plugin-transform-runtime");
-    },
-    {
-      useBuiltIns: "usage",
-      corejs: 3,
-      presets: "@babel/preset-env"
-    }
-  )
-
+  })
+  // not needed because babel.config.js is present
+//  .configureBabelPresetEnv((config) => {
+//    config.useBuiltIns = 'usage';
+//    config.corejs = 3;
+//  })
+  .addEntry('app', './assets/js/app.js')
+//  .addEntry('admin', './assets/js/admin.js')
+//  .addEntry('common', './assets/js/common.js')
+//  .addPlugin(new CopyWebpackPlugin([
+//   ...
+//  ]))
+  .enableSassLoader()
   .enableVueLoader()
-
-  /*
-   * ENTRY CONFIG
-   *
-   * Each entry will result in one JavaScript file (e.g. app.js)
-   * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
-   */
-  .addEntry("app", "./assets/src/app.js")
-
-// enable ESLint
-/*
-  .addLoader({
-    enforce: 'pre',
-    test: /\.(js|vue)$/,
-    loader: 'eslint-webpack-plugin',
-    exclude: /node_modules/,
-    options: {
-      eslintPath: 'eslint',
-      fix: true,
-      emitError: true,
-      emitWarning: true,
-    },
+  .autoProvideVariables({
+    '$': 'jquery',
+    'jQuery': 'jquery',
+    'window.$': 'jquery',
+    'window.jQuery': 'jquery',
   })
-*/
-
-// When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
-//    .splitEntryChunks()
-
-  // will require an extra script tag for runtime.js
-  // but, you probably want this, unless you're building a single-page app
-  //    .enableSingleRuntimeChunk()
-  .disableSingleRuntimeChunk()
-
-/*
-   * FEATURE CONFIG
-   *
-   * Enable & configure other features below. For a full
-   * list of features, see:
-   * https://symfony.com/doc/current/frontend.html#adding-more-features
-   */
-//    .cleanupOutputBeforeBuild()
-
-  .enableBuildNotifications()
-
+//  .addLoader({
+//    test: /\.js$/,
+//    enforce: 'pre',
+//    loader: 'eslint-loader',
+//    exclude: /node_modules/,
+//    options: {
+//      fix: true
+//    }
+//  })
+  .configureLoaderRule('eslint', loaderRule => {
+    loaderRule.test = /\.(jsx?|vue)$/;
+  })
   .enableSourceMaps(!Encore.isProduction())
-  // enables hashed filenames (e.g. app.abc123.css)
-  .enableVersioning(Encore.isProduction())
+  .enableSingleRuntimeChunk()
+;
 
-  .configureBabel((config) => {
-    config.plugins.push("@babel/preset-env");
-    config.plugins.push("@babel/plugin-proposal-class-properties");
-  })
+const config = Encore.getWebpackConfig();
 
-  // enables @babel/preset-env polyfills
-  .configureBabelPresetEnv((config) => {
-    config.useBuiltIns = "usage";
-    config.corejs = 3;
-    presets = ["@babel/preset-env"];
-  })
+//config.plugins = config.plugins.filter(
+//  (plugin) => !(plugin instanceof webpack.optimize.UglifyJsPlugin)
+//);
 
-// enables Sass/SCSS support
-  .enableSassLoader();
+//const eslintLoader = config.module.rules.find(rule => rule.loader === 'eslint-loader');
+//eslintLoader.test = /\.(js?|vue)$/;
 
-// uncomment if you use TypeScript
-//.enableTypeScriptLoader()
-
-// uncomment if you use React
-//.enableReactPreset()
-
-// uncomment to get integrity="..." attributes on your script & link tags
-// requires WebpackEncoreBundle 1.4 or higher
-//.enableIntegrityHashes(Encore.isProduction())
-
-// uncomment if you're having problems with a jQuery plugin
-//.autoProvidejQuery()
-
-if (Encore.isDevServer()) {
-  Encore.enableBuildNotifications(true, (options) => {
-    options.skipFirstNotification = true;
-  })
-
-    .enableBuildCache({ config: [__filename] }, (cache) => {
-      cache.version = `${process.env.GIT_REV}`;
-      cache.name = `${process.env.target}`;
-    })
-
-    .configureDevServerOptions((options) => {
-      // https://github.com/symfony/webpack-encore/issues/1017#issuecomment-887264214
-      // delete options.client.host
-
-      /**
-       * Normalize "options.static" property to an array
-       */
-      if (!options.static) {
-        options.static = [];
-      } else if (!Array.isArray(options.static)) {
-        options.static = [options.static];
-      }
-
-      /**
-       * Enable live reload and watch view directories
-       */
-      options.liveReload = true;
-
-      options.static.push({
-        directory: join(__dirname, "./app/templates"),
-        watch: true,
-      });
-
-      options.static.push({
-        directory: join(__dirname, "assets"),
-        staticOptions: {
-          index: "views/index.html",
-        },
-      });
-
-      // fixes cors header issues
-      options.headers = {
-        "Access-Control-Allow-Origin": "*",
-      };
-
-      options.open = {
-        target: ["/", "http://127.0.0.1:8000/"],
-        app: {
-          name: "chrome",
-        },
-      };
-    });
+if (Encore.isProduction()) {
+  config.plugins.push(
+//    new webpack.DefinePlugin({
+//      'process.env.NODE_ENV': JSON.stringify('production'),
+//    }),
+//    new webpack.DefinePlugin({
+//      'process.env' : {
+//        NODE_ENV: JSON.stringify('production')
+//      }
+//    }),
+//    new webpack.DefinePlugin({
+//      "process.env.PRODUCTION": JSON.stringify(PRODUCTION),
+//      "process.env.DEVELOPMENT": JSON.stringify(DEVELOPMENT)
+//    }),
+//    new UglifyJsPlugin()
+  );
 }
 
-if (Encore.isDev()) {
-  const linterConfig = {
-    files: "assets/js/",
-    fix: true,
-    cache: true,
-    cacheLocation: "./.cache/",
-    threads: true,
-  };
+//config.presets = [
+//  '@babel/preset-env'
+//];
 
-  new webpack.DefinePlugin({
-    __VUE_OPTIONS_API__: true,
-    __VUE_PROD_DEVTOOLS__: true
-  });
-
-  Encore.addPlugin(new ESLintPlugin(linterConfig));
-} else {
-  Encore
-
-    // enables hashed filenames (e.g. app.abc123.css)
-    .enableVersioning()
-
-    // uncomment to get integrity="..." attributes on your script & link tags
-    // requires WebpackEncoreBundle 1.4 or higher
-    .enableIntegrityHashes();
-
-  //      .addPlugin(new GenerateSW({
-  // these options encourage the ServiceWorkers to get in there fast
-  // and not allow any straggling "old" SWs to hang around
-  //        clientsClaim: true,
-  //        skipWaiting: true
-  //      }))
-
-  //      .addPlugin(new WebpackObfuscator({
-  //        rotateStringArray: true
-  //      }))
-}
-
-module.exports = Encore.getWebpackConfig();
-/*
-module.exports = {
-    plugins: [
-       new ESLintPlugin({
-            eslintPath: 'eslint',
-            fix: true,
-            emitError: true,
-            emitWarning: true,
-        }),
-        Encore.getWebpackConfig(),
-    ]
+config.resolve.alias = {
+  handlebars: 'handlebars/dist/handlebars.min.js',
+  vue: 'vue/dist/vue.js',
 };
-*/
+
+module.exports = config;
