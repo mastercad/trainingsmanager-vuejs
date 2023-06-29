@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,131 +9,99 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * TrainingPlanXExercise
- *
- * @ORM\Table(
- *    name="training_plan_x_exercise",
- *    uniqueConstraints={ 
- *      @ORM\UniqueConstraint(name="training_plan_exercise", columns={"exercise", "training_plan"})
- *    },
- *    indexes={
- *      @ORM\Index(name="training_plan_x_exercise_create_user_fk", columns={"creator"}),
- *      @ORM\Index(name="training_plan_x_exercise_id", columns={"id"}),
- *      @ORM\Index(name="training_plan_x_exercise_training_plan_fk", columns={"training_plan"}),
- *      @ORM\Index(name="training_plan_x_exercise_update_user_fk", columns={"updater"}),
- *      @ORM\Index(name="IDX_B83DAAE5AEDAD51C", columns={"exercise"})
- *    }
- * )
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- * @ApiResource(
- *   itemOperations={
- *     "get",
- *     "patch",
- *     "delete",
- *     "put"
- *   },
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}},
- *   collectionOperations={
- *     "get",
- *     "post"
- *   }
- * )
  */
+#[ORM\Table(name: 'training_plan_x_exercise')]
+#[ORM\Index(name: 'IDX_training_plan_x_exercise_creator', columns: ['creator'])]
+#[ORM\Index(name: 'IDX_training_plan_x_exercise_id', columns: ['id'])]
+#[ORM\Index(name: 'IDX_training_plan_x_exercise_training_plan', columns: ['training_plan'])]
+#[ORM\Index(name: 'IDX_training_plan_x_exercise_updater', columns: ['updater'])]
+#[ORM\Index(name: 'IDX_training_plan_x_exercise_exercise', columns: ['exercise'])]
+#[ORM\UniqueConstraint(name: 'training_plan_exercise', columns: ['exercise', 'training_plan'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class TrainingPlanXExercise
 {
     /**
      * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups(['read', 'write'])]
     private $id;
 
     /**
      * @var int
-     *
-     * @ORM\Column(name="exercise_order", type="integer", nullable=false, options={"default"="0","comment"="ist gedacht um die reihenfolge der übungen nachträglich noch ändern zu können"})
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'exercise_order', type: 'integer', nullable: false, options: ['default' => '0', 'comment' => 'ist gedacht um die reihenfolge der übungen nachträglich noch ändern zu können'])]
+    #[Groups(['read', 'write'])]
     private $order = 0;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="remark", type="text", length=65535, nullable=false)
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'remark', type: 'text', length: 65535, nullable: false)]
+    #[Groups(['read', 'write'])]
     private $remark;
 
     /**
      * @var Exercises
-     *
-     * @ORM\ManyToOne(targetEntity="Exercises", inversedBy="trainingPlans")
-     * @ORM\JoinColumn(name="exercise", referencedColumnName="id", nullable=false)
-     * @Groups({"read", "write"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Exercises', inversedBy: 'trainingPlans')]
+    #[ORM\JoinColumn(name: 'exercise', referencedColumnName: 'id', nullable: false)]
+    #[Groups(['read', 'write'])]
     private $exercise;
 
     /**
      * @var TrainingPlans
-     *
-     * @ORM\ManyToOne(targetEntity="TrainingPlans", inversedBy="trainingPlanExercises")
-     * @ORM\JoinColumn(name="training_plan", referencedColumnName="id", nullable=false)
-     * @Groups({"read", "write"})
      */
+    #[ORM\ManyToOne(targetEntity: 'TrainingPlans', inversedBy: 'trainingPlanExercises')]
+    #[ORM\JoinColumn(name: 'training_plan', referencedColumnName: 'id', nullable: false)]
+    #[Groups(['read', 'write'])]
     private $trainingPlan;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[Groups(['read'])]
     private $creator;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['read'])]
     private $created = 'CURRENT_TIMESTAMP';
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
+    #[Groups(['read'])]
     private $updater;
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
+    #[Groups(['read'])]
     private $updated;
 
     /**
      * @var Collection|TrainingPlanXExerciseOption[]
-     *
-     * @ORM\OneToMany(targetEntity="TrainingPlanXExerciseOption", mappedBy="trainingPlanXExercise", cascade={"persist"})
-     * @Groups({"read", "write"})
      */
+    #[ORM\OneToMany(targetEntity: 'TrainingPlanXExerciseOption', mappedBy: 'trainingPlanXExercise', cascade: ['persist'])]
+    #[Groups(['read', 'write'])]
     private $trainingPlanXExerciseOptions;
 
     /**
      * @var Collection|TrainingPlanXDeviceOption[]
-     *
-     * @ORM\OneToMany(targetEntity="TrainingPlanXDeviceOption", mappedBy="trainingPlanXExercise", cascade={"persist"})
-     * @Groups({"read", "write"})
      */
+    #[ORM\OneToMany(targetEntity: 'TrainingPlanXDeviceOption', mappedBy: 'trainingPlanXExercise', cascade: ['persist'])]
+    #[Groups(['read', 'write'])]
     private $trainingPlanXDeviceOptions;
 
     public function __construct()

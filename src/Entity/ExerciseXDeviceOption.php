@@ -2,102 +2,103 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * ExerciseXDeviceOption
- *
- * @ORM\Table(name="exercise_x_device_option", uniqueConstraints={@ORM\UniqueConstraint(name="exercise_id_device_option_id", columns={"exercise", "device_option"}), @ORM\UniqueConstraint(name="unique_exercise_x_device_option_id", columns={"id"})}, indexes={@ORM\Index(name="exercise_x_device_option_creator", columns={"creator"}), @ORM\Index(name="exercise_x_device_option_device_option", columns={"device_option"}), @ORM\Index(name="exercise_x_device_option_updater", columns={"updater"}), @ORM\Index(name="IDX_B9816180AEDAD51C", columns={"exercise"})})
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- * @ApiResource(
- *   itemOperations={
- *     "get",
- *     "patch",
- *     "delete",
- *     "put"
- *   },
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}},
- *   collectionOperations={
- *     "get",
- *     "post"
- *   }
- * )
  */
+#[ApiResource(
+  normalizationContext: ['groups' => ['read']],
+  denormalizationContext: ['groups' => ['write']],
+  operations: [
+    new Get(),
+    new GetCollection(),
+    new Post(),
+    new Patch(),
+    new Put(),
+    new Delete()
+  ]
+)]
+#[ORM\Table(name: 'exercise_x_device_option')]
+#[ORM\Index(name: 'exercise_x_device_option_creator', columns: ['creator'])]
+#[ORM\Index(name: 'exercise_x_device_option_device_option', columns: ['device_option'])]
+#[ORM\Index(name: 'exercise_x_device_option_updater', columns: ['updater'])]
+#[ORM\Index(name: 'IDX_B9816180AEDAD51C', columns: ['exercise'])]
+#[ORM\UniqueConstraint(name: 'exercise_id_device_option_id', columns: ['exercise', 'device_option'])]
+#[ORM\UniqueConstraint(name: 'unique_exercise_x_device_option_id', columns: ['id'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class ExerciseXDeviceOption
 {
     /**
      * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups(['read', 'write'])]
     private $id;
 
     /**
      * @var Exercises
-     *
-     * @ORM\ManyToOne(targetEntity="Exercises", inversedBy="exerciseXDeviceOptions")
-     * @ORM\JoinColumn(name="exercise", nullable=false, referencedColumnName="id", onDelete="CASCADE")
-     * @Groups({"read", "write"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Exercises', inversedBy: 'exerciseXDeviceOptions')]
+    #[ORM\JoinColumn(name: 'exercise', nullable: false, referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[Groups(['read', 'write'])]
     private $exercise;
 
     /**
      * @var DeviceOptions
-     *
-     * @ORM\ManyToOne(targetEntity="DeviceOptions")
-     * @ORM\JoinColumn(name="device_option", nullable=false, referencedColumnName="id", onDelete="CASCADE")
-     * @Groups({"read", "write"})
      */
+    #[ORM\ManyToOne(targetEntity: 'DeviceOptions')]
+    #[ORM\JoinColumn(name: 'device_option', nullable: false, referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[Groups(['read', 'write'])]
     private $deviceOption;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="device_option_value", type="string", length=255, nullable=false)
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'device_option_value', type: 'string', length: 255, nullable: false)]
+    #[Groups(['read', 'write'])]
     private $deviceOptionValue;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creator", nullable=false, referencedColumnName="id")
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
+    #[Groups(['read'])]
     private $creator;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['read'])]
     private $created = 'CURRENT_TIMESTAMP';
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="updater", nullable=true, referencedColumnName="id")
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'updater', nullable: true, referencedColumnName: 'id')]
+    #[Groups(['read'])]
     private $updater;
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
+    #[Groups(['read'])]
     private $updated;
 
     /**

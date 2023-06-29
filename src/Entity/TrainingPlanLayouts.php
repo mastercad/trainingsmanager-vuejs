@@ -2,74 +2,83 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * TrainingPlanLayouts
- *
- * @ORM\Table(name="training_plan_layouts", uniqueConstraints={@ORM\UniqueConstraint(name="trainingsplan_layout_name", columns={"name"})}, indexes={@ORM\Index(name="training_plan_layout_create_user_fk", columns={"creator"}), @ORM\Index(name="training_plan_layout_id", columns={"id"}), @ORM\Index(name="training_plan_layout_update_user_fk", columns={"updater"})})
- * @ORM\Entity
- * @ApiResource(
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}}
- * )
  */
+#[ApiResource(
+  normalizationContext: ['groups' => ['read']],
+  denormalizationContext: ['groups' => ['write']],
+  operations: [
+    new Get(),
+    new GetCollection(),
+    new Post(),
+    new Patch(),
+    new Put(),
+    new Delete()
+  ]
+)]
+#[ORM\Table(name: 'training_plan_layouts')]
+#[ORM\Index(name: 'training_plan_layout_create_user_fk', columns: ['creator'])]
+#[ORM\Index(name: 'training_plan_layout_id', columns: ['id'])]
+#[ORM\Index(name: 'training_plan_layout_update_user_fk', columns: ['updater'])]
+#[ORM\UniqueConstraint(name: 'trainingsplan_layout_name', columns: ['name'])]
+#[ORM\Entity]
 class TrainingPlanLayouts
 {
     /**
      * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups(['read', 'write'])]
     private $id;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=250, nullable=false)
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: false)]
+    #[Groups(['read', 'write'])]
     private $name;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $created = 'CURRENT_TIMESTAMP';
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
      */
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private $updated;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     private $creator;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     private $updater;
 
-    /**
-     * @ORM\OneToMany(targetEntity="TrainingPlans", mappedBy="trainingPlanLayout", cascade={"persist"})
-     */
+    #[ORM\OneToMany(targetEntity: 'TrainingPlans', mappedBy: 'trainingPlanLayout', cascade: ['persist'])]
     private $trainingPlans;
 
     /**

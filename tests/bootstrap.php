@@ -8,21 +8,44 @@ use Symfony\Component\Process\Process;
 
 require dirname(__DIR__).'/vendor/autoload.php';
 
+if (isset($_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])) {
+  // executes the "php bin/console cache:clear" command
+  passthru(sprintf(
+    'APP_ENV=%s php "%s/../bin/console" cache:clear --no-warmup',
+    $_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'],
+    __DIR__
+  ));
+}
+
 if (file_exists(dirname(__DIR__).'/config/bootstrap.php')) {
     require dirname(__DIR__).'/config/bootstrap.php';
 } elseif (method_exists(Dotenv::class, 'bootEnv')) {
     (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
 }
 
-#$_SERVER += $_ENV;
-#$_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null ?: 'dev';
-#$_SERVER['APP_DEBUG'] = $_SERVER['APP_DEBUG'] ?? $_ENV['APP_DEBUG'] ?? $_SERVER['APP_ENV'] !== 'prod';
-#$_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = (int) $_SERVER['APP_DEBUG'] || filter_var($_SERVER['APP_DEBUG'], FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
-
-$process = new Process(['php', 'bin/console', 'doctrine:migrations:migrate', '--no-interaction']);
+$process = new Process(['php', 'bin/console', 'doctrine:database:drop', '--no-interaction', '--if-exists', '--force']);
 $process->run();
 
-dump($_ENV);
+if (!$process->isSuccessful()) {
+//    throw new ProcessFailedException($process);
+}
+
+$process = new Process(['php', 'bin/console', 'doctrine:database:create', '--no-interaction']);
+$process->run();
+
+if (!$process->isSuccessful()) {
+    throw new ProcessFailedException($process);
+}
+
+$process = new Process(['php', 'bin/console', 'doctrine:schema:create', '--no-interaction']);
+$process->run();
+
+if (!$process->isSuccessful()) {
+    throw new ProcessFailedException($process);
+}
+
+$process = new Process(['php', 'bin/console', 'doctrine:migrations:migrate', '--no-interaction', '--allow-no-migration']);
+$process->run();
 
 if (!$process->isSuccessful()) {
     throw new ProcessFailedException($process);
@@ -30,6 +53,7 @@ if (!$process->isSuccessful()) {
 
 $process = new Process(['php', 'bin/console', 'doctrine:fixtures:load', '--no-interaction']);
 $process->run();
+
 if (!$process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }

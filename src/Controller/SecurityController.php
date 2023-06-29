@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -34,9 +34,7 @@ final class SecurityController extends AbstractController
         $this->jWTManager = $jWTManager;
     }
 
-    /**
-     * @Route("/login", name="login", methods={"POST"})
-     */
+    #[Route(path: '/login', name: 'login', methods: ['POST'])]
     public function loginAction(): JsonResponse
     {
         /** @var User $user */
@@ -56,9 +54,7 @@ final class SecurityController extends AbstractController
         return new JsonResponse(json_encode($data), Response::HTTP_OK, [], true);
     }
 
-    /**
-     * @Route("/api/refresh", name="api_refresh", methods={"POST"})
-     */
+    #[Route(path: '/api/refresh', name: 'api_refresh', methods: ['POST'])]
     public function refreshAction(): JsonResponse
     {
       $user = $this->getUser();
@@ -79,18 +75,15 @@ final class SecurityController extends AbstractController
 
     /**
      * @throws RuntimeException
-     *
-     * @Route("/logout", name="api_logout")
      */
+    #[Route(path: '/logout', name: 'api_logout')]
     public function logoutAction(): void
     {
         throw new RuntimeException('This should not be reached!');
     }
 
-    /**
-     * @Route("/register", name="user_registration")
-     */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager)
+    #[Route(path: '/register', name: 'user_registration')]
+    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager)
     {
         $user = new Users();
         $form = $this->createForm(UserType::class, $user);
@@ -99,7 +92,7 @@ final class SecurityController extends AbstractController
         $form->submit($jsonData);
 
         if ($form->isValid()) {
-            $user->setPassword($passwordEncoder->encodePassword($user, $user->getPlainPassword()));
+            $user->setPassword($passwordHasher->hashPassword($user, $user->getPlainPassword()));
             $user->setId(Uuid::uuid4());
 
             $entityManager->persist($user);

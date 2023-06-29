@@ -2,102 +2,92 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * ExerciseOptions
- *
- * @ORM\Table(
- *    name="exercise_options",
- *    uniqueConstraints={
- *      @ORM\UniqueConstraint(name="exercise_option_name", columns={"name"}),
- *      @ORM\UniqueConstraint(name="unique_exercise_option_id", columns={"id"})
- *    },
- *    indexes={
- *      @ORM\Index(name="exercise_option_creator", columns={"creator"}),
- *      @ORM\Index(name="exercise_option_updater", columns={"updater"})
- *    }
- * )
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- * @ApiResource(
- *   itemOperations={
- *     "get",
- *     "patch",
- *     "delete",
- *     "put"
- *   },
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}},
- *   collectionOperations={
- *     "get",
- *     "post"
- *   }
- * )
  */
+#[ApiResource(
+  normalizationContext: ['groups' => ['read']],
+  denormalizationContext: ['groups' => ['write']],
+  operations: [
+    new Get(),
+    new GetCollection(),
+    new Post(),
+    new Patch(),
+    new Put(),
+    new Delete()
+  ]
+)]
+#[ORM\Table(name: 'exercise_options')]
+#[ORM\Index(name: 'exercise_option_creator', columns: ['creator'])]
+#[ORM\Index(name: 'exercise_option_updater', columns: ['updater'])]
+#[ORM\UniqueConstraint(name: 'exercise_option_name', columns: ['name'])]
+#[ORM\UniqueConstraint(name: 'unique_exercise_option_id', columns: ['id'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class ExerciseOptions
 {
     /**
      * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups(['read', 'write'])]
     private $id;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: false)]
+    #[Groups(['read', 'write'])]
     private $name;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="default_value", type="string", length=255, nullable=false)
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'default_value', type: 'string', length: 255, nullable: false)]
+    #[Groups(['read', 'write'])]
     private $defaultValue;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['read'])]
     private $created = 'CURRENT_TIMESTAMP';
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
+    #[Groups(['read'])]
     private $updated;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[Groups(['read'])]
     private $creator;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="updater", referencedColumnName="id", nullable=true)
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id', nullable: true)]
+    #[Groups(['read'])]
     private $updater;
 
     /**

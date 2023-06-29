@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Muscles;
 use App\Entity\MuscleGroups;
 use App\Entity\Users;
@@ -12,103 +10,77 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * MuscleXMuscleGroup
- *
- * @ORM\Table(
- *    name="muscle_x_muscle_group",
- *    indexes={
- *      @ORM\Index(name="muscle_group_muscle", columns={"muscle"}),
- *      @ORM\Index(name="muscle_x_muscle_group_creator", columns={"creator"}),
- *      @ORM\Index(name="muscle_x_muscle_group_id", columns={"id"}),
- *      @ORM\Index(name="muscle_x_muscle_group_muscle_group", columns={"muscle_group"}),
- *      @ORM\Index(name="muscle_x_muscle_group_updater", columns={"updater"})
- *    }
- * )
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- * @ApiResource(
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}},
- *   itemOperations={
- *     "get"={"method"="GET"},
- *     "put"={"method"="PUT"},
- *     "delete"={"method"="DELETE"}
- *   },
- *   collectionOperations={
- *     "get"={"method"="GET"},
- *     "post"={"method"="POST"}
- *   }
- * )
  */
+#[ORM\Table(name: 'muscle_x_muscle_group')]
+#[ORM\Index(name: 'muscle_group_muscle', columns: ['muscle'])]
+#[ORM\Index(name: 'muscle_x_muscle_group_creator', columns: ['creator'])]
+#[ORM\Index(name: 'muscle_x_muscle_group_id', columns: ['id'])]
+#[ORM\Index(name: 'muscle_x_muscle_group_muscle_group', columns: ['muscle_group'])]
+#[ORM\Index(name: 'muscle_x_muscle_group_updater', columns: ['updater'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class MuscleXMuscleGroup
 {
     /**
      * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups(['read', 'write'])]
     private $id;
 
     /**
      * @var Muscles
-     *
-     * @ORM\ManyToOne(targetEntity=Muscles::class, inversedBy="muscleXMuscleGroups")
-     * @ORM\JoinColumn(name="muscle", nullable=false, referencedColumnName="id", onDelete="CASCADE")
-     * @Groups({"read", "write"})
      */
+    #[ORM\ManyToOne(targetEntity: Muscles::class, inversedBy: 'muscleXMuscleGroups')]
+    #[ORM\JoinColumn(name: 'muscle', nullable: false, referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[Groups(['read', 'write'])]
     private $muscle;
 
     /**
      * @var MuscleGroups
-     *
-     * @ORM\ManyToOne(targetEntity=MuscleGroups::class)
-     * @ORM\JoinColumn(name="muscle_group", nullable=false, referencedColumnName="id", onDelete="CASCADE")
-     * @Groups({"read", "write"})
      */
+    #[ORM\ManyToOne(targetEntity: MuscleGroups::class)]
+    #[ORM\JoinColumn(name: 'muscle_group', nullable: false, referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[Groups(['read', 'write'])]
     private $muscleGroup;
 
     /**
      * @var int
-     *
-     * @ORM\Column(name="strain", type="integer", nullable=false, options={"comment"="Beanspruchung des Muskels"})
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'strain', type: 'integer', nullable: false, options: ['comment' => 'Beanspruchung des Muskels'])]
+    #[Groups(['read', 'write'])]
     private $strain;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['read'])]
     private $created = 'CURRENT_TIMESTAMP';
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
+    #[Groups(['read'])]
     private $updated;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity=Users::class)
-     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: Users::class)]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[Groups(['read'])]
     private $creator;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity=Users::class)
-     * @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: Users::class)]
+    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
+    #[Groups(['read'])]
     private $updater;
 
     /**

@@ -20,8 +20,8 @@ security:
                 class: App\Entity\Users
                 property: email
 
-        jwt:
-            lexik_jwt: ~
+#        jwt:
+#            lexik_jwt: ~
 
 #        users_in_memory: { memory: null }
 
@@ -40,7 +40,8 @@ security:
         api:
             pattern: ^/api/
             stateless: false
-            provider: jwt
+#            provider: jwt
+            jwt: ~
             json_login:
                 provider: app_user_provider
                 check_path: /api/login_check
@@ -50,13 +51,13 @@ security:
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
 
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+#            guard:
+#                authenticators:
+#                    - lexik_jwt_authentication.jwt_token_authenticator
 
-            logout:
-                path: /logout
-                handlers: [App\Service\Authentication\LogoutHandler]
+#            logout:
+#                path: /logout
+#                handlers: [App\Service\Authentication\LogoutHandler]
 
 #        register:
 #            pattern: ^/api/register
@@ -69,9 +70,9 @@ security:
 
             provider: app_user_provider
 
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+#            guard:
+#                authenticators:
+#                    - lexik_jwt_authentication.jwt_token_authenticator
 
             json_login:
                 username_path: email
@@ -80,7 +81,7 @@ security:
 
             logout:
                 path: /logout
-                handlers: [App\Service\Authentication\LogoutHandler]
+#                handlers: [App\Service\Authentication\LogoutHandler]
 
     access_control:
         - { path: ^/authentication_token, roles: IS_AUTHENTICATED_ANONYMOUSLY }

@@ -13,9 +13,8 @@ final class IndexController extends AbstractController
 {
     /**
      * @throws JsonException
-     *
-     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|logout|refresh|_(profiler|wdt)).*"}, name="index", methods={"GET"})
      */
+    #[Route(path: '/{vueRouting}', requirements: ['vueRouting' => '^(?!api|logout|refresh|_(profiler|wdt)).*'], name: 'index', methods: ['GET'])]
     public function indexAction(string $vueRouting): Response
     {
         return $this->render('index/index.html.twig');

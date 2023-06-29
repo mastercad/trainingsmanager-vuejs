@@ -2,9 +2,14 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Entity\TrainingPlanLayouts;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,136 +19,126 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * TrainingPlans
- *
- * @ORM\Table(name="training_plans", indexes={@ORM\Index(name="training_plan_create_user_fk", columns={"creator"}), @ORM\Index(name="training_plan_id", columns={"id"}), @ORM\Index(name="training_plan_parent_fk", columns={"parent"}), @ORM\Index(name="training_plan_training_plan_layout_fk", columns={"training_plan_layout"}), @ORM\Index(name="training_plan_update_user_fk", columns={"updater"}), @ORM\Index(name="training_plan_user_fk", columns={"user"})})
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- * @ApiResource(
- *   itemOperations={
- *     "get",
- *     "patch",
- *     "delete",
- *     "put"
- *   },
- *   normalizationContext={"groups" = {"read"}},
- *   denormalizationContext={"groups" = {"write"}},
- *   collectionOperations={
- *     "get",
- *     "post"
- *   }
- * )
  */
+#[ApiResource(
+  normalizationContext: ['groups' => ['read']],
+  denormalizationContext: ['groups' => ['write']],
+  operations: [
+    new Get(),
+    new GetCollection(),
+    new Post(),
+    new Patch(),
+    new Put(),
+    new Delete()
+  ]
+)]
+#[ORM\Table(name: 'training_plans')]
+#[ORM\Index(name: 'training_plan_create_user_fk', columns: ['creator'])]
+#[ORM\Index(name: 'training_plan_id', columns: ['id'])]
+#[ORM\Index(name: 'training_plan_parent_fk', columns: ['parent'])]
+#[ORM\Index(name: 'training_plan_training_plan_layout_fk', columns: ['training_plan_layout'])]
+#[ORM\Index(name: 'training_plan_update_user_fk', columns: ['updater'])]
+#[ORM\Index(name: 'training_plan_user_fk', columns: ['user'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class TrainingPlans
 {
     /**
      * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups(['read', 'write'])]
     private $id;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=250, nullable=true)
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: true)]
+    #[Groups(['read', 'write'])]
     private $name;
 
     /**
      * @var bool
-     *
-     * @ORM\Column(name="active", type="boolean", nullable=false, options={"comment"="trainingsplan aktiv? damit nur der aktuellste angezeigt wird im tagebuch zum training"})
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'active', type: 'boolean', nullable: false, options: ['comment' => 'trainingsplan aktiv? damit nur der aktuellste angezeigt wird im tagebuch zum training'])]
+    #[Groups(['read', 'write'])]
     private $active = false;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="sorting", type="integer", nullable=false, options={"default"="1","comment"="ist für splitpläne gedacht um die reihenfolge zu beeinflussen"})
-     * @Groups({"read", "write"})
      */
+    #[ORM\Column(name: 'sorting', type: 'integer', nullable: false, options: ['default' => '1', 'comment' => 'ist für splitpläne gedacht um die reihenfolge zu beeinflussen'])]
+    #[Groups(['read', 'write'])]
     private $order = 1;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="user", referencedColumnName="id")
-     * @Groups({"read", "write"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'user', referencedColumnName: 'id')]
+    #[Groups(['read', 'write'])]
     private $user;
 
     /**
      * @var TrainingPlanLayouts
-     *
-     * @ORM\ManyToOne(targetEntity="TrainingPlanLayouts", cascade={"all"}, inversedBy="trainingPlans")
-     * @ORM\JoinColumn(name="training_plan_layout", referencedColumnName="id")
-     * @Groups({"read", "write", "items:training_plan_layouts:get"})
      */
+    #[ORM\ManyToOne(targetEntity: 'TrainingPlanLayouts', cascade: ['all'], inversedBy: 'trainingPlans')]
+    #[ORM\JoinColumn(name: 'training_plan_layout', referencedColumnName: 'id')]
+    #[Groups(['read', 'write', 'items:training_plan_layouts:get'])]
     private $trainingPlanLayout;
 
     /**
      * @var TrainingPlans
-     *
-     * @ORM\ManyToOne(targetEntity="TrainingPlans", inversedBy="children")
-     * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=true)
-     * @Groups({"read", "write"})
      */
+    #[ORM\ManyToOne(targetEntity: 'TrainingPlans', inversedBy: 'children')]
+    #[ORM\JoinColumn(name: 'parent', referencedColumnName: 'id', nullable: true)]
+    #[Groups(['read', 'write'])]
     private $parent;
 
     /**
      * @var Collection|TrainingPlans[]
-     *
-     * @ORM\OneToMany(targetEntity="TrainingPlans", mappedBy="parent", cascade={"persist"})
-     * @Groups({"read", "write"})
      */
+    #[ORM\OneToMany(targetEntity: 'TrainingPlans', mappedBy: 'parent', cascade: ['persist'])]
+    #[Groups(['read', 'write'])]
     private $children;
 
     /**
      * @var Collection|TrainingPlanXExercise[]
-     *
-     * @ORM\OneToMany(targetEntity="TrainingPlanXExercise", mappedBy="trainingPlan", cascade={"persist"})
-     * @Groups({"read", "write"})
      */
+    #[ORM\OneToMany(targetEntity: 'TrainingPlanXExercise', mappedBy: 'trainingPlan', cascade: ['persist'])]
+    #[Groups(['read', 'write'])]
     private $trainingPlanExercises;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['read'])]
     private $created = 'CURRENT_TIMESTAMP';
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
-     * @Groups({"read"})
      */
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
+    #[Groups(['read'])]
     private $updated;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[Groups(['read'])]
     private $creator;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="updater", referencedColumnName="id", nullable=true)
-     * @Groups({"read"})
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id', nullable: true)]
+    #[Groups(['read'])]
     private $updater;
 
     public function __construct()

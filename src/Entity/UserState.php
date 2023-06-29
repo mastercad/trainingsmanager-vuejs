@@ -2,66 +2,59 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(formats: ['json'])]
 /**
  * UserState
- *
- * @ORM\Table(name="user_state", indexes={@ORM\Index(name="user_state_create_user_fk", columns={"creator"}), @ORM\Index(name="user_state_id", columns={"id"}), @ORM\Index(name="user_state_update_user_fk", columns={"updater"})})
- * @ORM\Entity
  */
+#[ORM\Table(name: 'user_state')]
+#[ORM\Index(name: 'IDX_user_state_id', columns: ['id'])]
+#[ORM\Index(name: 'IDX_user_state_creator', columns: ['creator'])]
+#[ORM\Index(name: 'IDX_user_state_updater', columns: ['updater'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class UserState
 {
     /**
      * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private $id;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=250, nullable=false)
      */
+    #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: false)]
     private $name;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $created = 'CURRENT_TIMESTAMP';
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
      */
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private $updated;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creator", referencedColumnName="id")
-     * })
      */
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: 'Users')]
     private $creator;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * })
      */
+    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: 'Users')]
     private $updater;
 
     /**

@@ -7,8 +7,9 @@ use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use App\Service\FileUploader;
 use App\Entity\Exercises;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-final class ExerciseNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
+final class ExerciseNormalizer implements ContextAwareNormalizerInterface, NormalizerInterface, NormalizerAwareInterface
 {
     use NormalizerAwareTrait;
 
@@ -17,6 +18,11 @@ final class ExerciseNormalizer implements ContextAwareNormalizerInterface, Norma
 
     public function __construct(FileUploader $fileUploader) {
         $this->fileUploader = $fileUploader;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+      return [];
     }
 
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool {

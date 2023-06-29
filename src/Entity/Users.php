@@ -2,200 +2,179 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiResource;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(formats: ['json'])]
 /**
  * Users
- *
- * @ORM\Table(name="users", indexes={@ORM\Index(name="user_create_user_fk", columns={"creator"}), @ORM\Index(name="user_id", columns={"id"}), @ORM\Index(name="user_state_fk", columns={"state"}), @ORM\Index(name="user_update_user_fk", columns={"updater"})})
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
  */
-class Users implements UserInterface
+#[ORM\Table(name: 'users')]
+#[ORM\Index(name: 'IDX_users_id', columns: ['id'])]
+#[ORM\Index(name: 'IDX_users_state', columns: ['state'])]
+#[ORM\Index(name: 'IDX_users_creator', columns: ['creator'])]
+#[ORM\Index(name: 'IDX_users_updater', columns: ['updater'])]
+#[ORM\UniqueConstraint(name: 'UN_users_login', columns: ['login'])]
+#[ORM\UniqueConstraint(name: 'UN_users_email', columns: ['email'])]
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
+class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
-     * @ORM\Column(name="id", type="uuid", unique=true, nullable=false, options={"unsigned"=true})
-     * @ORM\Id
      *
      * @var UuidInterface
      */
+    #[ORM\Column(name: 'id', type: 'uuid', unique: true, nullable: false, options: ['unsigned' => true])]
+    #[ORM\Id]
     private $id;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="first_name", type="string", length=250, nullable=false)
      */
+    #[ORM\Column(name: 'first_name', type: 'string', length: 250, nullable: false)]
     private $firstName;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="last_name", type="string", length=250, nullable=false)
      */
+    #[ORM\Column(name: 'last_name', type: 'string', length: 250, nullable: false)]
     private $lastName;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=250, nullable=false)
-     * @Assert\NotBlank()
      */
+    #[ORM\Column(name: 'email', type: 'string', length: 250, nullable: false)]
+    #[Assert\NotBlank]
     private $email;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="login", type="string", length=250, nullable=false)
      */
+    #[ORM\Column(name: 'login', type: 'string', length: 250, nullable: false)]
     private $login;
 
     /**
      * @var string|null
-     *
-     * @ORM\Column(name="profile_picture_path", type="string", length=255, nullable=true)
      */
+    #[ORM\Column(name: 'profile_picture_path', type: 'string', length: 255, nullable: true)]
     private $profilePicturePath;
 
     /**
      * @var string|null
-     *
-     * @Assert\NotBlank()
-     * @Assert\Length(max=4096)
      */
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 4096)]
     private $plainPassword;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=250, nullable=false)
      */
+    #[ORM\Column(name: 'password', type: 'string', length: 250, nullable: false)]
     private $password;
 
     /**
-     * @ORM\Column(name="roles", type="json", nullable=false)
-     *
      * @var string[]
      */
+    #[ORM\Column(name: 'roles', type: 'json', nullable: false)]
     private $roles;
 
     /**
      * @var string|null
-     *
-     * @ORM\Column(name="facebook_id", type="string", length=250, nullable=true)
      */
+    #[ORM\Column(name: 'facebook_id', type: 'string', length: 250, nullable: true)]
     private $facebookId;
 
     /**
      * @var string|null
-     *
-     * @ORM\Column(name="twitter_id", type="string", length=250, nullable=true)
      */
+    #[ORM\Column(name: 'twitter_id', type: 'string', length: 250, nullable: true)]
     private $twitterId;
 
     /**
      * @var string|null
-     *
-     * @ORM\Column(name="google_plus_id", type="string", length=250, nullable=true)
      */
+    #[ORM\Column(name: 'google_plus_id', type: 'string', length: 250, nullable: true)]
     private $googlePlusId;
 
     /**
      * @var int|null
-     *
-     * @ORM\Column(name="session_timeout", type="integer", nullable=true)
      */
+    #[ORM\Column(name: 'session_timeout', type: 'integer', nullable: true)]
     private $sessionTimeout;
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="last_login", type="datetime", nullable=true)
      */
+    #[ORM\Column(name: 'last_login', type: 'datetime', nullable: true)]
     private $lastLogin;
 
     /**
      * @var int|null
-     *
-     * @ORM\Column(name="login_count", type="integer", nullable=true)
      */
+    #[ORM\Column(name: 'login_count', type: 'integer', nullable: true)]
     private $loginCount;
 
     /**
      * @var string|null
-     *
-     * @ORM\Column(name="session_id", type="string", length=250, nullable=true)
      */
+    #[ORM\Column(name: 'session_id', type: 'string', length: 250, nullable: true)]
     private $sessionId;
 
     /**
      * @var bool
-     *
-     * @ORM\Column(name="flag_logged_in", type="boolean", nullable=false)
      */
+    #[ORM\Column(name: 'flag_logged_in', type: 'boolean', nullable: false)]
     private $flagLoggedIn = '0';
 
     /**
      * @var bool|null
-     *
-     * @ORM\Column(name="flag_multilogin", type="boolean", nullable=true)
      */
+    #[ORM\Column(name: 'flag_multilogin', type: 'boolean', nullable: true)]
     private $flagMultilogin;
 
     /**
      * @var string|null
-     *
-     * @ORM\Column(name="validate_hash", type="string", length=250, nullable=true)
      */
+    #[ORM\Column(name: 'validate_hash', type: 'string', length: 250, nullable: true)]
     private $validateHash;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="created", type="datetime", nullable=false)
      */
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private $created;
 
     /**
      * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
      */
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private $updated;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumn(name="creator", referencedColumnName="id")
      */
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     private $creator;
 
     /**
      * @var UserState
-     *
-     * @ORM\ManyToOne(targetEntity="UserState")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="state", referencedColumnName="id")
-     * })
      */
+    #[ORM\JoinColumn(name: 'state', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: 'UserState')]
     private $state;
 
     /**
      * @var Users
-     *
-     * @ORM\ManyToOne(targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="updater", referencedColumnName="id")
-     * })
      */
+    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: 'Users')]
     private $updater;
 
     public function __construct()
@@ -204,19 +183,16 @@ class Users implements UserInterface
     }
 
     /**
-     * @ORM\PrePersist
-     *
      * @throws Exception
      */
+    #[ORM\PrePersist]
     public function onPrePersist(): void
     {
         $this->id = Uuid::uuid4();
         $this->created = new DateTime('NOW');
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
         $this->updated = new DateTime('NOW');
@@ -373,9 +349,11 @@ class Users implements UserInterface
     /**
      * Get the value of password.
      *
+     * @see PasswordAuthenticatedUserInterface
+     *
      * @return string
      */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -771,7 +749,7 @@ class Users implements UserInterface
      *  UserInterface functions
      *
      *******************************************************************************/
-    public function getUserIdentifier()
+    public function getUserIdentifier(): string
     {
         return $this->getEmail();
     }
