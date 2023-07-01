@@ -50,7 +50,6 @@
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "friendsoftwig/twigcs": "*",
         "phpstan/phpstan": "*",
-        "phpunit/phpunit": "*",
         "rector/rector": "*",
         "squizlabs/php_codesniffer": "*",
         "symfony/browser-kit": "6.3.*",
@@ -58,7 +57,7 @@
         "symfony/debug-bundle": "*",
         "symfony/http-client": "6.3.*",
         "symfony/maker-bundle": "*",
-        "symfony/phpunit-bridge": "*",
+        "symfony/phpunit-bridge": "^6.3",
         "symfony/process": "*",
         "symfony/stopwatch": "*",
         "symfony/web-profiler-bundle": "*",
@@ -76,6 +75,7 @@
         "preferred-install": {
             "*": "dist"
         },
+        "prepend-autoloader": false,
         "sort-packages": true
     },
     "autoload": {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1688208055">
-  <project timestamp="1688208055">
+<coverage generated="1688212942">
+  <project timestamp="1688212942">
     <file name="/application/src/Controller/DeviceImageController.php">
       <class name="App\Controller\DeviceImageController" namespace="global">
         <metrics complexity="8" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="17" coveredelements="0"/>
@@ -1727,7 +1727,7 @@
     </file>
     <file name="/application/src/OpenApi/JwtDecorator.php">
       <class name="App\OpenApi\JwtDecorator" namespace="global">
-        <metrics complexity="2" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="57" coveredstatements="0" elements="58" coveredelements="0"/>
+        <metrics complexity="2" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="56" coveredstatements="0" elements="57" coveredelements="0"/>
       </class>
       <line num="18" type="method" name="__invoke" visibility="public" complexity="1" crap="2" count="0"/>
       <line num="20" type="stmt" count="0"/>
@@ -1786,7 +1786,7 @@
       <line num="75" type="stmt" count="0"/>
       <line num="76" type="stmt" count="0"/>
       <line num="78" type="stmt" count="0"/>
-      <metrics loc="80" ncloc="80" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="57" coveredstatements="0" elements="58" coveredelements="0"/>
+      <metrics loc="80" ncloc="80" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="56" coveredstatements="0" elements="57" coveredelements="0"/>
     </file>
     <file name="/application/src/Security/JWTAuthenticator.php">
       <class name="App\Security\JWTAuthenticator" namespace="global">
@@ -1899,6 +1899,6 @@
       <line num="76" type="stmt" count="0"/>
       <metrics loc="79" ncloc="79" classes="1" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="26" coveredstatements="24" elements="30" coveredelements="27"/>
     </file>
-    <metrics files="56" loc="9343" ncloc="6040" classes="45" methods="495" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="1068" coveredstatements="69" elements="1563" coveredelements="91"/>
+    <metrics files="56" loc="9343" ncloc="6040" classes="45" methods="495" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="1067" coveredstatements="69" elements="1562" coveredelements="91"/>
   </project>
 </coverage>

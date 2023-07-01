@@ -33,7 +33,7 @@ jobs:
         run: npm test
 
       - name: run phpunit tests
-        run: docker compose exec php-fpm vendor/bin/phpunit
+        run: docker compose exec php-fpm bin/phpunit
 
       - name: Make code coverage badge
         uses: timkrase/phpunit-coverage-badge@v1.2.1
