@@ -45,9 +45,4 @@
         <extension class="Symfony\Component\Panther\ServerExtension" />
     </extensions>
     -->
-  <source>
-    <include>
-      <directory suffix=".php">src</directory>
-    </include>
-  </source>
 </phpunit>

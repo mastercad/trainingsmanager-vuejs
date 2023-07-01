@@ -12,10 +12,12 @@
 .cache
 .devcontainer
 .vscode
-/coverage
+coverage
 /dist
 .phpunit.result.cache
 .phpunit.cache
+dist
+.editorconfig
 
 ###< symfony/framework-bundle ###
 
