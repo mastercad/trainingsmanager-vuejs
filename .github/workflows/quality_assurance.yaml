@@ -1,0 +1,29 @@
+name: Quality Assurance
+run-name: ${{ github.actor }} Quality Assurance
+on: [push]
+jobs:
+  run-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the stack
+        run: docker compose up -d php-fpm mysql_tests
+
+      - name: install composer dependencies
+        run: docker compose exec php-fpm composer install
+
+      - name: install npm dependencies
+        run: npm install
+
+      - name: run frontend tests
+        run: npm test
+
+      - name: run phpunit tests
+        run: docker compose exec php-fpm vendor/bin/phpunit
+
+      - name: Make code coverage badge
+        uses: timkrase/phpunit-coverage-badge@v1.2.1
+        with:
+          coverage_badge_path: output/coverage.svg
+          push_badge: false
+          report: coverage/clover.xml

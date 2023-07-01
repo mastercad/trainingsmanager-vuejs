@@ -8,7 +8,6 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Tests\ApiHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use function count;
 
 final class ContactControllerTest extends ApiTestCase
 {

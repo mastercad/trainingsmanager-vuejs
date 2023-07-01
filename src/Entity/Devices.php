@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiFilter;
 use App\Controller\DeviceImageController;
 use App\Controller\DeviceImageUploadController;
 use App\Controller\DeviceImageDeleteController;
@@ -14,6 +15,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -25,7 +27,13 @@ use Doctrine\ORM\Mapping as ORM;
  * Devices
  */
 #[ApiResource(
-  validationContext: ['groups' => ['device:write']],
+  formats: [
+      'json',
+      'jsonld',
+      'html',
+      'jsonhal',
+      'csv' => 'text/csv',
+  ],
   normalizationContext: ['groups' => ['device:read']],
   denormalizationContext: ['groups' => ['device:write']],
   operations: [
@@ -96,6 +104,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'unique_device_seo_link', columns: ['seo_link'])]
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
+#[ApiFilter(PropertyFilter::class)]
 class Devices
 {
     /**
@@ -110,8 +119,8 @@ class Devices
     /**
      * @var string
      */
-    #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: false)]
-    #[Assert\NotBlank(groups: [ 'device:write' ])]
+    #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: true)]
+    #[Assert\NotBlank]
     #[Groups(['device:read', 'device:write'])]
     private $name;
 

@@ -13,6 +13,7 @@
 .devcontainer
 .vscode
 /coverage
+/dist
 
 ###< symfony/framework-bundle ###
 
@@ -36,6 +37,7 @@ yarn-error.log
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
+.phpunit.cache
 ###< phpunit/phpunit ###
 
 ###> lexik/jwt-authentication-bundle ###
