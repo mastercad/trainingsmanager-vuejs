@@ -12,8 +12,21 @@ jobs:
       - name: install composer dependencies
         run: docker compose exec php-fpm composer install
 
+      - name: validate database schema
+        run: |
+          docker compose exec php-fpm bin/console doctrine:database:create -n --env=test
+          docker compose exec php-fpm bin/console doctrine:schema:create -n --env=test
+          docker compose exec php-fpm bin/console doctrine:migrations:migrate -n --allow-no-migration --env=test
+          docker compose exec php-fpm bin/console doctrine:schema:validate -v -n --env=test
+
       - name: install npm dependencies
         run: npm install
+
+      - name: check lexik bundle configuration
+        run: docker compose exec php-fpm bin/console lexik:jwt:check-config
+
+      - name: generate keypair for token generation in tests
+        run: docker compose exec php-fpm bin/console lexik:jwt:generate-keypair --overwrite -n
 
       - name: run frontend tests
         run: npm test

@@ -47,7 +47,7 @@ class TrainingPlanXExercise
     /**
      * @var Exercises
      */
-    #[ORM\ManyToOne(targetEntity: 'Exercises', inversedBy: 'trainingPlans')]
+    #[ORM\ManyToOne(targetEntity: Exercises::class)]
     #[ORM\JoinColumn(name: 'exercise', referencedColumnName: 'id', nullable: false)]
     #[Groups(['read', 'write'])]
     private $exercise;
@@ -55,7 +55,7 @@ class TrainingPlanXExercise
     /**
      * @var TrainingPlans
      */
-    #[ORM\ManyToOne(targetEntity: 'TrainingPlans', inversedBy: 'trainingPlanExercises')]
+    #[ORM\ManyToOne(targetEntity: TrainingPlans::class, inversedBy: 'trainingPlanExercises')]
     #[ORM\JoinColumn(name: 'training_plan', referencedColumnName: 'id', nullable: false)]
     #[Groups(['read', 'write'])]
     private $trainingPlan;
@@ -63,7 +63,7 @@ class TrainingPlanXExercise
     /**
      * @var Users
      */
-    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\ManyToOne(targetEntity: Users::class)]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['read'])]
     private $creator;
@@ -78,7 +78,7 @@ class TrainingPlanXExercise
     /**
      * @var Users
      */
-    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\ManyToOne(targetEntity: Users::class)]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[Groups(['read'])]
     private $updater;
@@ -93,14 +93,14 @@ class TrainingPlanXExercise
     /**
      * @var Collection|TrainingPlanXExerciseOption[]
      */
-    #[ORM\OneToMany(targetEntity: 'TrainingPlanXExerciseOption', mappedBy: 'trainingPlanXExercise', cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: TrainingPlanXExerciseOption::class, mappedBy: 'trainingPlanXExercise', cascade: ['persist'])]
     #[Groups(['read', 'write'])]
     private $trainingPlanXExerciseOptions;
 
     /**
      * @var Collection|TrainingPlanXDeviceOption[]
      */
-    #[ORM\OneToMany(targetEntity: 'TrainingPlanXDeviceOption', mappedBy: 'trainingPlanXExercise', cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: TrainingPlanXDeviceOption::class, mappedBy: 'trainingPlanXExercise', cascade: ['persist'])]
     #[Groups(['read', 'write'])]
     private $trainingPlanXDeviceOptions;
 

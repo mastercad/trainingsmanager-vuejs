@@ -38,7 +38,7 @@ class TrainingPlanXDeviceOption
     /**
      * @var \DeviceOptions
      */
-    #[ORM\ManyToOne(targetEntity: 'DeviceOptions')]
+    #[ORM\ManyToOne(targetEntity: DeviceOptions::class)]
     #[ORM\JoinColumn(name: 'device_option', referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
     private $deviceOption;
@@ -46,7 +46,7 @@ class TrainingPlanXDeviceOption
     /**
      * @var \TrainingPlanXExercise
      */
-    #[ORM\ManyToOne(targetEntity: 'TrainingPlanXExercise')]
+    #[ORM\ManyToOne(targetEntity: TrainingPlanXExercise::class, inversedBy: "trainingPlanXDeviceOptions")]
     #[ORM\JoinColumn(name: 'training_plan_x_exercise', referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
     private $trainingPlanXExercise;

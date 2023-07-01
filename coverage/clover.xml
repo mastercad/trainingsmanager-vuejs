@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1688196831">
-  <project timestamp="1688196831">
+<coverage generated="1688208055">
+  <project timestamp="1688208055">
     <file name="/application/src/Controller/DeviceImageController.php">
       <class name="App\Controller\DeviceImageController" namespace="global">
         <metrics complexity="8" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="17" coveredelements="0"/>
@@ -1018,9 +1018,49 @@
     </file>
     <file name="/application/src/Entity/TrainingDiaryXDeviceOption.php">
       <class name="App\Entity\TrainingDiaryXDeviceOption" namespace="global">
-        <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        <metrics complexity="16" methods="16" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="0" elements="40" coveredelements="0"/>
       </class>
-      <metrics loc="75" ncloc="48" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      <line num="76" type="method" name="getId" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="78" type="stmt" count="0"/>
+      <line num="86" type="method" name="setId" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="88" type="stmt" count="0"/>
+      <line num="90" type="stmt" count="0"/>
+      <line num="96" type="method" name="getOptionValue" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="98" type="stmt" count="0"/>
+      <line num="106" type="method" name="setOptionValue" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="108" type="stmt" count="0"/>
+      <line num="110" type="stmt" count="0"/>
+      <line num="116" type="method" name="getCreated" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="118" type="stmt" count="0"/>
+      <line num="126" type="method" name="setCreated" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="128" type="stmt" count="0"/>
+      <line num="130" type="stmt" count="0"/>
+      <line num="136" type="method" name="getUpdated" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="138" type="stmt" count="0"/>
+      <line num="146" type="method" name="setUpdated" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="148" type="stmt" count="0"/>
+      <line num="150" type="stmt" count="0"/>
+      <line num="156" type="method" name="getCreator" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="158" type="stmt" count="0"/>
+      <line num="166" type="method" name="setCreator" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="168" type="stmt" count="0"/>
+      <line num="170" type="stmt" count="0"/>
+      <line num="176" type="method" name="getDeviceOption" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="178" type="stmt" count="0"/>
+      <line num="186" type="method" name="setDeviceOption" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="188" type="stmt" count="0"/>
+      <line num="190" type="stmt" count="0"/>
+      <line num="196" type="method" name="getTrainingPlanExercise" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="198" type="stmt" count="0"/>
+      <line num="206" type="method" name="setTrainingPlanExercise" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="208" type="stmt" count="0"/>
+      <line num="210" type="stmt" count="0"/>
+      <line num="216" type="method" name="getUpdater" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="218" type="stmt" count="0"/>
+      <line num="226" type="method" name="setUpdater" visibility="public" complexity="1" crap="2" count="0"/>
+      <line num="228" type="stmt" count="0"/>
+      <line num="230" type="stmt" count="0"/>
+      <metrics loc="233" ncloc="142" classes="1" methods="16" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="0" elements="40" coveredelements="0"/>
     </file>
     <file name="/application/src/Entity/TrainingDiaryXExerciseOption.php">
       <class name="App\Entity\TrainingDiaryXExerciseOption" namespace="global">
@@ -1859,6 +1899,6 @@
       <line num="76" type="stmt" count="0"/>
       <metrics loc="79" ncloc="79" classes="1" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="26" coveredstatements="24" elements="30" coveredelements="27"/>
     </file>
-    <metrics files="56" loc="9185" ncloc="5946" classes="44" methods="479" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="1044" coveredstatements="69" elements="1523" coveredelements="91"/>
+    <metrics files="56" loc="9343" ncloc="6040" classes="45" methods="495" coveredmethods="22" conditionals="0" coveredconditionals="0" statements="1068" coveredstatements="69" elements="1563" coveredelements="91"/>
   </project>
 </coverage>
