@@ -45,8 +45,6 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           gcov: true
-          path: coverage/clover.xml
-          files: coverage/clover.xml
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Make code coverage badge
