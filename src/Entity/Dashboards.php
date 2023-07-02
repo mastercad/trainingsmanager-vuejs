@@ -27,10 +27,10 @@ class Dashboards
     private string $name;
 
     #[ORM\Column(name: 'flag_active', type: 'boolean', nullable: false)]
-    private bool $flagActive = '0';
+    private bool $flagActive = false;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private DateTime|null $updated = null;

@@ -81,7 +81,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private string|null $sessionId = null;
 
     #[ORM\Column(name: 'flag_logged_in', type: 'boolean', nullable: false)]
-    private bool $flagLoggedIn = '0';
+    private bool $flagLoggedIn = false;
 
     #[ORM\Column(name: 'flag_multilogin', type: 'boolean', nullable: true)]
     private bool|null $flagMultilogin = null;

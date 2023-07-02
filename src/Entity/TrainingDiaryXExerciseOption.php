@@ -6,9 +6,6 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use ExerciseOptions;
-use TrainingPlanXExercise;
-use Users;
 
 /**
  * TrainingDiaryXExerciseOption
@@ -31,7 +28,7 @@ class TrainingDiaryXExerciseOption
     private string $optionValue;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private DateTime|null $updated = null;

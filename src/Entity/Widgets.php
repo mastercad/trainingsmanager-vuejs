@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Users;
 
 /**
  * Widgets
@@ -27,10 +26,10 @@ class Widgets
     private string $name;
 
     #[ORM\Column(name: 'editable', type: 'boolean', nullable: false)]
-    private bool $editable = '0';
+    private bool $editable = false;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private DateTime|null $updated = null;

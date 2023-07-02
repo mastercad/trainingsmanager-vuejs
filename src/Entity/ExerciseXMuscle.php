@@ -6,9 +6,6 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Exercises;
-use Muscles;
-use Users;
 
 /**
  * ExerciseXMuscle
@@ -31,7 +28,7 @@ class ExerciseXMuscle
     private int $muscleUse;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private DateTime|null $updated = null;

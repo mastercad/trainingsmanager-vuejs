@@ -27,8 +27,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(),
         new Patch(),
         new Put(),
-        new Delete(),
-    ],
+        new Delete()
+    ]
 )]
 #[ORM\Table(name: 'exercise_options')]
 #[ORM\Index(name: 'exercise_option_creator', columns: ['creator'])]
@@ -55,7 +55,7 @@ class ExerciseOptions
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]

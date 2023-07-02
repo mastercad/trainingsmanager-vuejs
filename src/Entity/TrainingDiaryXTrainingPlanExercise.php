@@ -6,9 +6,6 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use TrainingDiaries;
-use TrainingPlanXExercise;
-use Users;
 
 /**
  * TrainingDiaryXTrainingPlanExercise
@@ -31,7 +28,7 @@ class TrainingDiaryXTrainingPlanExercise
     private string $comment;
 
     #[ORM\Column(name: 'flag_finished', type: 'boolean', nullable: false)]
-    private bool $flagFinished = '0';
+    private bool $flagFinished = false;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private DateTime $created;

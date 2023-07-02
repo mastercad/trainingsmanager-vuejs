@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Dashboards;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Users;
-use Widgets;
 
 /**
  * DashboardXWidget
@@ -34,7 +31,7 @@ class DashboardXWidget
     private int $order;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private DateTime|null $updated = null;

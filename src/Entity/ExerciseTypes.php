@@ -27,8 +27,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(),
         new Patch(),
         new Put(),
-        new Delete(),
-    ],
+        new Delete()
+    ]
 )]
 #[ORM\Table(name: 'exercise_types')]
 #[ORM\Index(name: 'exercise_type_creator', columns: ['creator'])]
@@ -52,16 +52,16 @@ class ExerciseTypes
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private \Users $creator;
+    private Users $creator;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private \Users $updater;
+    private Users $updater;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]

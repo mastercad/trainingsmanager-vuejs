@@ -13,8 +13,6 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Exercises;
-use Users;
 
 /**
  * TrainingDiaries
@@ -48,7 +46,7 @@ class TrainingDiaries
     private string|null $comment = null;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private DateTime|null $updated = null;

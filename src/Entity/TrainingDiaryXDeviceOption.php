@@ -36,7 +36,7 @@ class TrainingDiaryXDeviceOption
     private Users $creator;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]

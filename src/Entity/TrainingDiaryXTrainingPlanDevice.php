@@ -34,7 +34,7 @@ class TrainingDiaryXTrainingPlanDevice
     private string $comment;
 
     #[ORM\Column(name: 'flag_finished', type: 'boolean', nullable: false)]
-    private bool $flagFinished = '0';
+    private bool $flagFinished = false;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     private DateTime $created;

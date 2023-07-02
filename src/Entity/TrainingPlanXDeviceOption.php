@@ -35,26 +35,26 @@ class TrainingPlanXDeviceOption
     #[ORM\ManyToOne(targetEntity: DeviceOptions::class)]
     #[ORM\JoinColumn(name: 'device_option', referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
-    private \DeviceOptions $deviceOption;
+    private DeviceOptions $deviceOption;
 
     #[ORM\ManyToOne(targetEntity: TrainingPlanXExercise::class, inversedBy: 'trainingPlanXDeviceOptions')]
     #[ORM\JoinColumn(name: 'training_plan_x_exercise', referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
-    private \TrainingPlanXExercise $trainingPlanXExercise;
+    private TrainingPlanXExercise $trainingPlanXExercise;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private \Users $creator;
+    private Users $creator;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
-    private DateTime $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private \Users $updater;
+    private Users $updater;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
