@@ -31,7 +31,7 @@ describe('Device.vue', () => {
         },
         store,
         localVue
-    });
+      });
   });
 
   test('Test component is loaded', () => {

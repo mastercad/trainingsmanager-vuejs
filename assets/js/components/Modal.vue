@@ -39,7 +39,7 @@
 
 <script>
 export default {
-  name: 'Modal',
+  name: 'ModalView',
   methods: {
     close() {
       this.$emit('close');

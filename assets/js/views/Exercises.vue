@@ -16,15 +16,16 @@
     <div class="row">
       <div class="col-3">
         <b-list-group>
-          <b-list-group-item href="#"
+          <b-list-group-item
             v-for="currentExercise in exercises"
             :key="currentExercise.id"
-            @contextmenu.prevent.stop="handleClick($event, currentExercise)"
-            @click="loadExercise($event, currentExercise)"
+            href="#"
             class="list-group-item"
             :active="exercise && exercise.id === currentExercise.id"
             unselectable="on"
             onselectstart="return false;"
+            @contextmenu.prevent.stop="handleClick($event, currentExercise)"
+            @click="loadExercise($event, currentExercise)"
           >
             {{ currentExercise.name }}
           </b-list-group-item>
@@ -50,9 +51,9 @@
 
     <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
     <vue-simple-context-menu
+      :id="'exercisesContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'exercisesContextMenu'"
       :options="options"
       @optionClicked="optionClicked"
     />
@@ -170,10 +171,10 @@ export default {
     },
     async deleteExercise(exercise) {
       if (this.isGenericId(exercise.id)) {
-        const result = await this.$store.dispatch("exercises/unregister", exercise.id);
+        await this.$store.dispatch("exercises/unregister", exercise.id);
         this.leftPanelVisibility = false;
       } else {
-        const result = await this.$store.dispatch("exercises/delete", exercise.id);
+        await this.$store.dispatch("exercises/delete", exercise.id);
         this.leftPanelVisibility = false;
       }
     },

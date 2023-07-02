@@ -12,6 +12,7 @@
               v-model="email"
               type="email"
               class="form-control"
+              placeholder="email"
             >
           </div>
           <div class="col-4">
@@ -19,6 +20,7 @@
               v-model="login"
               type="text"
               class="form-control"
+              placeholder="login"
             >
           </div>
           <div class="col-4">
@@ -26,6 +28,7 @@
               v-model="firstName"
               type="text"
               class="form-control"
+              placeholder="First Name"
             >
           </div>
           <div class="col-4">
@@ -33,6 +36,7 @@
               v-model="lastName"
               type="text"
               class="form-control"
+              placeholder="Name"
             >
           </div>
           <div class="col-4">
@@ -40,6 +44,7 @@
               v-model="firstPassword"
               type="password"
               class="form-control"
+              placeholder="Password"
             >
           </div>
           <div class="col-4">
@@ -47,6 +52,7 @@
               v-model="secondPassword"
               type="password"
               class="form-control"
+              placeholder="Repeat Password"
             >
           </div>
           <div class="col-4">
@@ -85,13 +91,8 @@
 </template>
 
 <script>
-import ErrorMessage from "../components/ErrorMessage";
-
 export default {
-  name: "Register",
-  components: {
-    ErrorMessage,
-  },
+  name: "RegisterView",
   data() {
     return {
       email: "",

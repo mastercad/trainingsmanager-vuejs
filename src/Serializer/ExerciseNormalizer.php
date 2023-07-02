@@ -1,42 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Serializer;
 
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
-use App\Service\FileUploader;
-use App\Entity\Exercises;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-final class ExerciseNormalizer implements ContextAwareNormalizerInterface, NormalizerInterface, NormalizerAwareInterface
+final class ExerciseNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
     use NormalizerAwareTrait;
 
-    private FileUploader $fileUploader;
     private const ALREADY_CALLED = 'EXERCISES_OBJECT_NORMALIZER_ALREADY_CALLED';
 
-    public function __construct(FileUploader $fileUploader) {
-        $this->fileUploader = $fileUploader;
-    }
-
-    public function getSupportedTypes(?string $format): array
+    /** @return mixed[] */
+    public function getSupportedTypes(string|null $format): array
     {
-      return [];
+        return [];
     }
 
-    public function supportsNormalization($data, ?string $format = null, array $context = []): bool {
+    /** @param mixed[] $context */
+    public function supportsNormalization(mixed $data, string|null $format = null, array $context = []): bool
+    {
 //      return !isset($context[self::ALREADY_CALLED]) && $data instanceof Exercises;
-      return !isset($context[self::ALREADY_CALLED]);
+        return ! isset($context[self::ALREADY_CALLED]);
     }
 
-    public function normalize($object, ?string $format = null, array $context = []) {
+    /** @param mixed[] $context */
+    public function normalize(mixed $object, string|null $format = null, array $context = []): mixed
+    {
         $context[self::ALREADY_CALLED] = true;
 
 //        $object->setPreviewPicturePath($this->fileUploader->retrieveUrl($object->getPreviewPicturePath()) ?? '');
 
-        $content = $this->normalizer->normalize($object, $format, $context);
-
-        return $content;
+        return $this->normalizer->normalize($object, $format, $context);
     }
 }

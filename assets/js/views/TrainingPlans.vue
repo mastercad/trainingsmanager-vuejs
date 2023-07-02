@@ -61,16 +61,16 @@
           :key="trainingPlan.id"
           :ref="'trainingPlanPanel'"
 
-          :trainingPlan="trainingPlan"
+          :training-plan="trainingPlan"
         />
       </div>
     </div>
     <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
 
     <vue-simple-context-menu
+      :id="'trainingPlansContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'trainingPlansContextMenu'"
       :options="options"
       @optionClicked="optionClicked"
     />
@@ -208,10 +208,10 @@ export default {
     },
     async deleteMuscle(trainingPlan) {
       if (this.isGenericId(trainingPlan.id)) {
-        const result = await this.$store.dispatch("trainingPlans/unregister", trainingPlan.id);
+        await this.$store.dispatch("trainingPlans/unregister", trainingPlan.id);
         this.leftPanelVisibility = false;
       } else {
-        const result = await this.$store.dispatch("trainingPlans/delete", trainingPlan.id);
+        await this.$store.dispatch("trainingPlans/delete", trainingPlan.id);
         this.leftPanelVisibility = false;
       }
     },

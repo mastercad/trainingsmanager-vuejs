@@ -1,13 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiFilter;
-use App\Controller\DeviceImageController;
-use App\Controller\DeviceImageUploadController;
-use App\Controller\DeviceImageDeleteController;
-use App\Controller\UploadImageDeleteController;
-use App\Entity\DeviceXDeviceOption;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -16,85 +13,88 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Serializer\Filter\PropertyFilter;
+use App\Controller\DeviceImageController;
+use App\Controller\DeviceImageDeleteController;
+use App\Controller\DeviceImageUploadController;
+use App\Controller\UploadImageDeleteController;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\Collection;
-
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Devices
  */
 #[ApiResource(
-  formats: [
-      'json',
-      'jsonld',
-      'html',
-      'jsonhal',
-      'csv' => 'text/csv',
-  ],
-  normalizationContext: ['groups' => ['device:read']],
-  denormalizationContext: ['groups' => ['device:write']],
-  operations: [
-    new Get(),
-    new Get(
-      uriTemplate: "/devices/{id}/images",
-      requirements: ['id' => '\d+'],
-      controller: DeviceImageController::class,
-      read: false,
-      openapiContext: [
-        'parameters' => [
-          [
-            "name" => "id",
-            "in" => "path",
-            "description" => "id of device",
-            "type" => "integer",
-            "required" => true,
-            "example"=> 1,
-          ],
-        ],
-      ],
-    ),
-    new GetCollection(),
-    new Post(),
-    new Post(
-      uriTemplate: "/devices/images",
-      controller: DeviceImageUploadController::class,
-      deserialize: false,
-      openapiContext: [
-        "requestBody" => [
-          "description" => "File upload to an existing resource (device)",
-          "required" => true,
-          "content" => [
-            "multipart/form-data" => [
-              "schema" => [
-                "type" => "object",
-                "properties" => [
-                  "file" => [
-                    "type" => "string",
-                    "format" => "binary",
-                    "description" => "image path name for device"
-                  ]
+    formats: [
+        'json',
+        'jsonld',
+        'html',
+        'jsonhal'
+    ],
+    normalizationContext: ['groups' => ['device:read']],
+    denormalizationContext: ['groups' => ['device:write']],
+    operations: [
+        new Get(),
+        new Get(
+            uriTemplate: '/api/devices/{id}/images',
+            requirements: ['id' => '\d+'],
+            controller: DeviceImageController::class,
+            read: false,
+            openapiContext: [
+                'parameters' => [
+                    [
+                        'name' => 'id',
+                        'in' => 'path',
+                        'description' => 'id of device',
+                        'type' => 'integer',
+                        'required' => true,
+                        'example' => 1
+                    ]
                 ]
-              ]
             ]
-          ]
-        ]
-      ]
-    ),
-    new Patch(),
-    new Put(),
-    new Delete(),
-    new Delete(
-      uriTemplate: "/uploads/image/{fileName}",
-      controller: UploadImageDeleteController::class
-    ),
-    new Delete(
-      uriTemplate: "/devices/{id}/image/{fileName}",
-      controller: DeviceImageDeleteController::class
-    )
-  ]
+        ),
+        new GetCollection(),
+        new Post(),
+        new Post(
+            uriTemplate: '/api/devices/images',
+            controller: DeviceImageUploadController::class,
+            deserialize: false,
+            openapiContext: [
+                'requestBody' => [
+                    'description' => 'File upload to an existing resource (device)',
+                    'required' => true,
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                        'description' => 'image path name for device',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ),
+        new Patch(),
+        new Put(),
+        new Delete(),
+        new Delete(
+            uriTemplate: '/api/uploads/image/{fileName}',
+            controller: UploadImageDeleteController::class,
+        ),
+        new Delete(
+            uriTemplate: '/api/devices/{id}/image/{fileName}',
+            controller: DeviceImageDeleteController::class,
+        ),
+    ],
 )]
 #[ORM\Table(name: 'devices')]
 #[ORM\Index(name: 'device_id', columns: ['id'])]
@@ -107,80 +107,52 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiFilter(PropertyFilter::class)]
 class Devices
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[Groups(['device:read', 'device:write'])]
-    private $id;
+    private int $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: true)]
     #[Assert\NotBlank]
     #[Groups(['device:read', 'device:write'])]
-    private $name;
+    private string $name;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'seo_link', type: 'string', length: 250, nullable: false)]
     #[Groups(['device:read', 'device:write'])]
-    private $seoLink;
+    private string $seoLink;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'preview_picture_path', type: 'string', length: 250, nullable: false)]
     #[Groups(['device:read', 'device:write'])]
-    private $previewPicturePath;
+    private string $previewPicturePath;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['device:read'])]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['device:read'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[Groups(['device:read'])]
-    private $updater;
+    private Users $updater;
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['device:read'])]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var Collection|DeviceOption[]
-     */
+    /** @var Collection|DeviceOption[] */
     #[ORM\OneToMany(targetEntity: DeviceXDeviceOption::class, mappedBy: 'device', cascade: ['ALL'], orphanRemoval: true)]
     #[Groups(['device:read', 'device:write'])]
-    private $deviceXDeviceOptions;
+    private Collection $deviceXDeviceOptions;
 
-    /**
-     * @var Collection|DeviceOption[]
-     */
+    /** @var Collection|DeviceOption[] */
     #[ORM\OneToMany(targetEntity: DeviceXDeviceGroup::class, mappedBy: 'device', cascade: ['ALL'], orphanRemoval: true)]
     #[Groups(['device:read', 'device:write'])]
-    private $deviceXDeviceGroups;
+    private Collection $deviceXDeviceGroups;
 
     public function __construct()
     {
@@ -188,29 +160,23 @@ class Devices
         $this->deviceXDeviceGroups = new ArrayCollection();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }
 
     /**
      * Get the value of id
-     *
-     * @return  int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * Set the value of id
-     *
-     * @param  int  $id
-     *
-     * @return  self
      */
-    public function setId(int $id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -219,22 +185,16 @@ class Devices
 
     /**
      * Get the value of name
-     *
-     * @return  string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
      * Set the value of name
-     *
-     * @param  string  $name
-     *
-     * @return  self
      */
-    public function setName(string $name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -243,22 +203,16 @@ class Devices
 
     /**
      * Get the value of seoLink
-     *
-     * @return  string
      */
-    public function getSeoLink()
+    public function getSeoLink(): string
     {
         return $this->seoLink;
     }
 
     /**
      * Set the value of seoLink
-     *
-     * @param  string  $seoLink
-     *
-     * @return  self
      */
-    public function setSeoLink(string $seoLink)
+    public function setSeoLink(string $seoLink): self
     {
         $this->seoLink = $seoLink;
 
@@ -267,22 +221,16 @@ class Devices
 
     /**
      * Get the value of previewPicturePath
-     *
-     * @return  string
      */
-    public function getPreviewPicturePath()
+    public function getPreviewPicturePath(): string
     {
         return $this->previewPicturePath;
     }
 
     /**
      * Set the value of previewPicturePath
-     *
-     * @param  string  $previewPicturePath
-     *
-     * @return  self
      */
-    public function setPreviewPicturePath(string $previewPicturePath)
+    public function setPreviewPicturePath(string $previewPicturePath): self
     {
         $this->previewPicturePath = $previewPicturePath;
 
@@ -291,22 +239,16 @@ class Devices
 
     /**
      * Get the value of created
-     *
-     * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created
-     *
-     * @param \DateTime  $created
-     *
-     * @return  self
      */
-    public function setCreated(\DateTime $created)
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -315,22 +257,16 @@ class Devices
 
     /**
      * Get the value of updated
-     *
-     * @return \DateTime|null
      */
-    public function getUpdated()
+    public function getUpdated(): DateTime|null
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated
-     *
-     * @param \DateTime|null  $updated
-     *
-     * @return self
      */
-    public function setUpdated($updated)
+    public function setUpdated(DateTime|null $updated): self
     {
         $this->updated = $updated;
 
@@ -339,22 +275,16 @@ class Devices
 
     /**
      * Get the value of creator
-     *
-     * @return Users
      */
-    public function getCreator()
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator
-     *
-     * @param Users $creator
-     *
-     * @return self
      */
-    public function setCreator(Users $creator)
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -363,34 +293,29 @@ class Devices
 
     /**
      * Get the value of updater
-     *
-     * @return Users
      */
-    public function getUpdater()
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater
-     *
-     * @param Users $updater
-     *
-     * @return  self
      */
-    public function setUpdater(Users $updater)
+    public function setUpdater(Users $updater): self
     {
         $this->updater = $updater;
 
         return $this;
     }
 
-    public function getDeviceXDeviceOptions()
+    /** @return DeviceXDeviceOption[] */
+    public function getDeviceXDeviceOptions(): Collection
     {
         return $this->deviceXDeviceOptions;
     }
 
-    public function addDeviceXDeviceOption(DeviceXDeviceOption $deviceXDeviceOption)
+    public function addDeviceXDeviceOption(DeviceXDeviceOption $deviceXDeviceOption): void
     {
         if ($this->deviceXDeviceOptions->contains($deviceXDeviceOption)) {
             return;
@@ -400,12 +325,9 @@ class Devices
         $deviceXDeviceOption->setDevice($this);
     }
 
-    /**
-     * @param DeviceXDeviceOption $deviceXDeviceOption
-     */
-    public function removeDeviceXDeviceOption(DeviceXDeviceOption $deviceXDeviceOption)
+    public function removeDeviceXDeviceOption(DeviceXDeviceOption $deviceXDeviceOption): void
     {
-        if (!$this->deviceXDeviceOptions->contains($deviceXDeviceOption)) {
+        if (! $this->deviceXDeviceOptions->contains($deviceXDeviceOption)) {
             return;
         }
 
@@ -413,12 +335,13 @@ class Devices
         $deviceXDeviceOption->setDevice(null);
     }
 
-    public function getDeviceXDeviceGroups()
+    /** @return DeviceXDeviceGroup[] */
+    public function getDeviceXDeviceGroups(): Collection
     {
         return $this->deviceXDeviceGroups;
     }
 
-    public function addDeviceXDeviceGroup(DeviceXDeviceGroup $deviceXDeviceGroup)
+    public function addDeviceXDeviceGroup(DeviceXDeviceGroup $deviceXDeviceGroup): void
     {
         if ($this->deviceXDeviceGroups->contains($deviceXDeviceGroup)) {
             return;
@@ -428,12 +351,10 @@ class Devices
         $deviceXDeviceGroup->setDevice($this);
     }
 
-    /**
-     * @param DeviceXDeviceGroup $deviceXDeviceOption
-     */
-    public function removeDeviceXDeviceGroup(DeviceXDeviceGroup $deviceXDeviceGroup)
+    /** @param DeviceXDeviceGroup $deviceXDeviceOption */
+    public function removeDeviceXDeviceGroup(DeviceXDeviceGroup $deviceXDeviceGroup): void
     {
-        if (!$this->deviceXDeviceGroups->contains($deviceXDeviceGroup)) {
+        if (! $this->deviceXDeviceGroups->contains($deviceXDeviceGroup)) {
             return;
         }
 

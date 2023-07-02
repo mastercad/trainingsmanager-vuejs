@@ -1,7 +1,9 @@
 <template>
   <b-container fluid>
-
-    <b-card bg-variant="light" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="3"
         label="Muscle Group"
@@ -17,12 +19,12 @@
           <b-col sm="9">
             <b-form-input
               id="muscle_group_name"
-              v-model="muscleGroup.name"
+              v-model="origMuscleGroup.name"
               type="text"
               placeholder="Muscle Group Name"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -33,12 +35,12 @@
           <b-col sm="9">
             <b-form-input
               id="muscle_group_seo_link"
-              v-model="muscleGroup.seoLink"
+              v-model="origMuscleGroup.seoLink"
               type="text"
               placeholder="Muscle Group Seo Link"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -48,24 +50,30 @@
           </b-col>
           <b-col sm="9">
             <verte
+              v-model="origMuscleGroup.color"
               :picker="square"
               model="hex"
-              value="'muscleGroup.color'"
-              v-model="muscleGroup.color"
-              :style="'display: block; backgroundColor:'+muscleGroup.color"
+              value="'origMuscleGroup.color'"
+              :style="'display: block; backgroundColor:'+origMuscleGroup.color"
             >
-              <span></span>
+              <span />
             </verte>
           </b-col>
         </b-row>
-
       </b-form-group>
     </b-card>
 
-    <b-card-group deck bg-variant="light" class="mt-2">
-      <b-card v-if="isValidId(muscleGroup.id)" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card-group
+      deck
+      bg-variant="light"
+      class="mt-2"
+    >
+      <b-card
+        v-if="isValidId(origMuscleGroup.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          :disabled="muscleGroup.name.length === 0"
+          :disabled="origMuscleGroup.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateMuscleGroup()"
@@ -74,9 +82,12 @@
         </button>
       </b-card>
 
-      <b-card v-if="isGenericId(muscleGroup.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-card
+        v-if="isGenericId(origMuscleGroup.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          :disabled="muscleGroup.name.length === 0"
+          :disabled="origMuscleGroup.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="createMuscleGroup()"
@@ -95,7 +106,6 @@
         </button>
       </b-card>
     </b-card-group>
-
   </b-container>
 </template>
 
@@ -108,6 +118,7 @@ import Verte from 'verte';
 import 'verte/dist/verte.css';
 
 export default {
+  name: 'MUscleGroupEditView',
   components: {
     Verte
   },
@@ -119,7 +130,8 @@ export default {
   },
   data() {
     return {
-      currentStatus: null
+      currentStatus: null,
+      origMuscleGroup: this.origMuscleGroup
     }
   },
   computed: {
@@ -141,27 +153,27 @@ export default {
   },
   methods: {
     async createMuscleGroup() {
-      const result = await this.$store.dispatch("muscleGroups/create",
+      await this.$store.dispatch("muscleGroups/create",
         {
-          id: this.muscleGroup.id,
-          name: this.muscleGroup.name,
-          seoLink: this.muscleGroup.seoLink,
-          color: this.muscleGroup.color
+          id: this.origMuscleGroup.id,
+          name: this.origMuscleGroup.name,
+          seoLink: this.origMuscleGroup.seoLink,
+          color: this.origMuscleGroup.color
         });
     },
     async updateMuscleGroup() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "muscleGroups/update",
         {
-          id: this.muscleGroup.id,
-          name: this.muscleGroup.name,
-          seoLink: this.muscleGroup.seoLink,
-          color: this.muscleGroup.color
+          id: this.origMuscleGroup.id,
+          name: this.origMuscleGroup.name,
+          seoLink: this.origMuscleGroup.seoLink,
+          color: this.origMuscleGroup.color
         }
       );
     },
     async deleteMuscleGroup() {
-      const result = await this.$store.dispatch("muscleGroups/delete", this.id);
+      await this.$store.dispatch("muscleGroups/delete", this.id);
     },
     reset() {
       // reset form to initial state

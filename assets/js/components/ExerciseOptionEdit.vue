@@ -1,7 +1,9 @@
 <template>
   <b-container fluid>
-
-    <b-card bg-variant="light" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="3"
         label="Exercise Option"
@@ -17,12 +19,12 @@
           <b-col sm="9">
             <b-form-input
               id="exercise_option_name"
-              v-model="exerciseOption.name"
+              v-model="origExerciseOption.name"
               type="text"
               placeholder="Exercise Option Name"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -33,22 +35,29 @@
           <b-col sm="9">
             <b-form-input
               id="exercise_option_default_value"
-              v-model="exerciseOption.defaultValue"
+              v-model="origExerciseOption.defaultValue"
               type="text"
               placeholder="Exercise Option Default Value"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
       </b-form-group>
     </b-card>
 
-    <b-card-group deck bg-variant="light" class="mt-2">
-      <b-card v-if="isValidId(exerciseOption.id)" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card-group
+      deck
+      bg-variant="light"
+      class="mt-2"
+    >
+      <b-card
+        v-if="isValidId(origExerciseOption.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          v-if="isValidId(exerciseOption.id)"
-          :disabled="exerciseOption.name.length === 0"
+          v-if="isValidId(origExerciseOption.id)"
+          :disabled="origExerciseOption.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateExerciseOption()"
@@ -57,9 +66,12 @@
         </button>
       </b-card>
 
-      <b-car v-if="isGenericId(exerciseOption.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-car
+        v-if="isGenericId(origExerciseOption.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          :disabled="exerciseOption.name.length === 0"
+          :disabled="origExerciseOption.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="createExerciseOption()"
@@ -78,7 +90,6 @@
         </button>
       </b-card>
     </b-card-group>
-
   </b-container>
 </template>
 
@@ -87,6 +98,7 @@
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+  name: 'ExerciseOptionEditView',
   props: {
     exerciseOption: {
       type: Object,
@@ -95,7 +107,8 @@ export default {
   },
   data() {
     return {
-      currentStatus: null
+      currentStatus: null,
+      origExerciseOption: this.exerciseOption
     }
   },
   computed: {
@@ -117,26 +130,26 @@ export default {
   },
   methods: {
     async createExerciseOption() {
-      const result = await this.$store.dispatch("exerciseOptions/create",
+      await this.$store.dispatch("exerciseOptions/create",
         {
-          id: this.exerciseOption.id,
-          name: this.exerciseOption.name,
-          defaultValue: this.exerciseOption.defaultValue
+          id: this.origExerciseOption.id,
+          name: this.origExerciseOption.name,
+          defaultValue: this.origExerciseOption.defaultValue
         }
       );
     },
     async updateExerciseOption() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "exerciseOptions/update",
         {
-          id: this.exerciseOption.id,
-          name: this.exerciseOption.name,
-          defaultValue: this.exerciseOption.defaultValue
+          id: this.origExerciseOption.id,
+          name: this.origExerciseOption.name,
+          defaultValue: this.origExerciseOption.defaultValue
         }
       );
     },
     async deleteExerciseOption() {
-      const result = await this.$store.dispatch("exerciseOptions/delete", this.id);
+      await this.$store.dispatch("exerciseOptions/delete", this.id);
     },
     reset() {
       // reset form to initial state

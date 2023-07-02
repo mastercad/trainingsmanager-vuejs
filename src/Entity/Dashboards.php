@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,58 +18,32 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class Dashboards
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private $id;
+    private int $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'name', type: 'string', length: 50, nullable: false)]
-    private $name;
+    private string $name;
 
-    /**
-     * @var bool
-     */
     #[ORM\Column(name: 'flag_active', type: 'boolean', nullable: false)]
-    private $flagActive = '0';
+    private bool $flagActive = '0';
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var Users
-     */
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var Users
-     */
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $updater;
+    private Users $updater;
 
-    /**
-     * @var Users
-     */
     #[ORM\JoinColumn(name: 'user', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $user;
-
-
+    private Users $user;
 }

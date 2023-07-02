@@ -15,11 +15,11 @@ final class ContactControllerTest extends ApiTestCase
 
     public function setUp(): void
     {
-      $client = self::createClient();
-      $container = self::getContainer();
+        $client = self::createClient();
+        $container = self::getContainer();
 
-      $this->apiHelper = $container->get(ApiHelper::class);
-      $this->apiHelper->init($this, $container, $client);
+        $this->apiHelper = $container->get(ApiHelper::class);
+        $this->apiHelper->init($this, $container, $client);
     }
 
     public function testCreateContact(): void

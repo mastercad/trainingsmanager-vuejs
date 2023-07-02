@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Exercises;
+use Muscles;
+use Users;
 
 /**
  * ExerciseXMuscle
@@ -16,59 +22,33 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class ExerciseXMuscle
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private $id;
+    private int $id;
 
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'muscle_use', type: 'integer', nullable: false, options: ['comment' => 'Beanspruchung des Muskels'])]
-    private $muscleUse;
+    private int $muscleUse;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var \Users
-     */
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var \Exercises
-     */
     #[ORM\JoinColumn(name: 'exercise', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Exercises')]
-    private $exercise;
+    private Exercises $exercise;
 
-    /**
-     * @var \Muscles
-     */
     #[ORM\JoinColumn(name: 'muscle', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Muscles')]
-    private $muscle;
+    private Muscles $muscle;
 
-    /**
-     * @var \Users
-     */
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $updater;
-
-
+    private Users $updater;
 }

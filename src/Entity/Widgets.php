@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Users;
 
 /**
  * Widgets
@@ -14,51 +18,28 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class Widgets
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private $id;
+    private int $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'name', type: 'string', length: 50, nullable: false)]
-    private $name;
+    private string $name;
 
-    /**
-     * @var bool
-     */
     #[ORM\Column(name: 'editable', type: 'boolean', nullable: false)]
-    private $editable = '0';
+    private bool $editable = '0';
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var \Users
-     */
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var \Users
-     */
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $updater;
-
-
+    private Users $updater;
 }

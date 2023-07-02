@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(formats: ['json'])]
 /**
  * UserState
  */
+#[ApiResource(formats: ['json'])]
 #[ORM\Table(name: 'user_state')]
 #[ORM\Index(name: 'IDX_user_state_id', columns: ['id'])]
 #[ORM\Index(name: 'IDX_user_state_creator', columns: ['creator'])]
@@ -17,64 +20,40 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\HasLifecycleCallbacks]
 class UserState
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private $id;
+    private int $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: false)]
-    private $name;
+    private string $name;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var Users
-     */
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var Users
-     */
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $updater;
+    private Users $updater;
 
     /**
      * Get the value of id
-     *
-     * @return  int
-     */ 
-    public function getId()
+     */
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * Set the value of id
-     *
-     * @param  int  $id
-     *
-     * @return  self
-     */ 
-    public function setId(int $id)
+     */
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -83,22 +62,16 @@ class UserState
 
     /**
      * Get the value of name
-     *
-     * @return  string
-     */ 
-    public function getName()
+     */
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
      * Set the value of name
-     *
-     * @param  string  $name
-     *
-     * @return  self
-     */ 
-    public function setName(string $name)
+     */
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -107,22 +80,16 @@ class UserState
 
     /**
      * Get the value of created
-     *
-     * @return  \DateTime
-     */ 
-    public function getCreated()
+     */
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created
-     *
-     * @param  \DateTime  $created
-     *
-     * @return  self
-     */ 
-    public function setCreated(\DateTime $created)
+     */
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -131,22 +98,16 @@ class UserState
 
     /**
      * Get the value of updated
-     *
-     * @return  \DateTime|null
-     */ 
-    public function getUpdated()
+     */
+    public function getUpdated(): DateTime|null
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated
-     *
-     * @param  \DateTime|null  $updated
-     *
-     * @return  self
-     */ 
-    public function setUpdated($updated)
+     */
+    public function setUpdated(DateTime|null $updated): self
     {
         $this->updated = $updated;
 
@@ -155,22 +116,16 @@ class UserState
 
     /**
      * Get the value of creator
-     *
-     * @return  Users
-     */ 
-    public function getCreator()
+     */
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator
-     *
-     * @param  Users  $creator
-     *
-     * @return  self
-     */ 
-    public function setCreator(Users $creator)
+     */
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -179,22 +134,16 @@ class UserState
 
     /**
      * Get the value of updater
-     *
-     * @return  Users
-     */ 
-    public function getUpdater()
+     */
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater
-     *
-     * @param  Users  $updater
-     *
-     * @return  self
-     */ 
-    public function setUpdater(Users $updater)
+     */
+    public function setUpdater(Users $updater): self
     {
         $this->updater = $updater;
 

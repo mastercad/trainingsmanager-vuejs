@@ -1,7 +1,9 @@
 <template>
   <b-container fluid>
-
-    <b-card bg-variant="light" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="3"
         label="Device"
@@ -17,12 +19,12 @@
           <b-col sm="9">
             <b-form-input
               id="device_name"
-              v-model="device.name"
+              v-model="origDevice.name"
               type="text"
               placeholder="Device Name"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -33,11 +35,11 @@
           <b-col sm="9">
             <b-form-input
               id="device_seo_link"
-              v-model="device.seoLink"
+              v-model="origDevice.seoLink"
               type="text"
               placeholder="Device Seo Link (automatically generated)"
               class="form-control"
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -48,17 +50,20 @@
           <b-col sm="9">
             <b-form-input
               id="device_preview_picture_path"
-              v-model="device.previewPicturePath"
+              v-model="origDevice.previewPicturePath"
               type="text"
               placeholder="Device picture preview path"
               class="form-control"
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
       </b-form-group>
     </b-card>
 
-    <b-card bg-variant="light" class="mt-2 shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="mt-2 shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="6"
         label="Device Group"
@@ -73,12 +78,12 @@
             split-variant="outline-primary"
             variant="primary"
             class="m-md-2"
-            :text="undefined !== device.deviceXDeviceGroups && device.deviceXDeviceGroups[0] && device.deviceXDeviceGroups[0].device ? device.deviceXDeviceGroups[0].deviceGroup.name : 'None'"
+            :text="undefined !== origDevice.deviceXDeviceGroups && origDevice.deviceXDeviceGroups[0] && origDevice.deviceXDeviceGroups[0].device ? origDevice.deviceXDeviceGroups[0].deviceGroup.name : 'None'"
           >
             <b-dropdown-item
               :id="'device_group_null'"
-              v-bind:key="'device_group_null'"
-              :active="undefined === device.deviceXDeviceGroups || undefined === device.deviceXDeviceGroups[0]"
+              :key="'device_group_null'"
+              :active="undefined === origDevice.deviceXDeviceGroups || undefined === origDevice.deviceXDeviceGroups[0]"
               @click="saveDeviceGroupSelection(null)"
             >
               None
@@ -87,8 +92,8 @@
             <b-dropdown-item
               v-for="possibleDeviceGroup in deviceGroups"
               :id="'device_group_'+possibleDeviceGroup.id"
-              v-bind:key="'device_group_'+possibleDeviceGroup.id"
-              :active="undefined !== device.deviceXDeviceGroups && device.deviceXDeviceGroups[0] && device.deviceXDeviceGroups[0].device && device.deviceXDeviceGroups[0].deviceGroup.id == possibleDeviceGroup.id"
+              :key="'device_group_'+possibleDeviceGroup.id"
+              :active="undefined !== origDevice.deviceXDeviceGroups && origDevice.deviceXDeviceGroups[0] && origDevice.deviceXDeviceGroups[0].device && origDevice.deviceXDeviceGroups[0].deviceGroup.id == possibleDeviceGroup.id"
               @click="saveDeviceGroupSelection(possibleDeviceGroup)"
             >
               {{ possibleDeviceGroup.name }}
@@ -101,13 +106,15 @@
     <options-for-edit
       type="device"
       :possible-options="possibleDeviceOptions"
-      :current-options="device.deviceXDeviceOptions"
-      :identifier="device.id"
+      :current-options="origDevice.deviceXDeviceOptions"
+      :identifier="origDevice.id"
       description="Possible Device Options for this Device"
-    >
-    </options-for-edit>
+    />
 
-    <b-card bg-variant="light" class="mt-2 shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="mt-2 shadow p-2 mb-3 bg-white rounded"
+    >
       <form
         enctype="multipart/form-data"
         novalidate
@@ -133,41 +140,42 @@
       </form>
     </b-card>
 
-    <b-card-group deck
-      bg-variant="light"
+    <b-card-group
       v-if="deviceImages && 0 < deviceImages.length"
       id="previews"
+      deck
+      bg-variant="light"
       class="mt-2"
     >
       <b-card
-        no-body
         v-for="(image, key) in deviceImages"
         :key="key"
+        no-body
         :img-src="image"
         img-alt="Image"
         img-top
-        v-bind:class="{ previewActive: previewPictureKey == key || extractFileName(image) === device.previewPicturePath }"
+        :class="{ previewActive: previewPictureKey == key || extractFileName(image) === origDevice.previewPicturePath }"
         @click="setImageAsPreview(key)"
       >
-          <b-button
-            class="mt-auto"
-            variant="primary"
-            @click="deleteDeviceImage(key)"
-          >
-            Delete
-          </b-button>
+        <b-button
+          class="mt-auto"
+          variant="primary"
+          @click="deleteDeviceImage(key)"
+        >
+          Delete
+        </b-button>
       </b-card>
     </b-card-group>
 
-    <b-card bg-variant="light"
-      class="mt-2 shadow p-2 mb-3 bg-white rounded"
+    <b-card
       v-if="deviceImages && 0 < deviceImages.length"
       id="previews"
+      bg-variant="light"
+      class="mt-2 shadow p-2 mb-3 bg-white rounded"
     >
       <div
-        v-for="(image, key) in deviceImages"
-        v-if="isImagesLoading === false && extractFileName(image) !== device.previewPicturePath"
-        :key="key"
+        v-for="(image, key) in cleanedDeviceImages"
+        :key="'image_'+key"
         class="col-3"
       >
         <img
@@ -189,11 +197,18 @@
       >
     </b-card>
 
-    <b-card-group deck bg-variant="light" class="mt-2">
-      <b-card v-if="isValidId(device.id)" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card-group
+      deck
+      bg-variant="light"
+      class="mt-2"
+    >
+      <b-card
+        v-if="isValidId(origDevice.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
           id="button_save"
-          :disabled="device.name.length === 0"
+          :disabled="origDevice.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateDevice()"
@@ -202,10 +217,13 @@
         </button>
       </b-card>
 
-      <b-card v-if="isGenericId(device.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-card
+        v-if="isGenericId(origDevice.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
           id="button_save"
-          :disabled="device.name.length === 0"
+          :disabled="origDevice.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="createDevice()"
@@ -214,7 +232,10 @@
         </button>
       </b-card>
 
-      <b-card v-if="isValidId(device.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-card
+        v-if="isValidId(origDevice.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
           id="button_delete"
           type="button"
@@ -224,9 +245,7 @@
           Delete
         </button>
       </b-card>
-
     </b-card-group>
-
   </b-container>
 </template>
 
@@ -237,6 +256,7 @@ import OptionsForEdit from './OptionsForEdit.vue';
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+  name: "DeviceEditView",
   components: {
     OptionsForEdit
   },
@@ -258,7 +278,8 @@ export default {
       uploadFieldName: 'deviceImage',
       fileCount: 0,
       currentSelectedDeviceGroups: [],
-      previewPictureKey: null
+      previewPictureKey: null,
+      origDevice: this.device
     }
   },
   computed: {
@@ -282,6 +303,21 @@ export default {
     },
     deviceGroups() {
       return this.$store.getters["deviceGroups/deviceGroups"];
+    },
+    cleanedDeviceImages() {
+      if(this.isImagesLoading) {
+        return [];
+      }
+
+      let cleanedDeviceImages = [];
+      for(let deviceImagePosition in this.deviceImages) {
+        let deviceImage = this.deviceImages[deviceImagePosition];
+        if (this.extractFileName(deviceImage) !== this.device.previewPicturePath) {
+          cleanedDeviceImages.push(deviceImage);
+        }
+      }
+
+      return cleanedDeviceImages;
     }
   },
   created() {
@@ -293,32 +329,32 @@ export default {
   },
   methods: {
     async createDevice() {
-      const result = await this.$store.dispatch("devices/create",
+      await this.$store.dispatch("devices/create",
         {
-          id: this.device.id,
-          name: this.device.name,
-          seoLink: this.device.seoLink,
-          previewPicturePath: this.device.previewPicturePath,
-          deviceXDeviceOptions: this.device.deviceXDeviceOptions,
+          id: this.origDevice.id,
+          name: this.origDevice.name,
+          seoLink: this.origDevice.seoLink,
+          previewPicturePath: this.origDevice.previewPicturePath,
+          deviceXDeviceOptions: this.origDevice.deviceXDeviceOptions,
           deviceXDeviceGroups: this.currentSelectedDeviceGroups
         }
       );
     },
     async updateDevice() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "devices/update",
         {
-          id: this.device.id,
-          name: this.device.name,
-          seoLink: this.device.seoLink,
-          previewPicturePath: this.device.previewPicturePath,
+          id: this.origDevice.id,
+          name: this.origDevice.name,
+          seoLink: this.origDevice.seoLink,
+          previewPicturePath: this.origDevice.previewPicturePath,
           deviceXDeviceOptions: this.device.deviceXDeviceOptions,
           deviceXDeviceGroups: this.currentSelectedDeviceGroups
         }
       );
     },
     async deleteDevice() {
-      const result = await this.$store.dispatch("devices/delete", this.device.id);
+      await this.$store.dispatch("devices/delete", this.device.id);
     },
     async deleteDeviceImage(key) {
       let imagePath = this.deviceImages[key];
@@ -336,7 +372,7 @@ export default {
       }
     },
     setImageAsPreview(key) {
-      this.device.previewPicturePath = this.extractFileName(this.deviceImages[key]);
+      this.origDevice.previewPicturePath = this.extractFileName(this.deviceImages[key]);
       this.previewPictureKey = key;
     },
     reset() {
@@ -352,7 +388,7 @@ export default {
 
       upload(formData)
         .then(function() {
-          me.$store.dispatch("devices/loadImages", me.id);
+          me.$store.dispatch("devices/loadImages", me.origDevice.id);
           me.currentStatus = STATUS_SUCCESS;
         })
         .catch(err => {
@@ -402,8 +438,8 @@ export default {
         'deviceGroup': deviceGroup
       };
 
-      if (this.isValidId(this.device.id)) {
-        deviceXDeviceGroup['device'] = '/api/devices/'+this.device.id
+      if (this.isValidId(this.origDevice.id)) {
+        deviceXDeviceGroup['device'] = '/api/devices/'+this.origDevice.id
       }
 
       this.currentSelectedDeviceGroups.push(deviceXDeviceGroup);

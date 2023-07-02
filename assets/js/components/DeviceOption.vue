@@ -2,12 +2,12 @@
   <div class="w-100">
     <div class="row">
       <div class="col-md-12">
-        <h1>{{ deviceOption.name }}</h1>
+        <h1>{{ origDeviceOption.name }}</h1>
       </div>
     </div>
     <div class="row">
       <div class="col-md-4">
-        {{ deviceOption.defaultValue }}
+        {{ origDeviceOption.defaultValue }}
       </div>
     </div>
   </div>
@@ -15,12 +15,17 @@
 
 <script>
 export default {
-  name: "DeviceOption",
+  name: "DeviceOptionView",
   alias: "device-option",
   props: {
     deviceOption: {
       type: Object,
       required: true
+    }
+  },
+  data() {
+    return {
+      origDeviceOption: this.deviceOption
     }
   }
 };

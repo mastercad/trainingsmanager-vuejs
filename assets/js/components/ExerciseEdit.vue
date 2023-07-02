@@ -1,7 +1,9 @@
 <template>
   <b-container fluid>
-
-    <b-card bg-variant="light" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="2"
         label="Exercise"
@@ -17,12 +19,12 @@
           <b-col sm="9">
             <b-form-input
               id="exercise_name"
-              v-model="exercise.name"
+              v-model="origExercise.name"
               type="text"
               placeholder="Exercise Name"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -33,12 +35,12 @@
           <b-col sm="9">
             <b-form-input
               id="exercise_seo_link"
-              v-model="exercise.seoLink"
+              v-model="origExercise.seoLink"
               type="text"
               placeholder="Exercise Seo Link (automatically generated)"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -49,12 +51,12 @@
           <b-col sm="9">
             <b-form-input
               id="exercise_preview_picture_path"
-              v-model="exercise.previewPicturePath"
+              v-model="origExercise.previewPicturePath"
               type="text"
               placeholder="Exercise Preview Picture Path"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -65,14 +67,14 @@
           <b-col sm="9">
             <b-form-textarea
               id="exercise_description"
-              v-model="exercise.description"
+              v-model="origExercise.description"
               type="text"
               placeholder="Exercise Description"
               class="form-control"
               required
               rows="3"
               max-rows="6"
-            ></b-form-textarea>
+            />
           </b-col>
         </b-row>
 
@@ -83,20 +85,23 @@
           <b-col sm="9">
             <b-form-textarea
               id="exercise_special_features"
-              v-model="exercise.specialFeatures"
+              v-model="origExercise.specialFeatures"
               type="text"
               placeholder="Exercise Special Features"
               class="form-control"
               required
               rows="3"
               max-rows="6"
-            ></b-form-textarea>
+            />
           </b-col>
         </b-row>
       </b-form-group>
     </b-card>
 
-    <b-card bg-variant="light" class="mt-2 shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="mt-2 shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="6"
         label="Exercise Type"
@@ -111,12 +116,12 @@
             split-variant="outline-primary"
             variant="primary"
             class="m-md-2"
-            :text="exercise.exerciseXExerciseType[0] && exercise.exerciseXExerciseType[0].exerciseType ? exercise.exerciseXExerciseType[0].exerciseType.name : 'None'"
+            :text="origExercise.exerciseXExerciseType[0] && origExercise.exerciseXExerciseType[0].exerciseType ? origExercise.exerciseXExerciseType[0].exerciseType.name : 'None'"
           >
             <b-dropdown-item
               :id="'exercise_type_null'"
-              v-bind:key="'exercise_type_null'"
-              :active="0 === exercise.exerciseXExerciseType[0].length"
+              :key="'exercise_type_null'"
+              :active="undefined === origExercise.exerciseXExerciseType[0] || 0 === origExercise.exerciseXExerciseType[0].length"
               @click="saveExerciseTypeSelection(null)"
             >
               None
@@ -125,8 +130,8 @@
             <b-dropdown-item
               v-for="possibleExerciseType in exerciseTypes"
               :id="'exercise_type_'+possibleExerciseType.id"
-              v-bind:key="'exercise_type_'+possibleExerciseType.id"
-              :active="exercise.exerciseXExerciseType[0] && exercise.exerciseXExerciseType[0].exerciseType && exercise.exerciseXExerciseType[0].exerciseType.id == possibleExerciseType.id"
+              :key="'exercise_type_'+possibleExerciseType.id"
+              :active="origExercise.exerciseXExerciseType[0] && origExercise.exerciseXExerciseType[0].exerciseType && origExercise.exerciseXExerciseType[0].exerciseType.id == possibleExerciseType.id"
               @click="saveExerciseTypeSelection(possibleExerciseType)"
             >
               {{ possibleExerciseType.name }}
@@ -142,10 +147,12 @@
       :current-options="exercise.exerciseXExerciseOptions"
       :identifier="exercise.id"
       description="Possible Exercise Options for this Exercise"
-    >
-    </options-for-edit>
+    />
 
-    <b-card bg-variant="light" class="mt-2 shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="mt-2 shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="6"
         label="Device"
@@ -160,12 +167,12 @@
             split-variant="outline-primary"
             variant="primary"
             class="m-md-2"
-            :text="exercise.exerciseXDevices[0] && exercise.exerciseXDevices[0].device ? exercise.exerciseXDevices[0].device.name : 'None'"
+            :text="origExercise.exerciseXDevices[0] && origExercise.exerciseXDevices[0].device ? origExercise.exerciseXDevices[0].device.name : 'None'"
           >
             <b-dropdown-item
               :id="'device_null'"
-              v-bind:key="'device_null'"
-              :active="0 === exercise.exerciseXDevices.length"
+              :key="'device_null'"
+              :active="0 === origExercise.exerciseXDevices.length"
               @click="saveDeviceSelection(null)"
             >
               None
@@ -174,8 +181,8 @@
             <b-dropdown-item
               v-for="possibleDevice in devices"
               :id="'device_'+possibleDevice.id"
-              v-bind:key="'device_'+possibleDevice.id"
-              :active="exercise.exerciseXDevices[0] && exercise.exerciseXDevices[0].device && exercise.exerciseXDevices[0].device.id == possibleDevice.id"
+              :key="'device_'+possibleDevice.id"
+              :active="origExercise.exerciseXDevices[0] && origExercise.exerciseXDevices[0].device && origExercise.exerciseXDevices[0].device.id == possibleDevice.id"
               @click="saveDeviceSelection(possibleDevice)"
             >
               {{ possibleDevice.name }}
@@ -188,14 +195,16 @@
     <options-for-edit
       type="device"
       :possible-options="possibleDeviceOptions"
-      :current-options="exercise.exerciseXDeviceOptions"
-      :additional-options="exercise.exerciseXDevices[0] ? exercise.exerciseXDevices[0].device.deviceXDeviceOptions : []"
-      :identifier="exercise.id"
+      :current-options="origExercise.exerciseXDeviceOptions"
+      :additional-options="origExercise.exerciseXDevices[0] ? origExercise.exerciseXDevices[0].device.deviceXDeviceOptions : []"
+      :identifier="origExercise.id"
       description="Possible Device Options for this Exercise"
-    >
-    </options-for-edit>
+    />
 
-    <b-card bg-variant="light" class="mt-2 shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="mt-2 shadow p-2 mb-3 bg-white rounded"
+    >
       <div class="col">
         <div class="row">
           <h2>Upload images</h2>
@@ -233,8 +242,7 @@
       class="row"
     >
       <div
-        v-for="(image, key) in exerciseImages"
-        v-if="extractFileName(image) !== exercise.previewPicturePath"
+        v-for="(image, key) in cleanedImages"
         :key="key"
         class="col-3 mt-2 shadow p-2 mb-3 bg-white rounded"
       >
@@ -252,11 +260,18 @@
       </div>
     </div>
 
-    <b-card-group deck bg-variant="light" class="mt-2">
-      <b-card v-if="isValidId(exercise.id)" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card-group
+      deck
+      bg-variant="light"
+      class="mt-2"
+    >
+      <b-card
+        v-if="isValidId(origExercise.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          v-if="isValidId(exercise.id)"
-          :disabled="exercise.name.length === 0 || exercise.description.length === 0"
+          v-if="isValidId(origExercise.id)"
+          :disabled="origExercise.name.length === 0 || origExercise.description.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateExercise()"
@@ -265,9 +280,12 @@
         </button>
       </b-card>
 
-      <b-card v-if="isGenericId(exercise.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-card
+        v-if="isGenericId(origExercise.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          :disabled="exercise.name.length === 0 || exercise.description.length === 0"
+          :disabled="origExercise.name.length === 0 || origExercise.description.length === 0"
           type="button"
           class="btn btn-primary"
           @click="createExercise()"
@@ -286,7 +304,6 @@
         </button>
       </b-card>
     </b-card-group>
-
   </b-container>
 </template>
 
@@ -297,6 +314,7 @@ import OptionsForEdit from './OptionsForEdit.vue';
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+  name: 'ExerciseEditView',
   components: {
     OptionsForEdit
   },
@@ -321,7 +339,8 @@ export default {
       currentStatus: null,
       uploadFieldName: 'exerciseImage',
       previewPictureKey: null,
-      fileCount: 0
+      fileCount: 0,
+      origExercise: this.exercise
     }
   },
   computed: {
@@ -345,10 +364,25 @@ export default {
     },
     exerciseTypes() {
       return this.$store.getters["exerciseTypes/exerciseTypes"];
+    },
+    cleanedImages() {
+      if(this.isImagesLoading) {
+        return [];
+      }
+
+      let cleanedImages = [];
+      for(let imagePosition in this.exerciseImages) {
+        let image = this.exerciseImages[imagePosition];
+        if (this.extractFileName(image) !== this.exercise.previewPicturePath) {
+          cleanedImages.push(image);
+        }
+      }
+
+      return cleanedImages;
     }
   },
   created() {
-    this.$store.dispatch("exercises/loadImages", this.exercise.id);
+    this.$store.dispatch("exercises/loadImages", this.origExercise.id);
     this.$store.dispatch("devices/findAll");
     this.$store.dispatch("exerciseTypes/findAll");
   },
@@ -361,40 +395,40 @@ export default {
   },
   methods: {
     async createExercise() {
-      const result = await this.$store.dispatch("exercises/create",
+      await this.$store.dispatch("exercises/create",
         {
-          id: this.exercise.id,
-          name: this.exercise.name,
-          description: this.exercise.description,
-          seoLink: this.exercise.seoLink,
-          specialFeatures: this.exercise.specialFeatures,
-          previewPicturePath: this.exercise.previewPicturePath,
-          exerciseXDeviceOptions: this.exercise.exerciseXDeviceOptions,
-          exerciseXExerciseOptions: this.exercise.exerciseXExerciseOptions,
-          exerciseXDevices: this.exercise.exerciseXDevices,
-          exerciseXExerciseType: this.exercise.exerciseXExerciseType
+          id: this.origExercise.id,
+          name: this.origExercise.name,
+          description: this.origExercise.description,
+          seoLink: this.origExercise.seoLink,
+          specialFeatures: this.origExercise.specialFeatures,
+          previewPicturePath: this.origExercise.previewPicturePath,
+          exerciseXDeviceOptions: this.origExercise.exerciseXDeviceOptions,
+          exerciseXExerciseOptions: this.origExercise.exerciseXExerciseOptions,
+          exerciseXDevices: this.origExercise.exerciseXDevices,
+          exerciseXExerciseType: this.origExercise.exerciseXExerciseType
         }
       );
     },
     async updateExercise() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "exercises/update",
         {
-          id: this.exercise.id,
-          name: this.exercise.name,
-          description: this.exercise.description,
-          seoLink: this.exercise.seoLink,
-          specialFeatures: this.exercise.specialFeatures,
-          previewPicturePath: this.exercise.previewPicturePath,
-          exerciseXDeviceOptions: this.exercise.exerciseXDeviceOptions,
-          exerciseXExerciseOptions: this.exercise.exerciseXExerciseOptions,
-          exerciseXDevices: this.exercise.exerciseXDevices,
-          exerciseXExerciseType: this.exercise.exerciseXExerciseType
+          id: this.origExercise.id,
+          name: this.origExercise.name,
+          description: this.origExercise.description,
+          seoLink: this.origExercise.seoLink,
+          specialFeatures: this.origExercise.specialFeatures,
+          previewPicturePath: this.origExercise.previewPicturePath,
+          exerciseXDeviceOptions: this.origExercise.exerciseXDeviceOptions,
+          exerciseXExerciseOptions: this.origExercise.exerciseXExerciseOptions,
+          exerciseXDevices: this.origExercise.exerciseXDevices,
+          exerciseXExerciseType: this.origExercise.exerciseXExerciseType
         }
       );
     },
     async deleteExercise() {
-      const result = await this.$store.dispatch("exercises/delete", this.exercise.id);
+      await this.$store.dispatch("exercises/delete", this.origExercise.id);
     },
     async deleteExerciseImage(key) {
       let imagePath = this.exerciseImages[key];
@@ -404,7 +438,7 @@ export default {
       if (imagePath.match(/^\/uploads\//)) {
         result = await this.$store.dispatch("exercises/deleteUploadImage", fileName);
       } else {
-        result = await this.$store.dispatch("exercises/deleteExerciseImage", {fileName: fileName, id: this.exercise.id});
+        result = await this.$store.dispatch("exercises/deleteExerciseImage", {fileName: fileName, id: this.origExercise.id});
       }
 
       if (result !== null) {
@@ -412,7 +446,7 @@ export default {
       }
     },
     setImageAsPreview(key) {
-      this.exercise.previewPicturePath = this.extractFileName(this.exerciseImages[key]);
+      this.origExercise.previewPicturePath = this.extractFileName(this.exerciseImages[key]);
       this.previewPictureKey = key;
     },
     reset() {
@@ -428,7 +462,7 @@ export default {
 
       upload(formData)
         .then(function() {
-          me.$store.dispatch("exercises/loadImages", me.id);
+          me.$store.dispatch("exercises/loadImages", me.origExercise.id);
           me.currentStatus = STATUS_SUCCESS;
         })
         .catch(err => {
@@ -458,22 +492,22 @@ export default {
     saveDeviceSelection(device)
     {
       if (null === device) {
-        this.exercise.exerciseXDevices = [];
+        this.origExercise.exerciseXDevices = [];
         return;
       }
 
-      if (this.exercise.exerciseXDevices[0]
-        && this.exercise.exerciseXDevices[0].device.id === device.id
+      if (this.origExercise.exerciseXDevices[0]
+        && this.origExercise.exerciseXDevices[0].device.id === device.id
       ) {
         return;
       }
 
-      if (this.exercise.exerciseXDevices[0]) {
-        this.exercise.exerciseXDevices[0]['device'] = device;
+      if (this.origExercise.exerciseXDevices[0]) {
+        this.origExercise.exerciseXDevices[0]['device'] = device;
         return;
       }
 
-      this.exercise.exerciseXDevices = [];
+      this.origExercise.exerciseXDevices = [];
       let exerciseXDevice = {
         'device': device
       };
@@ -482,36 +516,36 @@ export default {
         exerciseXDevice['exercise'] = '/api/exercises/'+this.exercise.id
       }
 
-      this.exercise.exerciseXDevices.push(exerciseXDevice);
+      this.origExercise.exerciseXDevices.push(exerciseXDevice);
     },
     saveExerciseTypeSelection(exerciseType)
     {
       if (null === exerciseType) {
-        this.exercise.exerciseXExerciseType = [];
+        this.origExercise.exerciseXExerciseType = [];
         return;
       }
 
-      if (this.exercise.exerciseXExerciseType[0]
-        && this.exercise.exerciseXExerciseType[0].exerciseType.id === exerciseType.id
+      if (this.origExercise.exerciseXExerciseType[0]
+        && this.origExercise.exerciseXExerciseType[0].exerciseType.id === exerciseType.id
       ) {
         return;
       }
 
-      if (this.exercise.exerciseXExerciseType[0]) {
-        this.exercise.exerciseXExerciseType[0]['exerciseType'] = exerciseType;
+      if (this.origExercise.exerciseXExerciseType[0]) {
+        this.origExercise.exerciseXExerciseType[0]['exerciseType'] = exerciseType;
         return;
       }
 
-      this.exercise.exerciseXExerciseType = [];
+      this.origExercise.exerciseXExerciseType = [];
       let exerciseXExerciseType = {
         'exerciseType': exerciseType
       };
 
-      if (this.isValidId(this.exercise.id)) {
-        exerciseXExerciseType['exercise'] = '/api/exercises/'+this.exercise.id
+      if (this.isValidId(this.origExercise.id)) {
+        exerciseXExerciseType['exercise'] = '/api/exercises/'+this.origExercise.id
       }
 
-      this.exercise.exerciseXExerciseType.push(exerciseXExerciseType);
+      this.origExercise.exerciseXExerciseType.push(exerciseXExerciseType);
     },
     isValidId(id) {
       return id && (typeof id === 'number' || !isNaN(id));

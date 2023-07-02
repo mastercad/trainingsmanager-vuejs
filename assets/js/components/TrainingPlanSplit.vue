@@ -15,7 +15,7 @@
           only id does not refresh the components, only order refresh only on first reorder if the order not 0, 1, 2 ...
         -->
         <training-plan
-          v-for="(child, index) in sortTrainingPlans"
+          v-for="(child) in sortTrainingPlans"
           :id="child.id"
           :key="child.order+'_'+child.id"
           :ref="child"
@@ -95,7 +95,8 @@ export default {
   },
   computed: {
     sortTrainingPlans() {
-     return this.origChildren.sort(
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.origChildren.sort(
         (a, b) => { // sort using this.orderBy
           const first = a[this.orderBy]
           const next = b[this.orderBy]

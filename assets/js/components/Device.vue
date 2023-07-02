@@ -2,14 +2,16 @@
   <div class="w-100">
     <div class="row">
       <div class="col-md-12">
-        <h1 id="device_name">{{ device.name }}</h1>
+        <h1 id="device_name">
+          {{ device.name }}
+        </h1>
       </div>
     </div>
     <div class="row">
       <div class="col-md-4">
         <img
           style="width: 100%"
-          v-bind:src="'/images/content/dynamic/devices/'+device.id+'/'+device.previewPicturePath"
+          :src="'/images/content/dynamic/devices/'+device.id+'/'+device.previewPicturePath"
           @error="imageAlternative"
         >
       </div>
@@ -19,7 +21,7 @@
       <div
         v-for="deviceOption in prepareDeviceOptions"
         :id="deviceOption.key"
-        v-bind:key="deviceOption.key"
+        :key="deviceOption.key"
       >
         <b-dropdown
           v-if="deviceOption.isMultipartOption"
@@ -31,7 +33,7 @@
           <b-dropdown-item
             v-for="option in deviceOption.parts"
             :id="option.key"
-            v-bind:key="option.key"
+            :key="option.key"
             :active="option.isActive"
           >
             {{ option.value }}
@@ -41,13 +43,12 @@
     </div>
 
     <div
-      v-if="deviceImages && 0 < deviceImages.length"
+      v-if="cleanedDeviceImages.length"
       id="previews"
       class="row"
     >
       <div
-        v-for="(image, key) in deviceImages"
-        v-if="isImagesLoading === false && extractFileName(image) !== device.previewPicturePath"
+        v-for="(image, key) in cleanedDeviceImages"
         :key="key"
         class="col-3"
       >
@@ -69,6 +70,7 @@
 import OptionFunctions from "../shared/optionFunctions.js";
 
 export default {
+  name: "DeviceView",
   props: {
     device: {
       type: Object,
@@ -96,6 +98,21 @@ export default {
     },
     isImagesLoading() {
       return this.$store.getters["devices/isImagesLoading"];
+    },
+    cleanedDeviceImages() {
+      if(this.isImagesLoading) {
+        return [];
+      }
+
+      let cleanedDeviceImages = [];
+      for(let deviceImagePosition in this.deviceImages) {
+        let deviceImage = this.deviceImages[deviceImagePosition];
+        if (this.extractFileName(deviceImage) !== this.device.previewPicturePath) {
+          cleanedDeviceImages.push(deviceImage);
+        }
+      }
+
+      return cleanedDeviceImages;
     }
   },
   created() {

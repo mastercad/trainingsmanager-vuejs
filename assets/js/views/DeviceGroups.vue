@@ -16,15 +16,16 @@
     <div class="row">
       <div class="col-3">
         <b-list-group>
-          <b-list-group-item href="#"
+          <b-list-group-item
             v-for="currentDeviceGroup in deviceGroups"
             :key="currentDeviceGroup.id"
-            @contextmenu.prevent.stop="handleClick($event, currentDeviceGroup)"
-            @click="loadDeviceGroup($event, currentDeviceGroup)"
+            href="#"
             class="list-group-item"
             :active="deviceGroup && deviceGroup.id === currentDeviceGroup.id"
             unselectable="on"
             onselectstart="return false;"
+            @contextmenu.prevent.stop="handleClick($event, currentDeviceGroup)"
+            @click="loadDeviceGroup($event, currentDeviceGroup)"
           >
             {{ currentDeviceGroup.name }}
           </b-list-group-item>
@@ -41,16 +42,16 @@
           :key="deviceGroup.id"
           :ref="'deviceGroupPanel'"
 
-          :deviceGroup="deviceGroup"
+          :device-group="deviceGroup"
         />
       </div>
     </div>
     <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
 
     <vue-simple-context-menu
+      :id="'deviceGroupsContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'deviceGroupsContextMenu'"
       :options="options"
       @optionClicked="optionClicked"
     />
@@ -152,10 +153,10 @@ export default {
     },
     async deleteDeviceGroup(deviceGroup) {
       if (this.isGenericId(deviceGroup.id)) {
-        const result = await this.$store.dispatch("deviceGroups/unregister", deviceGroup.id);
+        await this.$store.dispatch("deviceGroups/unregister", deviceGroup.id);
         this.leftPanelVisibility = false;
       } else {
-        const result = await this.$store.dispatch("deviceGroups/delete", deviceGroup.id);
+        await this.$store.dispatch("deviceGroups/delete", deviceGroup.id);
         this.leftPanelVisibility = false;
       }
     },

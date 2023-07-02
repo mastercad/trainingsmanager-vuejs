@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +13,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class JWTAuthenticator extends AbstractAuthenticator
 {
-    public function supports(Request $request): ?bool
+    public function supports(Request $request): bool|null
     {
         // TODO: Implement supports() method.
     }
@@ -21,12 +23,12 @@ class JWTAuthenticator extends AbstractAuthenticator
         // TODO: Implement authenticate() method.
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): Response|null
     {
         // TODO: Implement onAuthenticationSuccess() method.
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response|null
     {
         // TODO: Implement onAuthenticationFailure() method.
     }

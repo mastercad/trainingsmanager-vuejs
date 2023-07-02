@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Tests\Integration\Entity;
 
@@ -11,43 +11,43 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class DevicesTest extends ApiTestCase
 {
-  private ApiHelper $apiHelper;
+    private ApiHelper $apiHelper;
 
-  public function setUp(): void
-  {
-    $client = self::createClient();
-    $container = self::getContainer();
+    public function setUp(): void
+    {
+        $client = self::createClient();
+        $container = self::getContainer();
 
-    $this->apiHelper = $container->get(ApiHelper::class);
-    $this->apiHelper->init($this, $container, $client);
-  }
+        $this->apiHelper = $container->get(ApiHelper::class);
+        $this->apiHelper->init($this, $container, $client);
+    }
 
-  public function testLogin(): void
-  {
-      $this->apiHelper->request(Request::METHOD_GET, '/api/devices');
-      self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED, 'request without authorization should result in 401.');
+    public function testLogin(): void
+    {
+        $this->apiHelper->request(Request::METHOD_GET, '/api/devices');
+        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED, 'request without authorization should result in 401.');
 
-      $this->apiHelper->loginUser('test@example.com');
+        $this->apiHelper->loginUser('test@example.com');
 
-      $this->apiHelper->request(Request::METHOD_GET, '/api/devices');
-      self::assertResponseIsSuccessful('simple get request with authorization should work without any restrictions or problems.');
-  }
+        $this->apiHelper->request(Request::METHOD_GET, '/api/devices');
+        self::assertResponseIsSuccessful('simple get request with authorization should work without any restrictions or problems.');
+    }
 
-  public function testEmptyNameNotAccepted(): void
-  {
-    $this->apiHelper->loginUser('test@example.com');
+    public function testEmptyNameNotAccepted(): void
+    {
+        $this->apiHelper->loginUser('test@example.com');
 
-    $response = $this->apiHelper->request(Request::METHOD_POST, '/api/devices', ['Name' => ' ']);
+        $response = $this->apiHelper->request(Request::METHOD_POST, '/api/devices', ['Name' => ' ']);
 
-    self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-    self::assertArrayHasKey('@type', $response);
-    self::assertSame('ConstraintViolationList', $response['@type']);
-    self::assertArrayHasKey('violations', $response);
-    self::assertCount(1, $response['violations']);
-    self::assertArrayHasKey('propertyPath', $response['violations'][0]);
-    self::assertSame('name', $response['violations'][0]['propertyPath']);
-    self::assertArrayHasKey('message', $response['violations'][0]);
-    self::assertSame('This value should not be blank.', $response['violations'][0]['message']);
-  }
+        self::assertArrayHasKey('@type', $response);
+        self::assertSame('ConstraintViolationList', $response['@type']);
+        self::assertArrayHasKey('violations', $response);
+        self::assertCount(1, $response['violations']);
+        self::assertArrayHasKey('propertyPath', $response['violations'][0]);
+        self::assertSame('name', $response['violations'][0]['propertyPath']);
+        self::assertArrayHasKey('message', $response['violations'][0]);
+        self::assertSame('This value should not be blank.', $response['violations'][0]['message']);
+    }
 }

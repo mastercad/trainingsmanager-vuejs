@@ -57,6 +57,7 @@
 
 <script>
 export default {
+  name: "ContactView",
   props: {
     id: {
       type: Number,

@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: "ExerciseOption",
+  name: "ExerciseOptionView",
   alias: "exercise-option",
   props: {
     exerciseOption: {

@@ -16,15 +16,16 @@
     <div class="row">
       <div class="col-3">
         <b-list-group>
-          <b-list-group-item href="#"
+          <b-list-group-item
             v-for="currentDeviceOption in deviceOptions"
             :key="currentDeviceOption.id"
-            @contextmenu.prevent.stop="handleClick($event, currentDeviceOption)"
-            @click="loadDeviceOption($event, currentDeviceOption)"
+            href="#"
             class="list-group-item"
             :active="deviceOption && deviceOption.id === currentDeviceOption.id"
             unselectable="on"
             onselectstart="return false;"
+            @contextmenu.prevent.stop="handleClick($event, currentDeviceOption)"
+            @click="loadDeviceOption($event, currentDeviceOption)"
           >
             {{ currentDeviceOption.name }}
           </b-list-group-item>
@@ -41,16 +42,16 @@
           :key="deviceOption.id"
           :ref="'deviceOptionPanel'"
 
-          :deviceOption="deviceOption"
+          :device-option="deviceOption"
         />
       </div>
     </div>
     <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
 
     <vue-simple-context-menu
+      :id="'deviceOptionsContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'deviceOptionsContextMenu'"
       :options="options"
       @optionClicked="optionClicked"
     />
@@ -152,10 +153,10 @@ export default {
     },
     async deleteDeviceOption(deviceOption) {
       if (this.isGenericId(deviceOption.id)) {
-        const result = await this.$store.dispatch("deviceOptions/unregister", deviceOption.id);
+        await this.$store.dispatch("deviceOptions/unregister", deviceOption.id);
         this.leftPanelVisibility = false;
       } else {
-        const result = await this.$store.dispatch("deviceOptions/delete", deviceOption.id);
+        await this.$store.dispatch("deviceOptions/delete", deviceOption.id);
         this.leftPanelVisibility = false;
       }
     },

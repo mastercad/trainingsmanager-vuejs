@@ -1,7 +1,9 @@
 <template>
   <b-container fluid>
-
-    <b-card bg-variant="light" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="3"
         label="Muscle"
@@ -17,12 +19,12 @@
           <b-col sm="9">
             <b-form-input
               id="muscle_name"
-              v-model="muscle.name"
+              v-model="origMuscle.name"
               type="text"
               placeholder="Muscle Name"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -33,19 +35,22 @@
           <b-col sm="9">
             <b-form-input
               id="muscle_seo_link"
-              v-model="muscle.seoLink"
+              v-model="origMuscle.seoLink"
               type="text"
               placeholder="Muscle Seo Link"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
-
       </b-form-group>
     </b-card>
 
-    <b-card bg-variant="light" class="mt-2 shadow p-2 mb-3 bg-white rounded" title="Muscle Group">
+    <b-card
+      bg-variant="light"
+      class="mt-2 shadow p-2 mb-3 bg-white rounded"
+      title="Muscle Group"
+    >
       <b-card-group deck>
         <b-card no-body>
           <b-dropdown
@@ -57,7 +62,7 @@
             <b-dropdown-item
               v-for="possibleMuscleGroup in muscleGroups"
               :id="'muscle_group_dropdown_'+possibleMuscleGroup.id"
-              v-bind:key="'muscle_group_dropdown_'+possibleMuscleGroup.id"
+              :key="'muscle_group_dropdown_'+possibleMuscleGroup.id"
               :active="checkMuscleGroupSelected(possibleMuscleGroup)" 
               @click="saveMuscleGroupSelection(possibleMuscleGroup)"
             >
@@ -69,7 +74,7 @@
         <b-card>
           <div class="flex-grid">
             <div
-              v-for="currentSelectedMuscleGroup in muscle.muscleXMuscleGroups"
+              v-for="currentSelectedMuscleGroup in origMuscle.muscleXMuscleGroups"
               :id="'muscle_group_'+currentSelectedMuscleGroup.muscleGroup.id"
               :key="'muscle_group_'+currentSelectedMuscleGroup.muscleGroup.id"
             >
@@ -82,11 +87,18 @@
       </b-card-group>
     </b-card>
 
-    <b-card-group deck bg-variant="light" class="mt-2">
-      <b-card v-if="isValidId(muscle.id)" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card-group
+      deck
+      bg-variant="light"
+      class="mt-2"
+    >
+      <b-card
+        v-if="isValidId(origMuscle.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          v-if="isValidId(muscle.id)"
-          :disabled="muscle.name.length === 0"
+          v-if="isValidId(origMuscle.id)"
+          :disabled="origMuscle.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateMuscle()"
@@ -95,9 +107,12 @@
         </button>
       </b-card>
 
-      <b-card v-if="isGenericId(muscle.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-card
+        v-if="isGenericId(origMuscle.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          :disabled="muscle.name.length === 0"
+          :disabled="origMuscle.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="createMuscle()"
@@ -116,7 +131,6 @@
         </button>
       </b-card>
     </b-card-group>
-
   </b-container>
 </template>
 
@@ -125,6 +139,7 @@
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+  name: 'MuscleEditView',
   props: {
     muscle: {
       type: Object,
@@ -133,7 +148,8 @@ export default {
   },
   data() {
     return {
-      currentStatus: null
+      currentStatus: null,
+      origMuscle: this.muscle
     }
   },
   computed: {
@@ -158,27 +174,27 @@ export default {
   },
   methods: {
     async createMuscle() {
-      const result = await this.$store.dispatch("muscles/create",
-      {
-        id: this.muscle.id,
-        name: this.muscle.name,
-        seoLink: this.muscle.seoLink,
-        muscleXMuscleGroups: this.collectSelectedMuscleGroups()
-      });
+      await this.$store.dispatch("muscles/create",
+        {
+          id: this.origMuscle.id,
+          name: this.origMuscle.name,
+          seoLink: this.origMuscle.seoLink,
+          muscleXMuscleGroups: this.collectSelectedMuscleGroups()
+        });
     },
     async updateMuscle() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "muscles/update",
         {
-          id: this.muscle.id,
-          name: this.muscle.name,
-          seoLink: this.muscle.seoLink,
+          id: this.origMuscle.id,
+          name: this.origMuscle.name,
+          seoLink: this.origMuscle.seoLink,
           muscleXMuscleGroups: this.collectSelectedMuscleGroups()
         }
       );
     },
     async deleteMuscle() {
-      const result = await this.$store.dispatch("muscles/delete", this.muscle.id);
+      await this.$store.dispatch("muscles/delete", this.origMuscle.id);
     },
     reset() {
       // reset form to initial state
@@ -187,13 +203,13 @@ export default {
     collectSelectedMuscleGroups() {
       let muscleXMuscleGroups = new Array();
 
-      this.muscle.muscleXMuscleGroups.forEach(currentSelectedMuscleGroup => {
+      this.origMuscle.muscleXMuscleGroups.forEach(currentSelectedMuscleGroup => {
         let muscleXMuscleGroup = {};
         muscleXMuscleGroup['strain'] = currentSelectedMuscleGroup['strain'] ?? 0;
         muscleXMuscleGroup['muscleGroup'] = '/api/muscle_groups/'+currentSelectedMuscleGroup['muscleGroup']['id'];
 
-        if (this.isValidId(this.muscle.id)) {
-          muscleXMuscleGroup['muscle'] = '/api/muscles/'+this.muscle.id;
+        if (this.isValidId(this.origMuscle.id)) {
+          muscleXMuscleGroup['muscle'] = '/api/muscles/'+this.origMuscle.id;
         }
 
         if (currentSelectedMuscleGroup['id']) {
@@ -205,23 +221,23 @@ export default {
       return muscleXMuscleGroups;
     },
     saveMuscleGroupSelection(selectedMuscleGroup) {
-      let index = this.muscle.muscleXMuscleGroups.findIndex(currentSelectedMuscleGroup => currentSelectedMuscleGroup.muscleGroup.id == selectedMuscleGroup.id);
+      let index = this.origMuscle.muscleXMuscleGroups.findIndex(currentSelectedMuscleGroup => currentSelectedMuscleGroup.muscleGroup.id == selectedMuscleGroup.id);
       if (0 <= index) {
-        this.muscle.muscleXMuscleGroups.splice(index, 1);
+        this.origMuscle.muscleXMuscleGroups.splice(index, 1);
       } else {
         let muscleXMuscleGroup = {
           muscle: {
-            id: this.muscle.id,
-            name: this.muscle.name,
-            seoLink: this.muscle.seoLink
+            id: this.origMuscle.id,
+            name: this.origMuscle.name,
+            seoLink: this.origMuscle.seoLink
           },
           muscleGroup: selectedMuscleGroup
         };
-        this.muscle.muscleXMuscleGroups.push(muscleXMuscleGroup);
+        this.origMuscle.muscleXMuscleGroups.push(muscleXMuscleGroup);
       }
     },
     checkMuscleGroupSelected(possibleMuscleGroup) {
-      return 0 <= this.muscle.muscleXMuscleGroups.findIndex(currentSelectedMuscleGroup => currentSelectedMuscleGroup.muscleGroup.id == possibleMuscleGroup.id);
+      return 0 <= this.origMuscle.muscleXMuscleGroups.findIndex(currentSelectedMuscleGroup => currentSelectedMuscleGroup.muscleGroup.id == possibleMuscleGroup.id);
     },
     isValidId(id) {
       return id && (typeof id === 'number' || !isNaN(id));

@@ -12,6 +12,7 @@
               v-model="login"
               type="text"
               class="form-control"
+              placeholder="Login"
             >
           </div>
           <div class="col-4">
@@ -19,6 +20,7 @@
               v-model="password"
               type="password"
               class="form-control"
+              placeholder="Password"
             >
           </div>
           <div class="col-4">
@@ -57,13 +59,8 @@
 </template>
 
 <script>
-import ErrorMessage from "../components/ErrorMessage";
-
 export default {
-  name: "Login",
-  components: {
-    ErrorMessage,
-  },
+  name: "LoginView",
   data() {
     return {
       login: "",

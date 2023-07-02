@@ -23,6 +23,12 @@ jobs:
       - name: install npm dependencies
         run: npm install
 
+      - name: check js codestyles
+        run: npm run lint
+
+      - name: check php codestyles
+        run: docker compose exec php-fpm php vendor/bin/phpcs
+
       - name: check lexik bundle configuration
         run: docker compose exec php-fpm php bin/console lexik:jwt:check-config
 

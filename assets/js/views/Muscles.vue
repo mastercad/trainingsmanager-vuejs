@@ -16,15 +16,16 @@
     <div class="row">
       <div class="col-3">
         <b-list-group>
-          <b-list-group-item href="#"
+          <b-list-group-item
             v-for="currentMuscle in muscles"
             :key="currentMuscle.id"
-            @contextmenu.prevent.stop="handleClick($event, currentMuscle)"
-            @click.prevent.stop="loadMuscle($event, currentMuscle)"
+            href="#"
             class="list-group-item"
             :active="muscle && muscle.id === currentMuscle.id"
             unselectable="on"
             onselectstart="return false;"
+            @contextmenu.prevent.stop="handleClick($event, currentMuscle)"
+            @click.prevent.stop="loadMuscle($event, currentMuscle)"
           >
             {{ currentMuscle.name }}
           </b-list-group-item>
@@ -49,9 +50,9 @@
 
     <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
     <vue-simple-context-menu
+      :id="'musclesContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'musclesContextMenu'"
       :options="options"
       @optionClicked="optionClicked"
     />
@@ -158,10 +159,10 @@ export default {
     },
     async deleteMuscle(muscle) {
       if (this.isGenericId(muscle.id)) {
-        const result = await this.$store.dispatch("muscles/unregister", muscle.id);
+        await this.$store.dispatch("muscles/unregister", muscle.id);
         this.leftPanelVisibility = false;
       } else {
-        const result = await this.$store.dispatch("muscles/delete", muscle.id);
+        await this.$store.dispatch("muscles/delete", muscle.id);
         this.leftPanelVisibility = false;
       }
     },

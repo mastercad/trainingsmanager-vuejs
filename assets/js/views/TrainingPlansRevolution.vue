@@ -77,9 +77,9 @@
     <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
 
     <vue-simple-context-menu
+      :id="'trainingPlansRevolutionContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'trainingPlansRevolutionContextMenu'"
       :options="options"
       @option-clicked="optionClicked"
     />

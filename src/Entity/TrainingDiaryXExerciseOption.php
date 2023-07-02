@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use ExerciseOptions;
+use TrainingPlanXExercise;
+use Users;
 
 /**
  * TrainingDiaryXExerciseOption
@@ -16,59 +22,33 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class TrainingDiaryXExerciseOption
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private $id;
+    private int $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'option_value', type: 'string', length: 255, nullable: false)]
-    private $optionValue;
+    private string $optionValue;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var \Users
-     */
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var \ExerciseOptions
-     */
     #[ORM\JoinColumn(name: 'exercise_option', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'ExerciseOptions')]
-    private $exerciseOption;
+    private ExerciseOptions $exerciseOption;
 
-    /**
-     * @var \TrainingPlanXExercise
-     */
     #[ORM\JoinColumn(name: 'training_plan_exercise', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'TrainingPlanXExercise')]
-    private $trainingPlanExercise;
+    private TrainingPlanXExercise $trainingPlanExercise;
 
-    /**
-     * @var \Users
-     */
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $updater;
-
-
+    private Users $updater;
 }

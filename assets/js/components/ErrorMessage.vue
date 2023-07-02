@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "ErrorMessage",
+  name: "ErrorMessageView",
   props: {
     error: {
       type: Error,

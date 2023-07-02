@@ -1,5 +1,8 @@
 <template>
-  <b-card bg-variant="light" class="mt-2 shadow p-2 mb-3 bg-white rounded">
+  <b-card
+    bg-variant="light"
+    class="mt-2 shadow p-2 mb-3 bg-white rounded"
+  >
     <b-form-group
       label-cols-lg="3"
       :label="capitalizeFirstLetter(type)+' Options'"
@@ -9,11 +12,14 @@
       :description="description"
     >
       <b-row
-          v-for="option in prepareOptions"
-          :id="option.key"
-          v-bind:key="option.key"
+        v-for="option in prepareOptions"
+        :id="option.key"
+        :key="option.key"
+      >
+        <b-col
+          sm="5"
+          style="display: flex; align-items: center;"
         >
-        <b-col sm="5" style="display: flex; align-items: center;">
           <label
             :for="type+'_option_'+option.key"
           >
@@ -26,15 +32,15 @@
         <b-col sm="7">
           <b-dropdown
             v-if="option.isMultipartOption"
-            split-variant="outline-primary"
             :id="option.key"
+            split-variant="outline-primary"
             variant="primary"
             class="m-md-2"
             :text="option.name"
           >
             <b-dropdown-item
               :id="type+'_option_null'"
-              v-bind:key="type+'_option_null'"
+              :key="type+'_option_null'"
               :active="null === option.value"
               @click="saveOptionSelection({value: null}, option)"
             >
@@ -44,7 +50,7 @@
             <b-dropdown-item
               v-for="optionPart in option.parts"
               :id="type+'_option_'+optionPart.key"
-              v-bind:key="currentSelectedOption+'_option_'+optionPart.key"
+              :key="currentSelectedOption+'_option_'+optionPart.key"
               :active="optionPart.isActive"
               @click="saveOptionSelection(optionPart, option)"
             >
@@ -53,12 +59,12 @@
           </b-dropdown>
           <div v-else>
             <input
-              @input="saveOptionSelection({value: $event.target.value}, option)"
-              class="form-control"
               :id="type+'_option_'+option.key"
+              class="form-control"
               :placeholder="option.placeholder"
               type="text"
               :value="option.value"
+              @input="saveOptionSelection({value: $event.target.value}, option)"
             >
           </div>
         </b-col>
@@ -139,7 +145,7 @@ export default {
       let currentExistingOption = this.retrieveExistingOption(option, preparedOption);
       if (null === option.value
           || 0 === option.value.length
-        ) {
+      ) {
         this.refreshInputs(option, preparedOption);
 
         return;
@@ -225,7 +231,7 @@ export default {
         return id;
       }
 
-      let regEx = new RegExp('\/('+possibleExpectedId+')$', 'g');
+      let regEx = new RegExp('/('+possibleExpectedId+')$', 'g');
       if ((typeof id === 'string' || id instanceof String)) {
         let match = (id.match(regEx) || []).map(e => e.replace(regEx, '$1'));
         console.log(match[0]);

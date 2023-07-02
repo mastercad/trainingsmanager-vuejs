@@ -16,15 +16,16 @@
     <div class="row">
       <div class="col-3">
         <b-list-group>
-          <b-list-group-item href="#"
+          <b-list-group-item
             v-for="currentMuscleGroup in muscleGroups"
             :key="currentMuscleGroup.id"
-            @contextmenu.prevent.stop="handleClick($event, currentMuscleGroup)"
-            @click="loadMuscleGroup($event, currentMuscleGroup)"
+            href="#"
             class="list-group-item"
             :active="muscleGroup && muscleGroup.id === currentMuscleGroup.id"
             unselectable="on"
             onselectstart="return false;"
+            @contextmenu.prevent.stop="handleClick($event, currentMuscleGroup)"
+            @click="loadMuscleGroup($event, currentMuscleGroup)"
           >
             {{ currentMuscleGroup.name }}
           </b-list-group-item>
@@ -42,15 +43,15 @@
           :key="muscleGroup.id"
           :ref="'muscleGroupPanel'"
 
-          :muscleGroup="muscleGroup"
+          :muscle-group="muscleGroup"
         />
       </div>
     </div>
 
     <vue-simple-context-menu
+      :id="'muscleGroupsContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'muscleGroupsContextMenu'"
       :options="options"
       @optionClicked="optionClicked"
     />
@@ -152,10 +153,10 @@ export default {
     },
     async deleteMuscleGroup(muscleGroup) {
       if (this.isGenericId(muscleGroup.id)) {
-        const result = await this.$store.dispatch("muscleGroups/unregister", muscleGroup.id);
+        await this.$store.dispatch("muscleGroups/unregister", muscleGroup.id);
         this.leftPanelVisibility = false;
       } else {
-        const result = await this.$store.dispatch("muscleGroups/delete", muscleGroup.id);
+        await this.$store.dispatch("muscleGroups/delete", muscleGroup.id);
         this.leftPanelVisibility = false;
       }
     },

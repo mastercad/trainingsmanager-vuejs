@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -18,86 +21,56 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 class TrainingPlanXExerciseOption
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[Groups(['read', 'write'])]
-    private $id;
+    private int $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'option_value', type: 'string', length: 255, nullable: false)]
     #[Groups(['read', 'write'])]
-    private $optionValue;
+    private string $optionValue;
 
-    /**
-     * @var ExerciseOptions
-     */
     #[ORM\ManyToOne(targetEntity: 'ExerciseOptions')]
     #[ORM\JoinColumn(name: 'exercise_option', referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
-    private $exerciseOption;
+    private ExerciseOptions $exerciseOption;
 
-    /**
-     * @var TrainingPlanXExercise
-     */
     #[ORM\ManyToOne(targetEntity: 'TrainingPlanXExercise', inversedBy: 'trainingPlanXExerciseOptions')]
     #[ORM\JoinColumn(name: 'training_plan_x_exercise', referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
-    private $trainingPlanXExercise;
+    private TrainingPlanXExercise $trainingPlanXExercise;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     #[Groups(['read', 'write'])]
-    private $created;
+    private DateTime $created;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id', nullable: true)]
     #[Groups(['read', 'write'])]
-    private $updater;
+    private Users $updater;
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read', 'write'])]
-    private $updated;
+    private DateTime|null $updated = null;
 
     /**
      * Get the value of id
-     *
-     * @return  int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * Set the value of id
-     *
-     * @param  int  $id
-     *
-     * @return  self
      */
-    public function setId(int $id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -106,22 +79,16 @@ class TrainingPlanXExerciseOption
 
     /**
      * Get the value of optionValue
-     *
-     * @return  string
      */
-    public function getOptionValue()
+    public function getOptionValue(): string
     {
         return $this->optionValue;
     }
 
     /**
      * Set the value of optionValue
-     *
-     * @param string $optionValue
-     *
-     * @return self
      */
-    public function setOptionValue(string $optionValue)
+    public function setOptionValue(string $optionValue): self
     {
         $this->optionValue = $optionValue;
 
@@ -130,22 +97,16 @@ class TrainingPlanXExerciseOption
 
     /**
      * Get the value of exerciseOption
-     *
-     * @return ExerciseOptions
      */
-    public function getExerciseOption()
+    public function getExerciseOption(): ExerciseOptions
     {
         return $this->exerciseOption;
     }
 
     /**
      * Set the value of exerciseOption
-     *
-     * @param ExerciseOptions $exerciseOption
-     *
-     * @return  self
      */
-    public function setExerciseOption(ExerciseOptions $exerciseOption)
+    public function setExerciseOption(ExerciseOptions $exerciseOption): self
     {
         $this->exerciseOption = $exerciseOption;
 
@@ -154,22 +115,16 @@ class TrainingPlanXExerciseOption
 
     /**
      * Get the value of trainingPlanXExercise
-     *
-     * @return TrainingPlanXExercise
      */
-    public function getTrainingPlanXExercise()
+    public function getTrainingPlanXExercise(): TrainingPlanXExercise
     {
         return $this->trainingPlanXExercise;
     }
 
     /**
      * Set the value of trainingPlanXExercise
-     *
-     * @param ?TrainingPlanXExercise $trainingPlanXExercise
-     *
-     * @return self
      */
-    public function setTrainingPlanXExercise(?TrainingPlanXExercise $trainingPlanXExercise)
+    public function setTrainingPlanXExercise(TrainingPlanXExercise|null $trainingPlanXExercise): self
     {
         $this->trainingPlanXExercise = $trainingPlanXExercise;
 
@@ -178,22 +133,16 @@ class TrainingPlanXExerciseOption
 
     /**
      * Get the value of creator
-     *
-     * @return Users
      */
-    public function getCreator()
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator
-     *
-     * @param Users $creator
-     *
-     * @return  self
      */
-    public function setCreator(Users $creator)
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -202,22 +151,16 @@ class TrainingPlanXExerciseOption
 
     /**
      * Get the value of created
-     *
-     * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created
-     *
-     * @param \DateTime  $created
-     *
-     * @return self
      */
-    public function setCreated(\DateTime $created)
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -226,22 +169,16 @@ class TrainingPlanXExerciseOption
 
     /**
      * Get the value of updater
-     *
-     * @return Users
      */
-    public function getUpdater()
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater
-     *
-     * @param Users $updater
-     *
-     * @return self
      */
-    public function setUpdater(?Users $updater)
+    public function setUpdater(Users|null $updater): self
     {
         $this->updater = $updater;
 
@@ -250,22 +187,16 @@ class TrainingPlanXExerciseOption
 
     /**
      * Get the value of updated
-     *
-     * @return \DateTime|null
      */
-    public function getUpdated()
+    public function getUpdated(): DateTime|null
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated
-     *
-     * @param \DateTime|null $updated
-     *
-     * @return self
      */
-    public function setUpdated($updated)
+    public function setUpdated(DateTime|null $updated): self
     {
         $this->updated = $updated;
 

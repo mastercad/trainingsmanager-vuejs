@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -16,74 +19,48 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class TrainingDiaryXDeviceOption
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private $id;
+    private int $id;
 
-    /**
-     * @var DeviceOptions
-     */
     #[ORM\JoinColumn(name: 'device_option', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'DeviceOptions')]
-    private $deviceOption;
+    private DeviceOptions $deviceOption;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'option_value', type: 'string', length: 255, nullable: false)]
-    private $optionValue;
+    private string $optionValue;
 
-    /**
-     * @var Users
-     */
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var Users
-     */
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $updater;
+    private Users $updater;
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var TrainingPlanXExercise
-     */
     #[ORM\JoinColumn(name: 'training_plan_exercise', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'TrainingPlanXExercise')]
-    private $trainingPlanExercise;
+    private TrainingPlanXExercise $trainingPlanExercise;
 
     /**
      * Get the value of id
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * Set the value of id
-     *
-     * @return self
      */
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -93,17 +70,15 @@ class TrainingDiaryXDeviceOption
     /**
      * Get the value of optionValue
      */
-    public function getOptionValue()
+    public function getOptionValue(): string
     {
         return $this->optionValue;
     }
 
     /**
      * Set the value of optionValue
-     *
-     * @return self
      */
-    public function setOptionValue($optionValue)
+    public function setOptionValue(string $optionValue): self
     {
         $this->optionValue = $optionValue;
 
@@ -113,17 +88,15 @@ class TrainingDiaryXDeviceOption
     /**
      * Get the value of created
      */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created
-     *
-     * @return self
      */
-    public function setCreated($created)
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -133,17 +106,15 @@ class TrainingDiaryXDeviceOption
     /**
      * Get the value of updated
      */
-    public function getUpdated()
+    public function getUpdated(): DateTime
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated
-     *
-     * @return self
      */
-    public function setUpdated($updated)
+    public function setUpdated(DateTime $updated): self
     {
         $this->updated = $updated;
 
@@ -153,17 +124,15 @@ class TrainingDiaryXDeviceOption
     /**
      * Get the value of creator
      */
-    public function getCreator()
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator
-     *
-     * @return self
      */
-    public function setCreator($creator)
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -173,17 +142,15 @@ class TrainingDiaryXDeviceOption
     /**
      * Get the value of deviceOption
      */
-    public function getDeviceOption()
+    public function getDeviceOption(): DeviceOptions
     {
         return $this->deviceOption;
     }
 
     /**
      * Set the value of deviceOption
-     *
-     * @return self
      */
-    public function setDeviceOption($deviceOption)
+    public function setDeviceOption(DeviceOptions $deviceOption): self
     {
         $this->deviceOption = $deviceOption;
 
@@ -193,17 +160,15 @@ class TrainingDiaryXDeviceOption
     /**
      * Get the value of trainingPlanExercise
      */
-    public function getTrainingPlanExercise()
+    public function getTrainingPlanExercise(): TrainingPlanXExercise
     {
         return $this->trainingPlanExercise;
     }
 
     /**
      * Set the value of trainingPlanExercise
-     *
-     * @return self
      */
-    public function setTrainingPlanExercise($trainingPlanExercise)
+    public function setTrainingPlanExercise(TrainingPlanXExercise $trainingPlanExercise): self
     {
         $this->trainingPlanExercise = $trainingPlanExercise;
 
@@ -213,17 +178,15 @@ class TrainingDiaryXDeviceOption
     /**
      * Get the value of updater
      */
-    public function getUpdater()
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater
-     *
-     * @return self
      */
-    public function setUpdater($updater)
+    public function setUpdater(Users $updater): self
     {
         $this->updater = $updater;
 

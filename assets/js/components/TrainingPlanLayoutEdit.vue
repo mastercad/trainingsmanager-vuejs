@@ -1,7 +1,9 @@
 <template>
   <b-container fluid>
-
-    <b-card bg-variant="light" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="3"
         label="Training Plan Layout"
@@ -17,22 +19,29 @@
           <b-col sm="9">
             <b-form-input
               id="training_plan_layout_name"
-              v-model="trainingPlanLayout.name"
+              v-model="origTrainingPlanLayout.name"
               type="text"
               placeholder="Training Plan Layout Name"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
       </b-form-group>
     </b-card>
 
-    <b-card-group deck bg-variant="light" class="mt-2">
-      <b-card v-if="isValidId(trainingPlanLayout.id)" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card-group
+      deck
+      bg-variant="light"
+      class="mt-2"
+    >
+      <b-card
+        v-if="isValidId(origTrainingPlanLayout.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          v-if="isValidId(trainingPlanLayout.id)"
-          :disabled="trainingPlanLayout.name.length === 0"
+          v-if="isValidId(origTrainingPlanLayout.id)"
+          :disabled="origTrainingPlanLayout.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateTrainingPlanLayout()"
@@ -41,9 +50,12 @@
         </button>
       </b-card>
 
-      <b-card v-if="isGenericId(trainingPlanLayout.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-card
+        v-if="isGenericId(origTrainingPlanLayout.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          :disabled="trainingPlanLayout.name.length === 0"
+          :disabled="origTrainingPlanLayout.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="createTrainingPlanLayout()"
@@ -62,7 +74,6 @@
         </button>
       </b-card>
     </b-card-group>
-
   </b-container>
 </template>
 
@@ -71,6 +82,7 @@
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+  name: 'TrainingPlanLayoutEditView',
   props: {
     trainingPlanLayout: {
       type: Object,
@@ -79,7 +91,8 @@ export default {
   },
   data() {
     return {
-      currentStatus: null
+      currentStatus: null,
+      origTrainingPlanLayout: this.trainingPlanLayout
     }
   },
   computed: {
@@ -101,24 +114,24 @@ export default {
   },
   methods: {
     async createTrainingPlanLayout() {
-      const result = await this.$store.dispatch("trainingPlanLayouts/create",
+      await this.$store.dispatch("trainingPlanLayouts/create",
         {
-          id: this.trainingPlanLayout.id,
-          name: this.trainingPlanLayout.name
+          id: this.origTrainingPlanLayout.id,
+          name: this.origTrainingPlanLayout.name
         }
       );
     },
     async updateTrainingPlanLayout() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "trainingPlanLayouts/update",
         {
-          id: this.trainingPlanLayout.id,
-          name: this.trainingPlanLayout.name
+          id: this.origTrainingPlanLayout.id,
+          name: this.origTrainingPlanLayout.name
         }
       );
     },
     async deleteTrainingPlanLayout() {
-      const result = await this.$store.dispatch("trainingPlanLayouts/delete", this.trainingPlanLayout.id);
+      await this.$store.dispatch("trainingPlanLayouts/delete", this.origTrainingPlanLayout.id);
     },
     reset() {
       // reset form to initial state

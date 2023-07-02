@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -16,61 +19,32 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class TrainingDiaryXTrainingPlanDevice
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private $id;
+    private int $id;
 
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'training_plan_x_device', type: 'integer', nullable: false, options: ['unsigned' => true])]
-    private $trainingPlanXDevice;
+    private int $trainingPlanXDevice;
 
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'training_diary', type: 'integer', nullable: false, options: ['unsigned' => true])]
-    private $trainingDiary;
+    private int $trainingDiary;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'comment', type: 'string', length: 255, nullable: false)]
-    private $comment;
+    private string $comment;
 
-    /**
-     * @var bool
-     */
     #[ORM\Column(name: 'flag_finished', type: 'boolean', nullable: false)]
-    private $flagFinished = '0';
+    private bool $flagFinished = '0';
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
-    private $created;
+    private DateTime $created;
 
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'creator', type: 'integer', nullable: false, options: ['unsigned' => true])]
-    private $creator;
+    private int $creator;
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var int|null
-     */
     #[ORM\Column(name: 'updater', type: 'integer', nullable: true, options: ['unsigned' => true])]
-    private $updater;
-
-
+    private int|null $updater = null;
 }

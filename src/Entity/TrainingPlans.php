@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -10,27 +11,26 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\Entity\TrainingPlanLayouts;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * TrainingPlans
  */
 #[ApiResource(
-  normalizationContext: ['groups' => ['read']],
-  denormalizationContext: ['groups' => ['write']],
-  operations: [
-    new Get(),
-    new GetCollection(),
-    new Post(),
-    new Patch(),
-    new Put(),
-    new Delete()
-  ]
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Patch(),
+        new Put(),
+        new Delete()
+    ]
 )]
 #[ORM\Table(name: 'training_plans')]
 #[ORM\Index(name: 'training_plan_create_user_fk', columns: ['creator'])]
@@ -43,103 +43,66 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\HasLifecycleCallbacks]
 class TrainingPlans
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[Groups(['read', 'write'])]
-    private $id;
+    private int $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: true)]
     #[Groups(['read', 'write'])]
-    private $name;
+    private string $name;
 
-    /**
-     * @var bool
-     */
     #[ORM\Column(name: 'active', type: 'boolean', nullable: false, options: ['comment' => 'trainingsplan aktiv? damit nur der aktuellste angezeigt wird im tagebuch zum training'])]
     #[Groups(['read', 'write'])]
-    private $active = false;
+    private bool $active = false;
 
-    /**
-     * @var integer
-     */
     #[ORM\Column(name: 'sorting', type: 'integer', nullable: false, options: ['default' => '1', 'comment' => 'ist für splitpläne gedacht um die reihenfolge zu beeinflussen'])]
     #[Groups(['read', 'write'])]
-    private $order = 1;
+    private int $order = 1;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'user', referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
-    private $user;
+    private Users $user;
 
-    /**
-     * @var TrainingPlanLayouts
-     */
     #[ORM\ManyToOne(targetEntity: 'TrainingPlanLayouts', cascade: ['all'], inversedBy: 'trainingPlans')]
     #[ORM\JoinColumn(name: 'training_plan_layout', referencedColumnName: 'id')]
     #[Groups(['read', 'write', 'items:training_plan_layouts:get'])]
-    private $trainingPlanLayout;
+    private TrainingPlanLayouts $trainingPlanLayout;
 
-    /**
-     * @var TrainingPlans
-     */
     #[ORM\ManyToOne(targetEntity: 'TrainingPlans', inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent', referencedColumnName: 'id', nullable: true)]
     #[Groups(['read', 'write'])]
-    private $parent;
+    private TrainingPlans $parent;
 
-    /**
-     * @var Collection|TrainingPlans[]
-     */
+    /** @var Collection|TrainingPlans[] */
     #[ORM\OneToMany(targetEntity: 'TrainingPlans', mappedBy: 'parent', cascade: ['persist'])]
     #[Groups(['read', 'write'])]
-    private $children;
+    private Collection $children;
 
-    /**
-     * @var Collection|TrainingPlanXExercise[]
-     */
+    /** @var Collection|TrainingPlanXExercise[] */
     #[ORM\OneToMany(targetEntity: 'TrainingPlanXExercise', mappedBy: 'trainingPlan', cascade: ['persist'])]
     #[Groups(['read', 'write'])]
-    private $trainingPlanExercises;
+    private Collection $trainingPlanExercises;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id', nullable: true)]
     #[Groups(['read'])]
-    private $updater;
+    private Users $updater;
 
     public function __construct()
     {
@@ -149,22 +112,16 @@ class TrainingPlans
 
     /**
      * Get the value of id
-     *
-     * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * Set the value of id
-     *
-     * @param int $id
-     *
-     * @return self
      */
-    public function setId(int $id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -173,22 +130,16 @@ class TrainingPlans
 
     /**
      * Get the value of name
-     *
-     * @return null|string
      */
-    public function getName()
+    public function getName(): string|null
     {
         return $this->name;
     }
 
     /**
      * Set the value of name
-     *
-     * @param null|string $name
-     *
-     * @return self
      */
-    public function setName(?string $name)
+    public function setName(string|null $name): self
     {
         $this->name = $name;
 
@@ -197,22 +148,16 @@ class TrainingPlans
 
     /**
      * Get the value of active
-     *
-     * @return bool
      */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
     }
 
     /**
      * Set the value of active
-     *
-     * @param bool $active
-     *
-     * @return self
      */
-    public function setActive(bool $active)
+    public function setActive(bool $active): self
     {
         $this->active = $active;
 
@@ -221,22 +166,16 @@ class TrainingPlans
 
     /**
      * Get the value of order
-     *
-     * @return int
      */
-    public function getOrder()
+    public function getOrder(): int
     {
         return $this->order;
     }
 
     /**
      * Set the value of order
-     *
-     * @param int $order
-     *
-     * @return self
      */
-    public function setOrder(int $order)
+    public function setOrder(int $order): self
     {
         $this->order = $order;
 
@@ -245,22 +184,16 @@ class TrainingPlans
 
     /**
      * Get the value of created
-     *
-     * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created
-     *
-     * @param \DateTime $created
-     *
-     * @return self
      */
-    public function setCreated(\DateTime $created)
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -269,22 +202,16 @@ class TrainingPlans
 
     /**
      * Get the value of updated
-     *
-     * @return \DateTime|null
      */
-    public function getUpdated()
+    public function getUpdated(): DateTime|null
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated
-     *
-     * @param \DateTime|null $updated
-     *
-     * @return self
      */
-    public function setUpdated($updated)
+    public function setUpdated(DateTime|null $updated): self
     {
         $this->updated = $updated;
 
@@ -293,22 +220,16 @@ class TrainingPlans
 
     /**
      * Get the value of creator
-     *
-     * @return Users
      */
-    public function getCreator()
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator
-     *
-     * @param Users $creator
-     *
-     * @return self
      */
-    public function setCreator(Users $creator)
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -317,22 +238,16 @@ class TrainingPlans
 
     /**
      * Get the value of parent
-     *
-     * @return null|TrainingPlans
      */
-    public function getParent()
+    public function getParent(): TrainingPlans|null
     {
         return $this->parent;
     }
 
     /**
      * Set the value of parent
-     *
-     * @param null|TrainingPlans $parent
-     *
-     * @return self
      */
-    public function setParent(?TrainingPlans $parent)
+    public function setParent(TrainingPlans|null $parent): self
     {
         $this->parent = $parent;
 
@@ -341,22 +256,16 @@ class TrainingPlans
 
     /**
      * Get the value of trainingPlanLayout
-     *
-     * @return TrainingPlanLayouts
      */
-    public function getTrainingPlanLayout()
+    public function getTrainingPlanLayout(): TrainingPlanLayouts
     {
         return $this->trainingPlanLayout;
     }
 
     /**
      * Set the value of trainingPlanLayout
-     *
-     * @param ?TrainingPlanLayouts $trainingPlanLayout
-     *
-     * @return self
      */
-    public function setTrainingPlanLayout(?TrainingPlanLayouts $trainingPlanLayout)
+    public function setTrainingPlanLayout(TrainingPlanLayouts|null $trainingPlanLayout): self
     {
         $this->trainingPlanLayout = $trainingPlanLayout;
 
@@ -365,22 +274,16 @@ class TrainingPlans
 
     /**
      * Get the value of updater
-     *
-     * @return Users
      */
-    public function getUpdater()
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater
-     *
-     * @param Users $updater
-     *
-     * @return self
      */
-    public function setUpdater(Users $updater)
+    public function setUpdater(Users $updater): self
     {
         $this->updater = $updater;
 
@@ -389,46 +292,42 @@ class TrainingPlans
 
     /**
      * Get the value of user
-     *
-     * @return Users
      */
-    public function getUser()
+    public function getUser(): Users
     {
         return $this->user;
     }
 
     /**
      * Set the value of user
-     *
-     * @param Users $user
-     *
-     * @return self
      */
-    public function setUser(Users $user)
+    public function setUser(Users $user): self
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function addChild(TrainingPlans $trainingPlan)
+    public function addChild(TrainingPlans $trainingPlan): void
     {
-       $this->children[] = $trainingPlan;
-       $trainingPlan->setParent($this);
+        $this->children[] = $trainingPlan;
+        $trainingPlan->setParent($this);
     }
 
-    public function getChildren()
+    /** @return mixed[] */
+    public function getChildren(): Collection
     {
         return $this->children;
     }
 
-    public function addTrainingPlanExercise(TrainingPlanXExercise $trainingPlanExercises)
+    public function addTrainingPlanExercise(TrainingPlanXExercise $trainingPlanExercises): void
     {
-       $this->trainingPlanExercises[] = $trainingPlanExercises;
-       $trainingPlanExercises->setTrainingPlan($this);
+        $this->trainingPlanExercises[] = $trainingPlanExercises;
+        $trainingPlanExercises->setTrainingPlan($this);
     }
 
-    public function getTrainingPlanExercises()
+    /** @return TrainingPlanXExercise[] */
+    public function getTrainingPlanExercises(): Collection
     {
         return $this->trainingPlanExercises;
     }

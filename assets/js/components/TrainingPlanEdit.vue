@@ -6,28 +6,32 @@
 
     <div>
       <b-tabs content-class="mt-3">
-        <b-tab title="First" active><p>I'm the first tab</p></b-tab>
-        <b-tab title="Second"><p>I'm the second tab</p></b-tab>
-        <b-tab title="Disabled" disabled><p>I'm a disabled tab!</p></b-tab>
+        <b-tab
+          title="First"
+          active
+        >
+          <p>I'm the first tab</p>
+        </b-tab>
+        <b-tab title="Second">
+          <p>I'm the second tab</p>
+        </b-tab>
+        <b-tab
+          title="Disabled"
+          disabled
+        >
+          <p>I'm a disabled tab!</p>
+        </b-tab>
       </b-tabs>
     </div>
   </b-container>
 </template>
 
 <script scoped>
-import draggable from 'vuedraggable';
-import ExerciseOption from './ExerciseOption.vue';
-import DeviceOption from './DeviceOption.vue';
 
 import {v4} from "uuid";
 
 export default {
   name: "TrainingPlanEditView",
-  components: {
-    draggable: draggable,
-    ExerciseOption,
-    DeviceOption
-  },
   props: {
     trainingPlan: {
       type: Object,
@@ -40,12 +44,14 @@ export default {
       activeTabIndex: 0,
       maxTabIndex: 1,
       selectedExercise: null,
-      selectedDevice: null
+      selectedDevice: null,
+      origTrainingPlan: this.trainingPlan
     }
   },
   computed: {
     sortTrainingPlanExercises() {
-      return this.trainingPlan.trainingPlanXExercises.sort(
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.origTrainingPlan.trainingPlanXExercises.sort(
         (a, b) => { // sort using this.orderBy
           if (null === a
             || null === b
@@ -138,7 +144,7 @@ export default {
       let oldIndex = 0;
 
       console.log("reorderExercises");
-      console.log(this.trainingPlan.id);
+      console.log(this.origTrainingPlan.id);
       window.console.log(event);
       window.console.log(this);
 
@@ -149,7 +155,7 @@ export default {
       } else if (event.removed) {
         newIndex = this.$parent.newIndex;
         oldIndex = event.removed.oldIndex;
-//        this.$parent.exerciseMoveTarget.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
+        //        this.$parent.exerciseMoveTarget.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
         this.$parent.exerciseMoveTarget.trainingPlan.trainingPlanXExercises.forEach(function(item, index) {
           item.order = index;
         });
@@ -157,8 +163,8 @@ export default {
       } else if (event.moved) {
         oldIndex = event.moved.oldIndex;
         newIndex = event.moved.newIndex;
-        this.trainingPlan.trainingPlanXExercises.splice(newIndex, 0, this.trainingPlan.trainingPlanXExercises.splice(oldIndex, 1)[0]);
-        this.trainingPlan.trainingPlanXExercises.forEach(function(item, index) {
+        this.origTrainingPlan.trainingPlanXExercises.splice(newIndex, 0, this.origTrainingPlan.trainingPlanXExercises.splice(oldIndex, 1)[0]);
+        this.origTrainingPlan.trainingPlanXExercises.forEach(function(item, index) {
           item.order = index;
         });
       }
@@ -180,7 +186,6 @@ export default {
       let preparedPossibleExerciseOptions = {};
       let preparedPossibleDeviceOptions = {};
       let preparedExistingTrainingPlanExerciseOptions = {};
-      let preparedExistingTrainingPlanExerciseXDeviceOptions = {};
 
       this.possibleExerciseOptions.forEach(exerciseOption => {
         preparedPossibleExerciseOptions[exerciseOption.id] = exerciseOption;
@@ -223,7 +228,7 @@ export default {
 
       if (true === isNewTrainingPlanExercise) {
         // hier muss noch geprüft werden ob diese trainingplanexercise bereits vorhanden ist!
-        this.trainingPlan.trainingPlanXExercises.push(this.currentTrainingPlanExercise);
+        this.origTrainingPlan.trainingPlanXExercises.push(this.currentTrainingPlanExercise);
       }
 
       this.cancel();
@@ -303,13 +308,13 @@ export default {
       this.showModal();
     },
     showModal() {
-      this.$root.$emit('bv::show::modal', 'modal-'+this.trainingPlan.id, '#btnShow')
+      this.$root.$emit('bv::show::modal', 'modal-'+this.origTrainingPlan.id, '#btnShow')
     },
     hideModal() {
-      this.$root.$emit('bv::hide::modal', 'modal-'+this.trainingPlan.id, '#btnShow')
+      this.$root.$emit('bv::hide::modal', 'modal-'+this.origTrainingPlan.id, '#btnShow')
     },
     toggleModal() {
-      this.$root.$emit('bv::toggle::modal', 'modal-'+this.trainingPlan.id, '#btnToggle')
+      this.$root.$emit('bv::toggle::modal', 'modal-'+this.origTrainingPlan.id, '#btnToggle')
     },
     back() {
       this.$refs.formWiz.prevTab();
@@ -318,8 +323,8 @@ export default {
       this.$refs.formWiz.nextTab();
     },
     cancel() {
-//      this.selectedTrainingPlanExerciseOptions = {};
-//      this.selectedTrainingPlanDeviceOptions = {};
+      //      this.selectedTrainingPlanExerciseOptions = {};
+      //      this.selectedTrainingPlanDeviceOptions = {};
       this.currentTrainingPlanExercise = null;
       this.$refs.formWiz.reset();
 

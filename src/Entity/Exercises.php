@@ -1,12 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use App\Controller\ExerciseImageController;
-use App\Controller\ExerciseImageDeleteController;
-use App\Controller\ExerciseImageUploadController;
-use App\Controller\UploadImageDeleteController;
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -14,77 +11,88 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\ExerciseImageController;
+use App\Controller\ExerciseImageDeleteController;
+use App\Controller\ExerciseImageUploadController;
+use App\Controller\UploadImageDeleteController;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * Exercises
  */
 #[ApiResource(
-  normalizationContext: ['groups' => ['read']],
-  denormalizationContext: ['groups' => ['write']],
-  operations: [
-    new Get(),
-    new Get(
-      uriTemplate: "/exercises/{id}/images",
-      requirements: ['id' => '\d+'],
-      controller: ExerciseImageController::class,
-      read: false,
-      openapiContext: [
-        'parameters' => [
-          [
-            "name" => "id",
-            "in" => "path",
-            "description" => "id of exercise",
-            "type" => "integer",
-            "required" => true,
-            "example"=> 1,
-          ],
-        ],
-      ],
-    ),
-    new GetCollection(),
-    new Post(),
-    new Post(
-      uriTemplate: "/exercises/images",
-      controller: ExerciseImageUploadController::class,
-      deserialize: false,
-      openapiContext: [
-        "requestBody" => [
-          "description" => "File upload to an existing resource (exercise)",
-          "required" => true,
-          "content" => [
-            "multipart/form-data" => [
-              "schema" => [
-                "type" => "object",
-                "properties" => [
-                  "file" => [
-                    "type" => "string",
-                    "format" => "binary",
-                    "description" => "image path name for exercise"
-                  ]
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
-    ),
-    new Patch(),
-    new Put(),
-    new Delete(),
-    new Delete(
-      uriTemplate: "/uploads/image/{fileName}",
-      controller: UploadImageDeleteController::class
-    ),
-    new Delete(
-      uriTemplate: "/exercises/{id}/image/{fileName}",
-      controller: ExerciseImageDeleteController::class
-    )
-  ]
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
+    operations: [
+        new Get(
+            uriTemplate: '/exercises/{id}/images',
+            requirements: ['id' => '\d+'],
+            controller: ExerciseImageController::class,
+            read: false,
+            openapiContext: [
+                'parameters' => [
+                    [
+                        'name' => 'id',
+                        'in' => 'path',
+                        'description' => 'id of exercise',
+                        'type' => 'integer',
+                        'required' => true,
+                        'example' => 1,
+                    ],
+                ],
+            ],
+        ),
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Post(
+            uriTemplate: '/exercises/images',
+            controller: ExerciseImageUploadController::class,
+            deserialize: false,
+            openapiContext: [
+                'requestBody' => [
+                    'description' => 'File upload to an existing resource (exercise)',
+                    'required' => true,
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                        'description' => 'image path name for exercise',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ),
+        new Patch(),
+        new Put(),
+        new Delete(
+            uriTemplate: '/uploads/image/{fileName}',
+            deserialize: false,
+            requirements: ['fileName' => '[a-zA-Z0-9=]+'],
+            controller: UploadImageDeleteController::class,
+        ),
+        new Delete(
+            uriTemplate: '/exercises/{id}/image/{fileName}',
+            deserialize: false,
+            requirements: [
+                'id' => '\d+',
+                'fileName' => '[a-zA-Z0-9=]+',
+            ],
+            controller: ExerciseImageDeleteController::class,
+        ),
+        new Delete()
+    ],
 )]
 #[ORM\Table(name: 'exercises')]
 #[ORM\Index(name: 'IDX_exercise_creator', columns: ['creator'])]
@@ -96,149 +104,95 @@ use Doctrine\Common\Collections\Collection;
 #[ORM\HasLifecycleCallbacks]
 class Exercises
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[Groups(['read', 'write'])]
-    private $id;
+    private int $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: false)]
     #[Groups(['read', 'write'])]
-    private $name;
+    private string $name;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'seo_link', type: 'string', length: 250, nullable: false)]
     #[Groups(['read', 'write'])]
-    private $seoLink;
+    private string $seoLink;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'description', type: 'text', length: 65535, nullable: false)]
     #[Groups(['read', 'write'])]
-    private $description;
+    private string $description;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'special_features', type: 'text', length: 65535, nullable: false, options: ['comment' => 'Besonderheiten'])]
     #[Groups(['read', 'write'])]
-    private $specialFeatures;
+    private string $specialFeatures;
 
-    /**
-     * @var string
-     *
-     * #[ApiProperty(
-     *   iri="http://schema.org/image",
-     *   attributes={
-     *     "openapi_context"={
-     *       "type"="string",
-     *     }
-     *   }
-     * )
-     * ]
-     */
     #[ORM\Column(name: 'preview_picture_path', type: 'string', length: 250, nullable: false)]
     #[Groups(['read', 'write'])]
-    private $previewPicturePath;
+    private string $previewPicturePath;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: Users::class)]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id', nullable: true)]
     #[Groups(['read'])]
-    private $updater;
+    private Users $updater;
 
-    /**
-     * @var Collection|ExerciseOption[]
-     */
+    /** @var Collection|ExerciseOption[] */
     #[ORM\OneToMany(targetEntity: ExerciseXExerciseOption::class, mappedBy: 'exercise', cascade: ['ALL'], orphanRemoval: true)]
     #[Groups(['read', 'write'])]
     private Collection $exerciseXExerciseOptions;
 
-    /**
-     * @var Collection|DeviceOption[]
-     */
+    /** @var Collection|DeviceOption[] */
     #[ORM\OneToMany(targetEntity: ExerciseXDeviceOption::class, mappedBy: 'exercise', cascade: ['ALL'], orphanRemoval: true)]
     #[Groups(['read', 'write'])]
     private Collection $exerciseXDeviceOptions;
 
-    /**
-     * @var ArrayCollection|Device[]
-     */
+    /** @var ArrayCollection|Device[] */
     #[ORM\OneToMany(targetEntity: ExerciseXDevice::class, mappedBy: 'exercise', cascade: ['ALL'], orphanRemoval: true)]
     #[Groups(['read', 'write'])]
     private Collection $exerciseXDevices;
 
-    /**
-     * @var ArrayCollection|ExerciseType[]
-     */
+    /** @var ArrayCollection|ExerciseType[] */
     #[ORM\OneToMany(targetEntity: ExerciseXExerciseType::class, mappedBy: 'exercise', cascade: ['ALL'], orphanRemoval: true)]
     #[Groups(['read', 'write'])]
     private Collection $exerciseXExerciseType;
 
     public function __construct()
     {
-      $this->exerciseXDeviceOptions = new ArrayCollection();
-      $this->exerciseXExerciseOptions = new ArrayCollection();
-      $this->exerciseXDevices = new ArrayCollection();
-      $this->exerciseXExerciseType = new ArrayCollection();
+        $this->exerciseXDeviceOptions = new ArrayCollection();
+        $this->exerciseXExerciseOptions = new ArrayCollection();
+        $this->exerciseXDevices = new ArrayCollection();
+        $this->exerciseXExerciseType = new ArrayCollection();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }
 
     /**
      * Get the value of id
-     *
-     * @return  int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * Set the value of id
-     *
-     * @param  int  $id
-     *
-     * @return  self
      */
-    public function setId(int $id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -247,22 +201,16 @@ class Exercises
 
     /**
      * Get the value of name
-     *
-     * @return  string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
      * Set the value of name
-     *
-     * @param  string  $name
-     *
-     * @return  self
      */
-    public function setName(string $name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -271,22 +219,16 @@ class Exercises
 
     /**
      * Get the value of seoLink
-     *
-     * @return  string
      */
-    public function getSeoLink()
+    public function getSeoLink(): string
     {
         return $this->seoLink;
     }
 
     /**
      * Set the value of seoLink
-     *
-     * @param  string  $seoLink
-     *
-     * @return  self
      */
-    public function setSeoLink(string $seoLink)
+    public function setSeoLink(string $seoLink): self
     {
         $this->seoLink = $seoLink;
 
@@ -295,22 +237,16 @@ class Exercises
 
     /**
      * Get the value of description
-     *
-     * @return  string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
     /**
      * Set the value of description
-     *
-     * @param  string  $description
-     *
-     * @return  self
      */
-    public function setDescription(string $description)
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -319,22 +255,16 @@ class Exercises
 
     /**
      * Get the value of specialFeatures
-     *
-     * @return  string
      */
-    public function getSpecialFeatures()
+    public function getSpecialFeatures(): string
     {
         return $this->specialFeatures;
     }
 
     /**
      * Set the value of specialFeatures
-     *
-     * @param  string  $specialFeatures
-     *
-     * @return  self
      */
-    public function setSpecialFeatures(string $specialFeatures)
+    public function setSpecialFeatures(string $specialFeatures): self
     {
         $this->specialFeatures = $specialFeatures;
 
@@ -343,22 +273,16 @@ class Exercises
 
     /**
      * Get the value of previewPicturePath
-     *
-     * @return  string
      */
-    public function getPreviewPicturePath()
+    public function getPreviewPicturePath(): string
     {
         return $this->previewPicturePath;
     }
 
     /**
      * Set the value of previewPicturePath
-     *
-     * @param  string  $previewPicturePath
-     *
-     * @return  self
      */
-    public function setPreviewPicturePath(string $previewPicturePath)
+    public function setPreviewPicturePath(string $previewPicturePath): self
     {
         $this->previewPicturePath = $previewPicturePath;
 
@@ -367,22 +291,16 @@ class Exercises
 
     /**
      * Get the value of created
-     *
-     * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created
-     *
-     * @param \DateTime  $created
-     *
-     * @return  self
      */
-    public function setCreated(\DateTime $created)
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -391,22 +309,16 @@ class Exercises
 
     /**
      * Get the value of updated
-     *
-     * @return \DateTime|null
      */
-    public function getUpdated()
+    public function getUpdated(): DateTime|null
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated
-     *
-     * @param \DateTime|null  $updated
-     *
-     * @return self
      */
-    public function setUpdated($updated)
+    public function setUpdated(DateTime|null $updated): self
     {
         $this->updated = $updated;
 
@@ -415,22 +327,16 @@ class Exercises
 
     /**
      * Get the value of creator
-     *
-     * @return Users
      */
-    public function getCreator()
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator
-     *
-     * @param Users  $creator
-     *
-     * @return self
      */
-    public function setCreator(Users $creator)
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -439,49 +345,47 @@ class Exercises
 
     /**
      * Get the value of updater
-     *
-     * @return Users
      */
-    public function getUpdater()
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater
-     *
-     * @param Users $updater
-     *
-     * @return  self
      */
-    public function setUpdater(?Users $updater)
+    public function setUpdater(Users|null $updater): self
     {
-      $this->updater = $updater;
+        $this->updater = $updater;
 
-      return $this;
+        return $this;
     }
 
-    public function getExerciseXExerciseOptions()
+    /** @return ExerciseXExerciseOption[] */
+    public function getExerciseXExerciseOptions(): Collection
     {
-      return $this->exerciseXExerciseOptions;
+        return $this->exerciseXExerciseOptions;
     }
 
-    public function getExerciseXDeviceOptions()
+    /** @return ExerciseXDeviceOption[] */
+    public function getExerciseXDeviceOptions(): Collection
     {
-      return $this->exerciseXDeviceOptions;
+        return $this->exerciseXDeviceOptions;
     }
 
-    public function getExerciseXDevices()
+    /** @return ExerciseXDevice[] */
+    public function getExerciseXDevices(): Collection
     {
-      return $this->exerciseXDevices;
+        return $this->exerciseXDevices;
     }
 
-    public function getExerciseXExerciseType()
+    /** @return ExerciseXExerciseType[] */
+    public function getExerciseXExerciseType(): Collection
     {
-      return $this->exerciseXExerciseType;
+        return $this->exerciseXExerciseType;
     }
 
-    public function addExerciseXDeviceOption(ExerciseXDeviceOption $exerciseXDeviceOption)
+    public function addExerciseXDeviceOption(ExerciseXDeviceOption $exerciseXDeviceOption): void
     {
         if ($this->exerciseXDeviceOptions->contains($exerciseXDeviceOption)) {
             return;
@@ -491,12 +395,9 @@ class Exercises
         $exerciseXDeviceOption->setExercise($this);
     }
 
-    /**
-     * @param ExerciseXDeviceOption $exerciseXDeviceOption
-     */
-    public function removeExerciseXDeviceOption(ExerciseXDeviceOption $exerciseXDeviceOption)
+    public function removeExerciseXDeviceOption(ExerciseXDeviceOption $exerciseXDeviceOption): void
     {
-        if (!$this->exerciseXDeviceOptions->contains($exerciseXDeviceOption)) {
+        if (! $this->exerciseXDeviceOptions->contains($exerciseXDeviceOption)) {
             return;
         }
 
@@ -504,7 +405,7 @@ class Exercises
         $exerciseXDeviceOption->setExercise(null);
     }
 
-    public function addExerciseXExerciseOption(ExerciseXExerciseOption $exerciseXExerciseOption)
+    public function addExerciseXExerciseOption(ExerciseXExerciseOption $exerciseXExerciseOption): void
     {
         if ($this->exerciseXExerciseOptions->contains($exerciseXExerciseOption)) {
             return;
@@ -514,12 +415,9 @@ class Exercises
         $exerciseXExerciseOption->setExercise($this);
     }
 
-    /**
-     * @param ExerciseXExerciseOption $exerciseXExerciseOption
-     */
-    public function removeExerciseXExerciseOption(ExerciseXExerciseOption $exerciseXExerciseOption)
+    public function removeExerciseXExerciseOption(ExerciseXExerciseOption $exerciseXExerciseOption): void
     {
-        if (!$this->exerciseXExerciseOptions->contains($exerciseXExerciseOption)) {
+        if (! $this->exerciseXExerciseOptions->contains($exerciseXExerciseOption)) {
             return;
         }
 
@@ -527,49 +425,43 @@ class Exercises
         $exerciseXExerciseOption->setExercise(null);
     }
 
-    public function addExerciseXExerciseType(ExerciseXExerciseType $exerciseXExerciseType)
+    public function addExerciseXExerciseType(ExerciseXExerciseType $exerciseXExerciseType): void
     {
-      if ($this->exerciseXExerciseType->contains($exerciseXExerciseType)) {
-          return;
-      }
+        if ($this->exerciseXExerciseType->contains($exerciseXExerciseType)) {
+            return;
+        }
 
-      $this->exerciseXExerciseType->add($exerciseXExerciseType);
-      $exerciseXExerciseType->setExercise($this);
+        $this->exerciseXExerciseType->add($exerciseXExerciseType);
+        $exerciseXExerciseType->setExercise($this);
     }
 
-    /**
-     * @param ExerciseXExerciseType $exerciseXExerciseType
-     */
-    public function removeExerciseXExerciseType(ExerciseXExerciseType $exerciseXExerciseType)
+    public function removeExerciseXExerciseType(ExerciseXExerciseType $exerciseXExerciseType): void
     {
-      if (!$this->exerciseXExerciseType->contains($exerciseXExerciseType)) {
-          return;
-      }
+        if (! $this->exerciseXExerciseType->contains($exerciseXExerciseType)) {
+            return;
+        }
 
-      $this->exerciseXExerciseType->removeElement($exerciseXExerciseType);
-      $exerciseXExerciseType->setExercise(null);
+        $this->exerciseXExerciseType->removeElement($exerciseXExerciseType);
+        $exerciseXExerciseType->setExercise(null);
     }
 
-    public function addExerciseXDevice(ExerciseXDevice $exerciseXDevice)
+    public function addExerciseXDevice(ExerciseXDevice $exerciseXDevice): void
     {
-      if ($this->exerciseXDevices->contains($exerciseXDevice)) {
-          return;
-      }
+        if ($this->exerciseXDevices->contains($exerciseXDevice)) {
+            return;
+        }
 
-      $this->exerciseXDevices->add($exerciseXDevice);
-      $exerciseXDevice->setExercise($this);
+        $this->exerciseXDevices->add($exerciseXDevice);
+        $exerciseXDevice->setExercise($this);
     }
 
-    /**
-     * @param ExerciseXDevice $exerciseXDevice
-     */
-    public function removeExerciseXDevice(ExerciseXDevice $exerciseXDevice)
+    public function removeExerciseXDevice(ExerciseXDevice $exerciseXDevice): void
     {
-      if (!$this->exerciseXDevices->contains($exerciseXDevice)) {
-          return;
-      }
+        if (! $this->exerciseXDevices->contains($exerciseXDevice)) {
+            return;
+        }
 
-      $this->exerciseXDevices->removeElement($exerciseXDevice);
-      $exerciseXDevice->setExercise(null);
+        $this->exerciseXDevices->removeElement($exerciseXDevice);
+        $exerciseXDevice->setExercise(null);
     }
 }

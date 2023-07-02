@@ -16,15 +16,16 @@
     <div class="row">
       <div class="col-3">
         <b-list-group>
-          <b-list-group-item href="#"
+          <b-list-group-item
             v-for="currentTrainingPlanLayout in trainingPlanLayouts"
             :key="currentTrainingPlanLayout.id"
-            @contextmenu.prevent.stop="handleClick($event, currentTrainingPlanLayout)"
-            @click="loadTrainingPlanLayout($event, currentTrainingPlanLayout)"
+            href="#"
             class="list-group-item"
             :active="trainingPlanLayout && trainingPlanLayout.id === currentTrainingPlanLayout.id"
             unselectable="on"
             onselectstart="return false;"
+            @contextmenu.prevent.stop="handleClick($event, currentTrainingPlanLayout)"
+            @click="loadTrainingPlanLayout($event, currentTrainingPlanLayout)"
           >
             {{ currentTrainingPlanLayout.name }}
           </b-list-group-item>
@@ -41,16 +42,16 @@
           :key="trainingPlanLayout.id"
           :ref="'trainingPlanLayoutPanel'"
 
-          :trainingPlanLayout="trainingPlanLayout"
+          :training-plan-layout="trainingPlanLayout"
         />
       </div>
     </div>
     <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
 
     <vue-simple-context-menu
+      :id="'TrainingPlanLayoutsContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'TrainingPlanLayoutsContextMenu'"
       :options="options"
       @optionClicked="optionClicked"
     />
@@ -152,10 +153,10 @@ export default {
     },
     async deleteTrainingPlanLayout(trainingPlanLayout) {
       if (this.isGenericId(trainingPlanLayout.id)) {
-        const result = await this.$store.dispatch("trainingPlanLayouts/unregister", trainingPlanLayout.id);
+        await this.$store.dispatch("trainingPlanLayouts/unregister", trainingPlanLayout.id);
         this.leftPanelVisibility = false;
       } else {
-        const result = await this.$store.dispatch("trainingPlanLayouts/delete", trainingPlanLayout.id);
+        await this.$store.dispatch("trainingPlanLayouts/delete", trainingPlanLayout.id);
         this.leftPanelVisibility = false;
       }
     },

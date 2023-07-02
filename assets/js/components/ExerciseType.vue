@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "ExerciseType",
+  name: "ExerciseTypeView",
   alias: "exercise-type",
   props: {
     exerciseType: {

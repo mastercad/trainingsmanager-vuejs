@@ -2,12 +2,12 @@
   <div class="w-100">
     <div class="row">
       <div class="col-md-12">
-        <h1>{{ muscle.name }}</h1>
+        <h1>{{ origMuscle.name }}</h1>
       </div>
     </div>
     <div class="row">
       <div class="col-md-4">
-        {{ muscle.seoLink }}
+        {{ origMuscle.seoLink }}
       </div>
     </div>
   </div>
@@ -21,6 +21,11 @@ export default {
     muscle: {
       required: true,
       type: Object
+    }
+  },
+  data() {
+    return {
+      origMuscle: this.muscle
     }
   }
 };

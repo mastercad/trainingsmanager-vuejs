@@ -27,7 +27,6 @@
     >
       <div
         v-for="trainingPlanExercise in sortTrainingPlanExercises"
-        v-if="trainingPlanExercise"
         :key="origId+'_'+trainingPlanExercise.exercise.name+'_'+trainingPlanExercise.order"
         class="list-group-item exercise-sort-item"
       >
@@ -156,7 +155,9 @@
           ref="finishTab"
           title="Add"
         >
-          <h2 class="text-xl text-gray-800 text-center mb-2">Add Exercise</h2>
+          <h2 class="text-xl text-gray-800 text-center mb-2">
+            Add Exercise
+          </h2>
           <b>Configuration:</b>
           <div
             v-if="selectedExercise"
@@ -169,7 +170,6 @@
               <ul>
                 <li
                   v-for="(possibleExerciseOption, index) in selectedTrainingPlanExerciseOptions"
-                  v-if="possibleExerciseOption.value || possibleExerciseOption.defaultValue"
                   :key="'possible_exercise_option_'+index"
                 >
                   {{ possibleExerciseOption.origName }}: {{ possibleExerciseOption.value ? possibleExerciseOption.value : possibleExerciseOption.defaultValue }}
@@ -188,7 +188,6 @@
               <ul>
                 <li
                   v-for="(possibleDeviceOption, index) in selectedTrainingPlanDeviceOptions"
-                  v-if="possibleDeviceOption.value || possibleDeviceOption.defaultValue"
                   :key="'possible_device_option_'+index"
                 >
                   {{ possibleDeviceOption.origName }}: {{ possibleDeviceOption.value ? possibleDeviceOption.value : possibleDeviceOption.defaultValue }}
@@ -249,8 +248,6 @@
 
 <script scoped>
 import draggable from 'vuedraggable';
-import ExerciseOptionsRevolution from './ExerciseOptionsRevolution.vue';
-import DeviceOptionsRevolution from './DeviceOptionsRevolution.vue';
 import OptionFunctions from "../shared/optionFunctions.js";
 
 import {v4} from "uuid";
@@ -258,9 +255,7 @@ import {v4} from "uuid";
 export default {
   name: "TrainingPlanView",
   components: {
-    draggable: draggable,
-    ExerciseOptionsRevolution,
-    DeviceOptionsRevolution
+    draggable: draggable
   },
   props: {
     id: {
@@ -318,6 +313,7 @@ export default {
       return this.$store.getters['trainingPlanExerciseOptions/deviceOptionKey'];
     },
     sortTrainingPlanExercises() {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return this.origTrainingPlanExercises.sort(
         (a, b) => { // sort using this.orderBy
           if (null === a
@@ -348,10 +344,30 @@ export default {
       return this.$store.getters['exerciseOptions/exerciseOptions'];
     },
     selectedTrainingPlanExerciseOptions() {
-      return this.$store.getters['trainingPlanExerciseOptions/getSelectedTrainingPlanExerciseOptions'];
+      let cleanedTrainingPlanExerciseOptions = [];
+      let trainingPlanExerciseOptions = this.$store.getters['trainingPlanExerciseOptions/getSelectedTrainingPlanExerciseOptions'];
+
+      for (let position in trainingPlanExerciseOptions) {
+        let possibleExerciseOption = trainingPlanExerciseOptions[position];
+        if (possibleExerciseOption.value || possibleExerciseOption.defaultValue) {
+          cleanedTrainingPlanExerciseOptions.push(possibleExerciseOption);
+        }
+      }
+
+      return cleanedTrainingPlanExerciseOptions;
     },
     selectedTrainingPlanDeviceOptions() {
-      return this.$store.getters['trainingPlanExerciseOptions/getSelectedTrainingPlanDeviceOptions'];
+      let cleanedTrainingPlanDeviceOptions = [];
+      let trainingPlanDeviceOptions = this.$store.getters['trainingPlanExerciseOptions/getSelectedTrainingPlanDeviceOptions'];
+
+      for (let position in trainingPlanDeviceOptions) {
+        let possibleDeviceOption = trainingPlanDeviceOptions[position];
+        if (possibleDeviceOption.value || possibleDeviceOption.defaultValue) {
+          cleanedTrainingPlanDeviceOptions.push(possibleDeviceOption);
+        }
+      }
+
+      return cleanedTrainingPlanDeviceOptions;
     },
     possibleDeviceOptions() {
       return this.$store.getters['deviceOptions/deviceOptions'];
@@ -369,7 +385,7 @@ export default {
       } else if (event.removed) {
         newIndex = this.$parent.newIndex;
         oldIndex = event.removed.oldIndex;
-//        this.$parent.exerciseMoveTarget.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
+        //        this.$parent.exerciseMoveTarget.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
         this.$parent.exerciseMoveTarget.origTrainingPlanExercises.forEach(function(item, index) {
           item.order = index;
         });
@@ -446,19 +462,18 @@ export default {
     },
     updateTrainingPlanExercise() {
       this.handleTrainingPlanExerciseOptionsForSave(
-        this.selectedTrainingPlanExercise,
         this.$store.getters['trainingPlanExerciseOptions/getSelectedTrainingPlanExerciseOptions']
       );
     },
-    handleTrainingPlanExerciseOptionsForSave(trainingPlanExercise, selectedTrainingPlanExerciseOptions) {
+    handleTrainingPlanExerciseOptionsForSave(selectedTrainingPlanExerciseOptions) {
 
       this.$store.dispatch("trainingPlanExerciseOptions/update", {
-        trainingPlanXExerciseOption: selectedTrainingPlanExerciseOption.trainingPlanXExerciseOption,
-        optionValue: selectedTrainingPlanExerciseOption.value,
-        exerciseOption: selectedTrainingPlanExerciseOption.trainingPlanXExerciseOption.exerciseOption,
+        trainingPlanXExerciseOption: this.selectedTrainingPlanExerciseOption.trainingPlanXExerciseOption,
+        optionValue: this.selectedTrainingPlanExerciseOption.value,
+        exerciseOption: this.selectedTrainingPlanExerciseOption.trainingPlanXExerciseOption.exerciseOption,
         trainingPlanExercise: this.selectedTrainingPlanExercise
       });
-      
+
       for (let key in selectedTrainingPlanExerciseOptions) {
         let selectedTrainingPlanExerciseOption = selectedTrainingPlanExerciseOptions[key];
         console.log(selectedTrainingPlanExerciseOption);
@@ -598,7 +613,7 @@ export default {
       this.selectedDevice = null;
       this.selectedTrainingPlanExercise = trainingPlanExercise;
       this.selectExercise(trainingPlanExercise.exercise);
-//      this.selectDevice(null !== trainingPlanExercise.exercise.exerciseXDevice ? trainingPlanExercise.exercise.exerciseXDevice.device : null);
+      //      this.selectDevice(null !== trainingPlanExercise.exercise.exerciseXDevice ? trainingPlanExercise.exercise.exerciseXDevice.device : null);
 
       this.showModal();
     },
@@ -622,8 +637,8 @@ export default {
       this.$refs.formWiz.nextTab();
     },
     cancel() {
-//      this.selectedTrainingPlanExerciseOptions = {};
-//      this.selectedTrainingPlanDeviceOptions = {};
+      //      this.selectedTrainingPlanExerciseOptions = {};
+      //      this.selectedTrainingPlanDeviceOptions = {};
       this.selectedTrainingPlanExercise = null;
       this.$refs.formWiz.reset();
 

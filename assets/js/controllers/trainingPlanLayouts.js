@@ -1,14 +1,14 @@
 import axios from "axios";
 
 export default {
-  create(name) {
+  create(trainingPlanLayout) {
     return axios.post("/api/training_plan_layouts", {
-      name: name
+      name: trainingPlanLayout.name
     });
   },
-  update(id, name) {
-    return axios.put("/api/training_plan_layouts/"+id, {
-      name: name
+  update(trainingPlanLayout) {
+    return axios.put("/api/training_plan_layouts/"+trainingPlanLayout.id, {
+      name: trainingPlanLayout.name
     });
   },
   delete(id) {

@@ -6,7 +6,7 @@
         type="dark"
         variant="info"
       >
-        <b-navbar-toggle target="nav-collapse" ></b-navbar-toggle>
+        <b-navbar-toggle target="nav-collapse" />
 
         <b-navbar-brand href="#">
           NavBar
@@ -17,30 +17,11 @@
           is-nav
         >
           <b-navbar-nav>
-            <b-nav-item
-              v-for="item in $router.options.routes"
-              v-if="!item.children"
+            <nav-item
+              v-for="item in routes"
               :key="item.name"
-              :to="item.path"
-            >
-              {{ item.name }}
-            </b-nav-item>
-            <b-nav-item-dropdown
-              v-for="item in $router.options.routes"
-              v-if="item.children"
-              :key="item.name"
-              :text="item.name"
-              active-class="active"
-            >
-              <b-dropdown-item
-                v-for="child in item.children"
-                :key="child.name"
-                :to="child.path"
-                active-class="active"
-              >
-                {{ child.name }}
-              </b-dropdown-item>
-            </b-nav-item-dropdown>
+              :item="item"
+            />
           </b-navbar-nav>
 
           <b-navbar-nav class="ml-auto">
@@ -92,7 +73,7 @@
     </div>
 
     <router-view />
-<!--
+    <!--
     <li
       v-if="isAuthenticated==true"
       class="nav-item"
@@ -151,20 +132,19 @@
 <script>
 import store from "../store";
 import router from "../router";
+import NavItem from "./NavItem.vue"
 
 export default {
-  name: 'App',
-  data() {
-    return {
-      message: "A list of words",
-      words: [],
-      counter: 0,
-      showAlert: false
-    };
+  name: "AppView",
+  components: {
+    NavItem
   },
   computed: {
     isAuthenticated() {
       return this.$store.getters['security/isAuthenticated']
+    },
+    routes() {
+      return router.options.routes;
     }
   },
   mounted() {
@@ -202,14 +182,14 @@ export default {
       ]
     );
 
-//    router.beforeEach((to, from, next) => {
-//      if (to.name !== 'Login' && !this.isAuthenticated) next({ name: 'Login' })
-//      else next()
-//    })
+    //    router.beforeEach((to, from, next) => {
+    //      if (to.name !== 'Login' && !this.isAuthenticated) next({ name: 'Login' })
+    //      else next()
+    //    })
 
     //router.replace(router.currentRoute.value.fullPath)
 
-/*
+    /*
     axios.interceptors.response.use(undefined, (err) => {
       return new Promise(() => {
         if (401 === err.response.status) {

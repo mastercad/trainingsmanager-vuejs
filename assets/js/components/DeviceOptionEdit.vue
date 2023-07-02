@@ -1,7 +1,9 @@
 <template>
   <b-container fluid>
-
-    <b-card bg-variant="light" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="3"
         label="Device Option"
@@ -17,12 +19,12 @@
           <b-col sm="9">
             <b-form-input
               id="device_option_name"
-              v-model="deviceOption.name"
+              v-model="origDeviceOption.name"
               type="text"
               placeholder="Device Option Name"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -33,22 +35,29 @@
           <b-col sm="9">
             <b-form-input
               id="device_option_default_value"
-              v-model="deviceOption.defaultValue"
+              v-model="origDeviceOption.defaultValue"
               type="text"
               placeholder="Device default value"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
       </b-form-group>
     </b-card>
 
-    <b-card-group deck bg-variant="light" class="mt-2">
-      <b-card v-if="isValidId(deviceOption.id)" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card-group
+      deck
+      bg-variant="light"
+      class="mt-2"
+    >
+      <b-card
+        v-if="isValidId(origDeviceOption.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          v-if="isValidId(deviceOption.id)"
-          :disabled="deviceOption.name.length === 0"
+          v-if="isValidId(origDeviceOption.id)"
+          :disabled="origDeviceOption.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateDeviceOption()"
@@ -57,9 +66,12 @@
         </button>
       </b-card>
 
-      <b-card v-if="isGenericId(deviceOption.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-card
+        v-if="isGenericId(origDeviceOption.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          :disabled="deviceOption.name.length === 0"
+          :disabled="origDeviceOption.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="createDeviceOption()"
@@ -86,6 +98,7 @@
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+  name: "DeviceOptionEditView",
   props: {
     deviceOption: {
       type: Object,
@@ -94,7 +107,8 @@ export default {
   },
   data() {
     return {
-      currentStatus: null
+      currentStatus: null,
+      origDeviceOption: this.deviceOption
     }
   },
   computed: {
@@ -116,26 +130,26 @@ export default {
   },
   methods: {
     async createDeviceOption() {
-      const result = await this.$store.dispatch("deviceOptions/create",
+      await this.$store.dispatch("deviceOptions/create",
         {
-          id: this.deviceOption.id,
-          name: this.deviceOption.name,
-          defaultValue: this.deviceOption.defaultValue
+          id: this.origDeviceOption.id,
+          name: this.origDeviceOption.name,
+          defaultValue: this.origDeviceOption.defaultValue
         }
       );
     },
     async updateDeviceOption() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "deviceOptions/update",
         {
-          id: this.deviceOption.id,
-          name: this.deviceOption.name,
-          defaultValue: this.deviceOption.defaultValue
+          id: this.origDeviceOption.id,
+          name: this.origDeviceOption.name,
+          defaultValue: this.origDeviceOption.defaultValue
         }
       );
     },
     async deleteDeviceOption() {
-      const result = await this.$store.dispatch("deviceOptions/delete", this.deviceOption.id);
+      await this.$store.dispatch("deviceOptions/delete", this.origDeviceOption.id);
     },
     reset() {
       // reset form to initial state

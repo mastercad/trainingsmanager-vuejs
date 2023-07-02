@@ -91,7 +91,7 @@
 import Contact from "../components/Contact";
 
 export default {
-  name: "Contacts",
+  name: "ContactsView",
   components: {
     Contact
   },

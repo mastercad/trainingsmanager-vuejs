@@ -2,7 +2,7 @@
   <div class="row p-2 border rounded">
     <div class="row">
       <div class="col-11">
-        <h1>{{ trainingPlan.name }}</h1>
+        <h1>{{ origTrainingPlan.name }}</h1>
       </div>
       <div class="col-1">
         <b-button v-b-modal.modal="'modal-'+trainingPlan.id">
@@ -12,8 +12,8 @@
     </div>
 
     <draggable
-      v-if="trainingPlan.trainingPlanXExercises"
-      :list="trainingPlan.trainingPlanXExercises"
+      v-if="origTrainingPlan.trainingPlanXExercises"
+      :list="origTrainingPlan.trainingPlanXExercises"
       class="list-group"
       ghost-class="ghost"
       :options="{group:'tags'}"
@@ -27,8 +27,7 @@
     >
       <div
         v-for="trainingPlanExercise in sortTrainingPlanExercises"
-        v-if="trainingPlanExercise"
-        :key="trainingPlan.id+'_'+trainingPlanExercise.exercise.name+'_'+trainingPlanExercise.order"
+        :key="origTrainingPlan.id+'_'+trainingPlanExercise.exercise.name+'_'+trainingPlanExercise.order"
         class="list-group-item exercise-sort-item"
       >
         {{ trainingPlanExercise.exercise.name }}
@@ -37,7 +36,7 @@
     </draggable>
 
     <b-modal
-      :id="'modal-'+trainingPlan.id"
+      :id="'modal-'+origTrainingPlan.id"
       ref="formWizModal"
       title="Exercise Wizard"
       scrollable
@@ -66,10 +65,10 @@
             Choose Exercise
             <br>
             <span
-              v-if="trainingPlan.trainingPlanExercises && trainingPlan.trainingPlanExercises[0]"
+              v-if="origTrainingPlan.trainingPlanExercises && origTrainingPlan.trainingPlanExercises[0]"
               class="fs-6"
             >
-              ({{ trainingPlan.trainingPlanExercises[0].name }})
+              ({{ origTrainingPlan.trainingPlanExercises[0].name }})
             </span>
           </h2>
 
@@ -99,8 +98,7 @@
                 :additional-options="selectExercise.exerciseXExerciseOptions"
                 :identifier="selectedExercise.id"
                 description="Possible Exercise Options for this Exercise"
-              >
-              </options-for-edit>
+              />
 
               <div class="col-12">
                 {{ selectedExercise.description }}
@@ -153,8 +151,7 @@
                 :additional-options="selectedExercise.exerciseXDevices[0] ? selectedExercise.exerciseXDevices[0].device.deviceXDeviceOptions : []"
                 :identifier="selectedDevice.id"
                 description="Possible Device Options for this Device"
-              >
-              </options-for-edit>
+              />
             </div>
           </div>
         </tab-content>
@@ -164,7 +161,9 @@
           ref="finishTab"
           title="Add"
         >
-          <h2 class="text-xl text-gray-800 text-center mb-2">Add Exercise</h2>
+          <h2 class="text-xl text-gray-800 text-center mb-2">
+            Add Exercise
+          </h2>
           <b>Configuration:</b>
           <div
             v-if="selectedExercise"
@@ -270,12 +269,14 @@ export default {
       display: 'Clone',
       activeTabIndex: 0,
       maxTabIndex: 1,
-      currentTrainingPlanExercise: null
+      currentTrainingPlanExercise: null,
+      origTrainingPlan: this.trainingPlan
     }
   },
   computed: {
     sortTrainingPlanExercises() {
-      return this.trainingPlan.trainingPlanXExercises.sort(
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.origTrainingPlan.trainingPlanXExercises.sort(
         (a, b) => { // sort using this.orderBy
           if (null === a
             || null === b
@@ -368,7 +369,7 @@ export default {
       let oldIndex = 0;
 
       console.log("reorderExercises");
-      console.log(this.trainingPlan.id);
+      console.log(this.origTrainingPlan.id);
       window.console.log(event);
       window.console.log(this);
 
@@ -379,16 +380,16 @@ export default {
       } else if (event.removed) {
         newIndex = this.$parent.newIndex;
         oldIndex = event.removed.oldIndex;
-//        this.$parent.exerciseMoveTarget.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
-        this.$parent.exerciseMoveTarget.trainingPlan.trainingPlanXExercises.forEach(function(item, index) {
+        //        this.$parent.exerciseMoveTarget.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
+        this.$parent.exerciseMoveTarget.origTrainingPlan.trainingPlanXExercises.forEach(function(item, index) {
           item.order = index;
         });
         this.$parent.newIndex = 0;
       } else if (event.moved) {
         oldIndex = event.moved.oldIndex;
         newIndex = event.moved.newIndex;
-        this.trainingPlan.trainingPlanXExercises.splice(newIndex, 0, this.trainingPlan.trainingPlanXExercises.splice(oldIndex, 1)[0]);
-        this.trainingPlan.trainingPlanXExercises.forEach(function(item, index) {
+        this.origTrainingPlan.trainingPlanXExercises.splice(newIndex, 0, this.origTrainingPlan.trainingPlanXExercises.splice(oldIndex, 1)[0]);
+        this.origTrainingPlan.trainingPlanXExercises.forEach(function(item, index) {
           item.order = index;
         });
       }
@@ -410,7 +411,6 @@ export default {
       let preparedPossibleExerciseOptions = {};
       let preparedPossibleDeviceOptions = {};
       let preparedExistingTrainingPlanExerciseOptions = {};
-      let preparedExistingTrainingPlanExerciseXDeviceOptions = {};
 
       this.possibleExerciseOptions.forEach(exerciseOption => {
         preparedPossibleExerciseOptions[exerciseOption.id] = exerciseOption;
@@ -453,7 +453,7 @@ export default {
 
       if (true === isNewTrainingPlanExercise) {
         // hier muss noch geprüft werden ob diese trainingplanexercise bereits vorhanden ist!
-        this.trainingPlan.trainingPlanXExercises.push(this.currentTrainingPlanExercise);
+        this.origTrainingPlan.trainingPlanXExercises.push(this.currentTrainingPlanExercise);
       }
 
       this.cancel();
@@ -473,10 +473,10 @@ export default {
       trainingPlanExercise.id = IdGenerator.generate('training_plan_x_exercise_');
       trainingPlanExercise.order = 0;
       trainingPlanExercise.remark = '';
-      trainingPlanExercise.trainingPlan = '/api/training_plan/'+this.id;
+      //      trainingPlanExercise.trainingPlan = '/api/training_plan/'+this.id;
       trainingPlanExercise.trainingPlanXExerciseOptions = [];
       trainingPlanExercise.trainingPlanXDeviceOptions = [];
-      trainingPlanExercise.trainingPlan = this.trainingPlan;
+      trainingPlanExercise.trainingPlan = this.origTrainingPlan;
 
       return trainingPlanExercise;
     },
@@ -533,13 +533,13 @@ export default {
       this.showModal();
     },
     showModal() {
-      this.$root.$emit('bv::show::modal', 'modal-'+this.trainingPlan.id, '#btnShow')
+      this.$root.$emit('bv::show::modal', 'modal-'+this.origTrainingPlan.id, '#btnShow')
     },
     hideModal() {
-      this.$root.$emit('bv::hide::modal', 'modal-'+this.trainingPlan.id, '#btnShow')
+      this.$root.$emit('bv::hide::modal', 'modal-'+this.origTrainingPlan.id, '#btnShow')
     },
     toggleModal() {
-      this.$root.$emit('bv::toggle::modal', 'modal-'+this.trainingPlan.id, '#btnToggle')
+      this.$root.$emit('bv::toggle::modal', 'modal-'+this.origTrainingPlan.id, '#btnToggle')
     },
     back() {
       this.$refs.formWiz.prevTab();

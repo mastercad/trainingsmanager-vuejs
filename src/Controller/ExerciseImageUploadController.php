@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\Service\FileUploader;
-use Symfony\Component\HttpFoundation\Response;
 
 #[AsController]
 final class ExerciseImageUploadController extends AbstractController
@@ -17,7 +17,7 @@ final class ExerciseImageUploadController extends AbstractController
     public function __invoke(Request $request, FileUploader $fileUploader): Response
     {
         $uploadedFiles = $request->files->get('exerciseImage');
-        if (!$uploadedFiles) {
+        if (! $uploadedFiles) {
             throw new BadRequestHttpException('"file" is required');
         }
 

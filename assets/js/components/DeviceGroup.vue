@@ -2,7 +2,7 @@
   <div class="w-100">
     <div class="row">
       <div class="col-md-12">
-        <h1>{{ deviceGroup.name }}</h1>
+        <h1>{{ origDeviceGroup.name }}</h1>
       </div>
     </div>
     <div class="row">
@@ -15,12 +15,17 @@
 
 <script>
 export default {
-  name: "DeviceGroup",
+  name: "DeviceGroupView",
   alias: "device-group",
   props: {
     deviceGroup: {
       type: Object,
       required: true
+    }
+  },
+  data() {
+    return {
+      origDeviceGroup: this.deviceGroup
     }
   }
 };

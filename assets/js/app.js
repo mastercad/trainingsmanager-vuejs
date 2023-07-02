@@ -32,8 +32,8 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css';
 
 library.add(faPlus, faJs, faVuejs);
 
-Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component('VueSimpleContextMenu', VueSimpleContextMenu);
+Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 
 // Vue.use(VueJsonLD);
 Vue.use(BootstrapVue);

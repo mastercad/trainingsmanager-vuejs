@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,113 +24,76 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 class TrainingPlanXExercise
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[Groups(['read', 'write'])]
-    private $id;
+    private int $id;
 
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'exercise_order', type: 'integer', nullable: false, options: ['default' => '0', 'comment' => 'ist gedacht um die reihenfolge der übungen nachträglich noch ändern zu können'])]
     #[Groups(['read', 'write'])]
-    private $order = 0;
+    private int $order = 0;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'remark', type: 'text', length: 65535, nullable: false)]
     #[Groups(['read', 'write'])]
-    private $remark;
+    private string $remark;
 
-    /**
-     * @var Exercises
-     */
     #[ORM\ManyToOne(targetEntity: Exercises::class)]
     #[ORM\JoinColumn(name: 'exercise', referencedColumnName: 'id', nullable: false)]
     #[Groups(['read', 'write'])]
-    private $exercise;
+    private Exercises $exercise;
 
-    /**
-     * @var TrainingPlans
-     */
     #[ORM\ManyToOne(targetEntity: TrainingPlans::class, inversedBy: 'trainingPlanExercises')]
     #[ORM\JoinColumn(name: 'training_plan', referencedColumnName: 'id', nullable: false)]
     #[Groups(['read', 'write'])]
-    private $trainingPlan;
+    private TrainingPlans $trainingPlan;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: Users::class)]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: Users::class)]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private $updater;
+    private Users $updater;
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var Collection|TrainingPlanXExerciseOption[]
-     */
+    /** @var Collection|TrainingPlanXExerciseOption[] */
     #[ORM\OneToMany(targetEntity: TrainingPlanXExerciseOption::class, mappedBy: 'trainingPlanXExercise', cascade: ['persist'])]
     #[Groups(['read', 'write'])]
-    private $trainingPlanXExerciseOptions;
+    private Collection $trainingPlanXExerciseOptions;
 
-    /**
-     * @var Collection|TrainingPlanXDeviceOption[]
-     */
+    /** @var Collection|TrainingPlanXDeviceOption[] */
     #[ORM\OneToMany(targetEntity: TrainingPlanXDeviceOption::class, mappedBy: 'trainingPlanXExercise', cascade: ['persist'])]
     #[Groups(['read', 'write'])]
-    private $trainingPlanXDeviceOptions;
+    private Collection $trainingPlanXDeviceOptions;
 
     public function __construct()
     {
-      $this->trainingPlanXExerciseOptions = new ArrayCollection();
-      $this->trainingPlanXDeviceOptions = new ArrayCollection();
+        $this->trainingPlanXExerciseOptions = new ArrayCollection();
+        $this->trainingPlanXDeviceOptions = new ArrayCollection();
     }
 
     /**
      * Get the value of id
-     *
-     * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * Set the value of id
-     *
-     * @param int $id
-     *
-     * @return self
      */
-    public function setId(int $id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -136,22 +102,16 @@ class TrainingPlanXExercise
 
     /**
      * Get the value of oOrder
-     *
-     * @return int
      */
-    public function getOrder()
+    public function getOrder(): int
     {
         return $this->order;
     }
 
     /**
      * Set the value of order
-     *
-     * @param int $order
-     *
-     * @return self
      */
-    public function setOrder(int $order)
+    public function setOrder(int $order): self
     {
         $this->order = $order;
 
@@ -160,22 +120,16 @@ class TrainingPlanXExercise
 
     /**
      * Get the value of remark
-     *
-     * @return string
      */
-    public function getRemark()
+    public function getRemark(): string
     {
         return $this->remark;
     }
 
     /**
      * Set the value of remark
-     *
-     * @param string $remark
-     *
-     * @return self
      */
-    public function setRemark(string $remark)
+    public function setRemark(string $remark): self
     {
         $this->remark = $remark;
 
@@ -184,22 +138,16 @@ class TrainingPlanXExercise
 
     /**
      * Get the value of created
-     *
-     * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created
-     *
-     * @param \DateTime $created
-     *
-     * @return self
      */
-    public function setCreated(\DateTime $created)
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -208,22 +156,16 @@ class TrainingPlanXExercise
 
     /**
      * Get the value of updated
-     *
-     * @return \DateTime|null
      */
-    public function getUpdated()
+    public function getUpdated(): DateTime|null
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated
-     *
-     * @param \DateTime|null $updated
-     *
-     * @return self
      */
-    public function setUpdated($updated)
+    public function setUpdated(DateTime|null $updated): self
     {
         $this->updated = $updated;
 
@@ -232,22 +174,16 @@ class TrainingPlanXExercise
 
     /**
      * Get the value of creator
-     *
-     * @return Users
      */
-    public function getCreator()
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator
-     *
-     * @param Users $creator
-     *
-     * @return self
      */
-    public function setCreator(Users $creator)
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -256,22 +192,16 @@ class TrainingPlanXExercise
 
     /**
      * Get the value of exercise
-     *
-     * @return Exercises
      */
-    public function getExercise()
+    public function getExercise(): Exercises
     {
         return $this->exercise;
     }
 
     /**
      * Set the value of exercise
-     *
-     * @param Exercises $exercise
-     *
-     * @return self
      */
-    public function setExercise(Exercises $exercise)
+    public function setExercise(Exercises $exercise): self
     {
         $this->exercise = $exercise;
 
@@ -280,22 +210,16 @@ class TrainingPlanXExercise
 
     /**
      * Get the value of trainingPlan
-     *
-     * @return TrainingPlans
      */
-    public function getTrainingPlan()
+    public function getTrainingPlan(): TrainingPlans
     {
         return $this->trainingPlan;
     }
 
     /**
      * Set the value of trainingPlan
-     *
-     * @param TrainingPlans $trainingPlan
-     *
-     * @return self
      */
-    public function setTrainingPlan(TrainingPlans $trainingPlan)
+    public function setTrainingPlan(TrainingPlans $trainingPlan): self
     {
         $this->trainingPlan = $trainingPlan;
 
@@ -304,81 +228,72 @@ class TrainingPlanXExercise
 
     /**
      * Get the value of updater
-     *
-     * @return Users
      */
-    public function getUpdater()
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater
-     *
-     * @param Users $updater
-     *
-     * @return self
      */
-    public function setUpdater(Users $updater)
+    public function setUpdater(Users $updater): self
     {
         $this->updater = $updater;
 
         return $this;
     }
 
-    public function getTrainingPlanXExerciseOptions()
+    /** @return TrainingPlanXExerciseOption[] */
+    public function getTrainingPlanXExerciseOptions(): Collection
     {
         return $this->trainingPlanXExerciseOptions;
     }
 
-    public function addTrainingXPlanExerciseOption(TrainingPlanXExerciseOption $trainingPlanXExerciseOption)
+    public function addTrainingXPlanExerciseOption(TrainingPlanXExerciseOption $trainingPlanXExerciseOption): void
     {
-      if ($this->trainingPlanXExerciseOptions->contains($trainingPlanXExerciseOption)) {
-          return;
-      }
+        if ($this->trainingPlanXExerciseOptions->contains($trainingPlanXExerciseOption)) {
+            return;
+        }
 
-      $this->trainingPlanXExerciseOptions->add($trainingPlanXExerciseOption);
-      $trainingPlanXExerciseOption->setTrainingPlanXExercise($this);
+        $this->trainingPlanXExerciseOptions->add($trainingPlanXExerciseOption);
+        $trainingPlanXExerciseOption->setTrainingPlanXExercise($this);
     }
 
-    /**
-     * @param TrainingPlanXExerciseOption $trainingPlanXExerciseOption
-     */
-    public function removeTrainingXPlanExerciseOption(TrainingPlanXExerciseOption $trainingPlanXExerciseOption)
+    public function removeTrainingXPlanExerciseOption(TrainingPlanXExerciseOption $trainingPlanXExerciseOption): void
     {
-      if (!$this->trainingPlanXExerciseOptions->contains($trainingPlanXExerciseOption)) {
-          return;
-      }
+        if (! $this->trainingPlanXExerciseOptions->contains($trainingPlanXExerciseOption)) {
+            return;
+        }
 
-      $this->trainingPlanXExerciseOptions->removeElement($trainingPlanXExerciseOption);
-      $trainingPlanXExerciseOption->setTrainingPlanXExercise(null);
+        $this->trainingPlanXExerciseOptions->removeElement($trainingPlanXExerciseOption);
+        $trainingPlanXExerciseOption->setTrainingPlanXExercise(null);
     }
 
-    public function getTrainingPlanXDeviceOptions()
+    /** @return TrainingPlanXDeviceOption[] */
+    public function getTrainingPlanXDeviceOptions(): Collection
     {
         return $this->trainingPlanXDeviceOptions;
     }
 
-    public function addTrainingXPlanDeviceOption(TrainingPlanXDeviceOption $trainingPlanXDeviceOption)
+    public function addTrainingXPlanDeviceOption(TrainingPlanXDeviceOption $trainingPlanXDeviceOption): void
     {
-      if ($this->trainingPlanXDeviceOptions->contains($trainingPlanXDeviceOption)) {
-          return;
-      }
+        if ($this->trainingPlanXDeviceOptions->contains($trainingPlanXDeviceOption)) {
+            return;
+        }
 
-      $this->trainingPlanXDeviceOptions->add($trainingPlanXDeviceOption);
-      $trainingPlanXDeviceOption->setTrainingPlanXExercise($this);
+        $this->trainingPlanXDeviceOptions->add($trainingPlanXDeviceOption);
+        $trainingPlanXDeviceOption->setTrainingPlanXExercise($this);
     }
 
-    /**
-     * @param ExerciseXDevice $exerciseXDevice
-     */
-    public function removeTrainingXPlanDeviceOption(TrainingPlanXDeviceOption $trainingPlanXDeviceOption)
+    /** @param ExerciseXDevice $exerciseXDevice */
+    public function removeTrainingXPlanDeviceOption(TrainingPlanXDeviceOption $trainingPlanXDeviceOption): void
     {
-      if (!$this->trainingPlanXDeviceOptions->contains($trainingPlanXDeviceOption)) {
-          return;
-      }
+        if (! $this->trainingPlanXDeviceOptions->contains($trainingPlanXDeviceOption)) {
+            return;
+        }
 
-      $this->trainingPlanXDeviceOptions->removeElement($trainingPlanXDeviceOption);
-      $trainingPlanXDeviceOption->setTrainingPlanXExercise(null);
+        $this->trainingPlanXDeviceOptions->removeElement($trainingPlanXDeviceOption);
+        $trainingPlanXDeviceOption->setTrainingPlanXExercise(null);
     }
 }

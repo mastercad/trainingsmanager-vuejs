@@ -1,67 +1,72 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\UrlHelper;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
+use function file_exists;
+use function pathinfo;
+use function str_replace;
+use function uniqid;
+use function unlink;
+
+use const PATHINFO_FILENAME;
 
 class FileUploader
 {
-    private $uploadPath;
-    private $slugger;
-    private $urlHelper;
-    private $relativeUploadsDir;
+    private string $relativeUploadsDir;
 
-    public function __construct($publicPath, $uploadPath, SluggerInterface $slugger, UrlHelper $urlHelper)
+    public function __construct(string $publicPath, private string $uploadPath, private SluggerInterface $slugger, private UrlHelper $urlHelper)
     {
-        $this->uploadPath = $uploadPath;
-        $this->slugger = $slugger;
-        $this->urlHelper = $urlHelper;
-
         // get uploads directory relative to public path //  "/uploads/"
-        $this->relativeUploadsDir = str_replace($publicPath, '', $this->uploadPath).'/';
+        $this->relativeUploadsDir = str_replace($publicPath, '', $this->uploadPath) . '/';
     }
 
-    public function upload(UploadedFile $file, $userIdentifier)
+    public function upload(UploadedFile $file, string $userIdentifier): string
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
-        $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+        $fileName = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
         try {
-            $file->move($this->getUploadPath().'/'.$userIdentifier, $fileName);
-        } catch (FileException $e) {
+            $file->move($this->getUploadPath() . '/' . $userIdentifier, $fileName);
+        } catch (FileException) {
             // ... handle exception if something happens during file upload
         }
 
         return $fileName;
     }
 
-    public function delete($fileName, $userIdentifier)
+    public function delete(string $fileName, string $userIdentifier): bool
     {
-      $absoluteFilePath = $this->getUploadPath().'/'.$userIdentifier.'/'.$fileName;
-      if (!file_exists($absoluteFilePath)) {
-        return true;
-      }
+        $absoluteFilePath = $this->getUploadPath() . '/' . $userIdentifier . '/' . $fileName;
+        if (! file_exists($absoluteFilePath)) {
+            return true;
+        }
 
-      return unlink($absoluteFilePath);
+        return unlink($absoluteFilePath);
     }
 
-    public function getUploadPath()
+    public function getUploadPath(): string
     {
         return $this->uploadPath;
     }
 
-    public function retrieveUrl(?string $fileName, bool $absolute = true)
+    public function retrieveUrl(string|null $fileName, bool $absolute = true): string
     {
-        if (empty($fileName)) return null;
-
-        if ($absolute) {
-            return $this->urlHelper->getAbsoluteUrl($this->relativeUploadsDir.$fileName);
+        if (empty($fileName)) {
+            return null;
         }
 
-        return $this->urlHelper->getRelativePath($this->relativeUploadsDir.$fileName);
+        if ($absolute) {
+            return $this->urlHelper->getAbsoluteUrl($this->relativeUploadsDir . $fileName);
+        }
+
+        return $this->urlHelper->getRelativePath($this->relativeUploadsDir . $fileName);
     }
 }

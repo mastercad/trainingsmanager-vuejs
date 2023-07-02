@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataFixtures;
 
 use App\Entity\Users;
@@ -9,23 +11,21 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixture extends Fixture
 {
-    private UserPasswordHasherInterface $passwordHasher;
-
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private UserPasswordHasherInterface $passwordHasher)
     {
-      $this->passwordHasher = $passwordHasher;
     }
+
     public function load(ObjectManager $manager): void
     {
-      $user = new Users();
-      $user->setFirstName('first name');
-      $user->setLastName('last name');
-      $user->setLogin('test@example.com');
-      $user->setEmail('test@example.com');
+        $user = new Users();
+        $user->setFirstName('first name');
+        $user->setLastName('last name');
+        $user->setLogin('test@example.com');
+        $user->setEmail('test@example.com');
 
-      $user->setPassword($this->passwordHasher->hashPassword($user, '$3CR3T'));
+        $user->setPassword($this->passwordHasher->hashPassword($user, '$3CR3T'));
 
-      $manager->persist($user);
-      $manager->flush();
+        $manager->persist($user);
+        $manager->flush();
     }
 }

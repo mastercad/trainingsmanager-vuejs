@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -11,10 +13,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(formats: ['json'])]
 /**
  * Users
  */
+#[ApiResource(formats: ['json'])]
 #[ORM\Table(name: 'users')]
 #[ORM\Index(name: 'IDX_users_id', columns: ['id'])]
 #[ORM\Index(name: 'IDX_users_state', columns: ['state'])]
@@ -26,165 +28,91 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     *
-     * @var UuidInterface
-     */
     #[ORM\Column(name: 'id', type: 'uuid', unique: true, nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
-    private $id;
+    private UuidInterface $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'first_name', type: 'string', length: 250, nullable: false)]
-    private $firstName;
+    private string $firstName;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'last_name', type: 'string', length: 250, nullable: false)]
-    private $lastName;
+    private string $lastName;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'email', type: 'string', length: 250, nullable: false)]
     #[Assert\NotBlank]
-    private $email;
+    private string $email;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'login', type: 'string', length: 250, nullable: false)]
-    private $login;
+    private string $login;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(name: 'profile_picture_path', type: 'string', length: 255, nullable: true)]
-    private $profilePicturePath;
+    private string|null $profilePicturePath = null;
 
-    /**
-     * @var string|null
-     */
     #[Assert\NotBlank]
     #[Assert\Length(max: 4096)]
-    private $plainPassword;
+    private string|null $plainPassword = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(name: 'password', type: 'string', length: 250, nullable: false)]
-    private $password;
+    private string $password;
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     #[ORM\Column(name: 'roles', type: 'json', nullable: false)]
-    private $roles;
+    private array $roles;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(name: 'facebook_id', type: 'string', length: 250, nullable: true)]
-    private $facebookId;
+    private string|null $facebookId = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(name: 'twitter_id', type: 'string', length: 250, nullable: true)]
-    private $twitterId;
+    private string|null $twitterId = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(name: 'google_plus_id', type: 'string', length: 250, nullable: true)]
-    private $googlePlusId;
+    private string|null $googlePlusId = null;
 
-    /**
-     * @var int|null
-     */
     #[ORM\Column(name: 'session_timeout', type: 'integer', nullable: true)]
-    private $sessionTimeout;
+    private int|null $sessionTimeout = null;
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'last_login', type: 'datetime', nullable: true)]
-    private $lastLogin;
+    private DateTime|null $lastLogin = null;
 
-    /**
-     * @var int|null
-     */
     #[ORM\Column(name: 'login_count', type: 'integer', nullable: true)]
-    private $loginCount;
+    private int|null $loginCount = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(name: 'session_id', type: 'string', length: 250, nullable: true)]
-    private $sessionId;
+    private string|null $sessionId = null;
 
-    /**
-     * @var bool
-     */
     #[ORM\Column(name: 'flag_logged_in', type: 'boolean', nullable: false)]
-    private $flagLoggedIn = '0';
+    private bool $flagLoggedIn = '0';
 
-    /**
-     * @var bool|null
-     */
     #[ORM\Column(name: 'flag_multilogin', type: 'boolean', nullable: true)]
-    private $flagMultilogin;
+    private bool|null $flagMultilogin = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(name: 'validate_hash', type: 'string', length: 250, nullable: true)]
-    private $validateHash;
+    private string|null $validateHash = null;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
-    private $created;
+    private DateTime $created;
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var UserState
-     */
     #[ORM\JoinColumn(name: 'state', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'UserState')]
-    private $state;
+    private UserState $state;
 
-    /**
-     * @var Users
-     */
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private $updater;
+    private Users $updater;
 
     public function __construct()
     {
         $this->roles = [];
     }
 
-    /**
-     * @throws Exception
-     */
+    /** @throws Exception */
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
@@ -210,10 +138,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Set the value of id.
-     *
-     * @return self
      */
-    public function setId(UuidInterface $id)
+    public function setId(UuidInterface $id): self
     {
         $this->id = $id;
 
@@ -222,20 +148,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of firstName.
-     *
-     * @return string
      */
-    public function getFirstName()
+    public function getFirstName(): string
     {
         return $this->firstName;
     }
 
     /**
      * Set the value of firstName.
-     *
-     * @return self
      */
-    public function setFirstName(string $firstName)
+    public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -244,20 +166,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of lastName.
-     *
-     * @return string
      */
-    public function getLastName()
+    public function getLastName(): string
     {
         return $this->lastName;
     }
 
     /**
      * Set the value of lastName.
-     *
-     * @return self
      */
-    public function setLastName(string $lastName)
+    public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -266,20 +184,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of email.
-     *
-     * @return string
      */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
     /**
      * Set the value of email.
-     *
-     * @return self
      */
-    public function setEmail(string $email)
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
@@ -288,20 +202,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of login.
-     *
-     * @return string
      */
-    public function getLogin()
+    public function getLogin(): string
     {
         return $this->login;
     }
 
     /**
      * Set the value of login.
-     *
-     * @return self
      */
-    public function setLogin(string $login)
+    public function setLogin(string $login): self
     {
         $this->login = $login;
 
@@ -310,29 +220,23 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of profilePicturePath.
-     *
-     * @return string|null
      */
-    public function getProfilePicturePath()
+    public function getProfilePicturePath(): string|null
     {
         return $this->profilePicturePath;
     }
 
     /**
      * Set the value of profilePicturePath.
-     *
-     * @param string|null $profilePicturePath
-     *
-     * @return self
      */
-    public function setProfilePicturePath($profilePicturePath)
+    public function setProfilePicturePath(string|null $profilePicturePath): self
     {
         $this->profilePicturePath = $profilePicturePath;
 
         return $this;
     }
 
-    public function getPlainPassword(): ?string
+    public function getPlainPassword(): string|null
     {
         return $this->plainPassword;
     }
@@ -350,8 +254,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      * Get the value of password.
      *
      * @see PasswordAuthenticatedUserInterface
-     *
-     * @return string
      */
     public function getPassword(): string
     {
@@ -360,10 +262,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Set the value of password.
-     *
-     * @return self
      */
-    public function setPassword(string $password)
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -383,9 +283,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Set the value of roles.
      *
-     * @return self
+     * @var string[] $roles
      */
-    public function setRoles(array $roles)
+    public function setRoles(mixed $roles): self
     {
         $this->roles = $roles;
 
@@ -394,22 +294,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of facebookId.
-     *
-     * @return string|null
      */
-    public function getFacebookId()
+    public function getFacebookId(): string|null
     {
         return $this->facebookId;
     }
 
     /**
      * Set the value of facebookId.
-     *
-     * @param string|null $facebookId
-     *
-     * @return self
      */
-    public function setFacebookId($facebookId)
+    public function setFacebookId(string|null $facebookId): self
     {
         $this->facebookId = $facebookId;
 
@@ -418,22 +312,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of twitterId.
-     *
-     * @return string|null
      */
-    public function getTwitterId()
+    public function getTwitterId(): string|null
     {
         return $this->twitterId;
     }
 
     /**
      * Set the value of twitterId.
-     *
-     * @param string|null $twitterId
-     *
-     * @return self
      */
-    public function setTwitterId($twitterId)
+    public function setTwitterId(string|null $twitterId): self
     {
         $this->twitterId = $twitterId;
 
@@ -442,22 +330,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of googlePlusId.
-     *
-     * @return string|null
      */
-    public function getGooglePlusId()
+    public function getGooglePlusId(): string|null
     {
         return $this->googlePlusId;
     }
 
     /**
      * Set the value of googlePlusId.
-     *
-     * @param string|null $googlePlusId
-     *
-     * @return self
      */
-    public function setGooglePlusId($googlePlusId)
+    public function setGooglePlusId(string|null $googlePlusId): self
     {
         $this->googlePlusId = $googlePlusId;
 
@@ -466,22 +348,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of sessionTimeout.
-     *
-     * @return int|null
      */
-    public function getSessionTimeout()
+    public function getSessionTimeout(): int|null
     {
         return $this->sessionTimeout;
     }
 
     /**
      * Set the value of sessionTimeout.
-     *
-     * @param int|null $sessionTimeout
-     *
-     * @return self
      */
-    public function setSessionTimeout($sessionTimeout)
+    public function setSessionTimeout(int|null $sessionTimeout): self
     {
         $this->sessionTimeout = $sessionTimeout;
 
@@ -490,22 +366,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of lastLogin.
-     *
-     * @return \DateTime|null
      */
-    public function getLastLogin()
+    public function getLastLogin(): DateTime|null
     {
         return $this->lastLogin;
     }
 
     /**
      * Set the value of lastLogin.
-     *
-     * @param \DateTime|null $lastLogin
-     *
-     * @return self
      */
-    public function setLastLogin($lastLogin)
+    public function setLastLogin(DateTime|null $lastLogin): self
     {
         $this->lastLogin = $lastLogin;
 
@@ -514,22 +384,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of loginCount.
-     *
-     * @return int|null
      */
-    public function getLoginCount()
+    public function getLoginCount(): int|null
     {
         return $this->loginCount;
     }
 
     /**
      * Set the value of loginCount.
-     *
-     * @param int|null $loginCount
-     *
-     * @return self
      */
-    public function setLoginCount($loginCount)
+    public function setLoginCount(int|null $loginCount): self
     {
         $this->loginCount = $loginCount;
 
@@ -538,22 +402,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of sessionId.
-     *
-     * @return string|null
      */
-    public function getSessionId()
+    public function getSessionId(): string|null
     {
         return $this->sessionId;
     }
 
     /**
      * Set the value of sessionId.
-     *
-     * @param string|null $sessionId
-     *
-     * @return self
      */
-    public function setSessionId($sessionId)
+    public function setSessionId(string|null $sessionId): self
     {
         $this->sessionId = $sessionId;
 
@@ -562,20 +420,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of flagLoggedIn.
-     *
-     * @return bool
      */
-    public function getFlagLoggedIn()
+    public function getFlagLoggedIn(): bool
     {
         return $this->flagLoggedIn;
     }
 
     /**
      * Set the value of flagLoggedIn.
-     *
-     * @return self
      */
-    public function setFlagLoggedIn(bool $flagLoggedIn)
+    public function setFlagLoggedIn(bool $flagLoggedIn): self
     {
         $this->flagLoggedIn = $flagLoggedIn;
 
@@ -584,22 +438,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of flagMultilogin.
-     *
-     * @return bool|null
      */
-    public function getFlagMultilogin()
+    public function getFlagMultilogin(): bool|null
     {
         return $this->flagMultilogin;
     }
 
     /**
      * Set the value of flagMultilogin.
-     *
-     * @param bool|null $flagMultilogin
-     *
-     * @return self
      */
-    public function setFlagMultilogin($flagMultilogin)
+    public function setFlagMultilogin(bool|null $flagMultilogin): self
     {
         $this->flagMultilogin = $flagMultilogin;
 
@@ -608,22 +456,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of validateHash.
-     *
-     * @return string|null
      */
-    public function getValidateHash()
+    public function getValidateHash(): string|null
     {
         return $this->validateHash;
     }
 
     /**
      * Set the value of validateHash.
-     *
-     * @param string|null $validateHash
-     *
-     * @return self
      */
-    public function setValidateHash($validateHash)
+    public function setValidateHash(string|null $validateHash): self
     {
         $this->validateHash = $validateHash;
 
@@ -632,22 +474,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of created.
-     *
-     * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created.
-     *
-     * @param \DateTime $created
-     *
-     * @return self
      */
-    public function setCreated(DateTime $created)
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -656,22 +492,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of updated.
-     *
-     * @return \DateTime|null
      */
-    public function getUpdated()
+    public function getUpdated(): DateTime|null
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated.
-     *
-     * @param \DateTime|null $updated
-     *
-     * @return self
      */
-    public function setUpdated($updated)
+    public function setUpdated(DateTime|null $updated): self
     {
         $this->updated = $updated;
 
@@ -680,20 +510,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of creator.
-     *
-     * @return Users
      */
-    public function getCreator()
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator.
-     *
-     * @return self
      */
-    public function setCreator(Users $creator)
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -702,20 +528,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of state.
-     *
-     * @return UserState
      */
-    public function getState()
+    public function getState(): UserState
     {
         return $this->state;
     }
 
     /**
      * Set the value of state.
-     *
-     * @return self
      */
-    public function setState(UserState $state)
+    public function setState(UserState $state): self
     {
         $this->state = $state;
 
@@ -724,48 +546,42 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of updater.
-     *
-     * @return Users
      */
-    public function getUpdater()
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater.
-     *
-     * @return self
      */
-    public function setUpdater(Users $updater)
+    public function setUpdater(Users $updater): self
     {
         $this->updater = $updater;
 
         return $this;
     }
 
-    /*******************************************************************************
-     *
-     *  UserInterface functions
-     *
+    /**
+     * UserInterface functions
      *******************************************************************************/
     public function getUserIdentifier(): string
     {
         return $this->getEmail();
     }
 
-    public function getSalt()
+    public function getSalt(): string
     {
         return '';
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         $this->plainPassword = '';
     }
 
-    public function getUsername()
+    public function getUsername(): string
     {
-        return $this->firstName.' '.$this->lastName;
+        return $this->firstName . ' ' . $this->lastName;
     }
 }

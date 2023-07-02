@@ -45,7 +45,7 @@ describe('DeviceEdit.vue', () => {
         },
         store,
         localVue
-    });
+      });
   });
 
   test('Create new entry without required entries', () => {

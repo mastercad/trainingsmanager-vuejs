@@ -1,7 +1,9 @@
 <template>
   <b-container fluid>
-
-    <b-card bg-variant="light" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card
+      bg-variant="light"
+      class="shadow p-2 mb-3 bg-white rounded"
+    >
       <b-form-group
         label-cols-lg="3"
         label="Device Group"
@@ -17,12 +19,12 @@
           <b-col sm="9">
             <b-form-input
               id="device_group_name"
-              v-model="deviceGroup.name"
+              v-model="origDeviceGroup.name"
               type="text"
               placeholder="Device Group Name"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
 
@@ -33,22 +35,29 @@
           <b-col sm="9">
             <b-form-input
               id="device_group_seo_link"
-              v-model="deviceGroup.seoLink"
+              v-model="origDeviceGroup.seoLink"
               type="text"
               placeholder="Device Group Seo Link"
               class="form-control"
               required
-            ></b-form-input>
+            />
           </b-col>
         </b-row>
       </b-form-group>
     </b-card>
 
-    <b-card-group deck bg-variant="light" class="mt-2">
-      <b-card v-if="isValidId(deviceGroup.id)" class="shadow p-2 mb-3 bg-white rounded">
+    <b-card-group
+      deck
+      bg-variant="light"
+      class="mt-2"
+    >
+      <b-card
+        v-if="isValidId(origDeviceGroup.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          v-if="isValidId(deviceGroup.id)"
-          :disabled="deviceGroup.name.length === 0"
+          v-if="isValidId(origDeviceGroup.id)"
+          :disabled="origDeviceGroup.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="updateDeviceGroup()"
@@ -57,9 +66,12 @@
         </button>
       </b-card>
 
-      <b-card v-if="isGenericId(deviceGroup.id)" class="shadow p-2 mb-3 bg-white rounded">
+      <b-card
+        v-if="isGenericId(origDeviceGroup.id)"
+        class="shadow p-2 mb-3 bg-white rounded"
+      >
         <button
-          :disabled="deviceGroup.name.length === 0"
+          :disabled="origDeviceGroup.name.length === 0"
           type="button"
           class="btn btn-primary"
           @click="createDeviceGroup()"
@@ -78,7 +90,6 @@
         </button>
       </b-card>
     </b-card-group>
-
   </b-container>
 </template>
 
@@ -87,6 +98,7 @@
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+  name: "DeviceGroupEditView",
   props: {
     deviceGroup: {
       type: Object,
@@ -95,7 +107,8 @@ export default {
   },
   data() {
     return {
-      currentStatus: null
+      currentStatus: null,
+      origDeviceGroup: this.deviceGroup
     }
   },
   computed: {
@@ -117,25 +130,25 @@ export default {
   },
   methods: {
     async createDeviceGroup() {
-      const result = await this.$store.dispatch("deviceGroups/create",
+      await this.$store.dispatch("deviceGroups/create",
         {
-          id: this.deviceGroup.id,
-          name: this.deviceGroup.name,
-          seoLink: this.deviceGroup.seoLink
+          id: this.origDeviceGroup.id,
+          name: this.origDeviceGroup.name,
+          seoLink: this.origDeviceGroup.seoLink
         });
     },
     async updateDeviceGroup() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "deviceGroups/update",
         {
-          id: this.deviceGroup.id,
-          name: this.deviceGroup.name,
-          seoLink: this.deviceGroup.seoLink
+          id: this.origDeviceGroup.id,
+          name: this.origDeviceGroup.name,
+          seoLink: this.origDeviceGroup.seoLink
         }
       );
     },
     async deleteDeviceGroup() {
-      const result = await this.$store.dispatch("deviceGroups/delete", this.deviceGroup.id);
+      await this.$store.dispatch("deviceGroups/delete", this.origDeviceGroup.id);
     },
     reset() {
       // reset form to initial state

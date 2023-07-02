@@ -8,7 +8,7 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class LogoutListener
 {
-    public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event)
+    public function onSymfonyComponentSecurityHttpEventLogoutEvent(LogoutEvent $event): void
     {
         $response = $event->getResponse();
         $response->headers->clearCookie('BEARER');

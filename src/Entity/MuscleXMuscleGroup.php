@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use App\Entity\Muscles;
-use App\Entity\MuscleGroups;
-use App\Entity\Users;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -21,86 +21,56 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 class MuscleXMuscleGroup
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[Groups(['read', 'write'])]
-    private $id;
+    private int $id;
 
-    /**
-     * @var Muscles
-     */
     #[ORM\ManyToOne(targetEntity: Muscles::class, inversedBy: 'muscleXMuscleGroups')]
     #[ORM\JoinColumn(name: 'muscle', nullable: false, referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[Groups(['read', 'write'])]
-    private $muscle;
+    private Muscles $muscle;
 
-    /**
-     * @var MuscleGroups
-     */
     #[ORM\ManyToOne(targetEntity: MuscleGroups::class)]
     #[ORM\JoinColumn(name: 'muscle_group', nullable: false, referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[Groups(['read', 'write'])]
-    private $muscleGroup;
+    private MuscleGroups $muscleGroup;
 
-    /**
-     * @var int
-     */
     #[ORM\Column(name: 'strain', type: 'integer', nullable: false, options: ['comment' => 'Beanspruchung des Muskels'])]
     #[Groups(['read', 'write'])]
-    private $strain;
+    private int $strain;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
-    private $created = 'CURRENT_TIMESTAMP';
+    private DateTime $created = 'CURRENT_TIMESTAMP';
 
-    /**
-     * @var \DateTime|null
-     */
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
-    private $updated;
+    private DateTime|null $updated = null;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: Users::class)]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private $creator;
+    private Users $creator;
 
-    /**
-     * @var Users
-     */
     #[ORM\ManyToOne(targetEntity: Users::class)]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private $updater;
+    private Users $updater;
 
     /**
      * Get the value of id
-     *
-     * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * Set the value of id
-     *
-     * @param int $id
-     *
-     * @return self
      */
-    public function setId(int $id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -109,22 +79,16 @@ class MuscleXMuscleGroup
 
     /**
      * Get the value of use
-     *
-     * @return int
      */
-    public function getStrain()
+    public function getStrain(): int
     {
         return $this->strain;
     }
 
     /**
      * Set the value of use
-     *
-     * @param int $strain
-     *
-     * @return self
      */
-    public function setStrain(int $strain)
+    public function setStrain(int $strain): self
     {
         $this->strain = $strain;
 
@@ -133,22 +97,16 @@ class MuscleXMuscleGroup
 
     /**
      * Get the value of created
-     *
-     * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
      * Set the value of created
-     *
-     * @param \DateTime $created
-     *
-     * @return self
      */
-    public function setCreated(\DateTime $created)
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
 
@@ -157,22 +115,16 @@ class MuscleXMuscleGroup
 
     /**
      * Get the value of updated
-     *
-     * @return \DateTime|null
      */
-    public function getUpdated()
+    public function getUpdated(): DateTime|null
     {
         return $this->updated;
     }
 
     /**
      * Set the value of updated
-     *
-     * @param \DateTime|null $updated
-     *
-     * @return self
      */
-    public function setUpdated($updated)
+    public function setUpdated(DateTime|null $updated): self
     {
         $this->updated = $updated;
 
@@ -181,22 +133,16 @@ class MuscleXMuscleGroup
 
     /**
      * Get the value of creator
-     *
-     * @return Users
      */
-    public function getCreator()
+    public function getCreator(): Users
     {
         return $this->creator;
     }
 
     /**
      * Set the value of creator
-     *
-     * @param Users $creator
-     *
-     * @return  self
      */
-    public function setCreator(Users $creator)
+    public function setCreator(Users $creator): self
     {
         $this->creator = $creator;
 
@@ -205,22 +151,16 @@ class MuscleXMuscleGroup
 
     /**
      * Get the value of muscle
-     *
-     * @return ?Muscles
      */
-    public function getMuscle()
+    public function getMuscle(): Muscles|null
     {
         return $this->muscle;
     }
 
     /**
      * Set the value of muscle
-     *
-     * @param Muscles $muscle
-     *
-     * @return self
      */
-    public function setMuscle(?Muscles $muscle)
+    public function setMuscle(Muscles|null $muscle): self
     {
         $this->muscle = $muscle;
 
@@ -229,22 +169,16 @@ class MuscleXMuscleGroup
 
     /**
      * Get the value of muscleGroup
-     *
-     * @return MuscleGroups
      */
-    public function getMuscleGroup()
+    public function getMuscleGroup(): MuscleGroups
     {
         return $this->muscleGroup;
     }
 
     /**
      * Set the value of muscleGroup
-     *
-     * @param ?MuscleGroups $muscleGroup
-     *
-     * @return self
      */
-    public function setMuscleGroup(?MuscleGroups $muscleGroup)
+    public function setMuscleGroup(MuscleGroups|null $muscleGroup): self
     {
         $this->muscleGroup = $muscleGroup;
 
@@ -253,22 +187,16 @@ class MuscleXMuscleGroup
 
     /**
      * Get the value of updater
-     *
-     * @return Users
      */
-    public function getUpdater()
+    public function getUpdater(): Users
     {
         return $this->updater;
     }
 
     /**
      * Set the value of updater
-     *
-     * @param Users $updater
-     *
-     * @return self
      */
-    public function setUpdater(Users $updater)
+    public function setUpdater(Users $updater): self
     {
         $this->updater = $updater;
 

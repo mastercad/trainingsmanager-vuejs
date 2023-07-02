@@ -16,15 +16,16 @@
     <div class="row item-wrapper">
       <div class="col-3">
         <b-list-group>
-          <b-list-group-item href="#"
+          <b-list-group-item
             v-for="currentExerciseOption in exerciseOptions"
             :key="currentExerciseOption.id"
-            @contextmenu.prevent.stop="handleClick($event, currentExerciseOption)"
-            @click="loadExerciseOption($event, currentExerciseOption)"
+            href="#"
             class="item-wrapper__item list-group-item list-group-item-action"
             :active="exerciseOption && exerciseOption.id === currentExerciseOption.id"
             unselectable="on"
             onselectstart="return false;"
+            @contextmenu.prevent.stop="handleClick($event, currentExerciseOption)"
+            @click="loadExerciseOption($event, currentExerciseOption)"
           >
             {{ currentExerciseOption.name }}
           </b-list-group-item>
@@ -42,16 +43,16 @@
           :key="exerciseOption.id"
           :ref="'exerciseOptionPanel'"
 
-          :exerciseOption="exerciseOption"
+          :exercise-option="exerciseOption"
         />
       </div>
     </div>
     <!-- Make sure you add the `ref` attribute, as that is what gives you the ability to open the menu. -->
 
     <vue-simple-context-menu
+      :id="'ExerciseOptionsContextMenu'"
       :ref="'vueSimpleContextMenu'"
       :element-id="'contextMenu'"
-      :id="'ExerciseOptionsContextMenu'"
       :options="options"
       @optionClicked="optionClicked"
     />
@@ -153,10 +154,10 @@ export default {
     },
     async deleteExerciseOption(exerciseOption) {
       if (this.isGenericId(exerciseOption.id)) {
-        const result = await this.$store.dispatch("exerciseOptions/unregister", exerciseOption.id);
+        await this.$store.dispatch("exerciseOptions/unregister", exerciseOption.id);
         this.leftPanelVisibility = false;
       } else {
-        const result = await this.$store.dispatch("exerciseOptions/delete", exerciseOption.id);
+        await this.$store.dispatch("exerciseOptions/delete", exerciseOption.id);
         this.leftPanelVisibility = false;
       }
     },

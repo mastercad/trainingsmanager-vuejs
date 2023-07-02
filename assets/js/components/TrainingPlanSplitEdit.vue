@@ -2,7 +2,6 @@
   <div>
     <div class="row">
       TrainingPlan Layout Split Edit
-
     </div>
   </div>
 </template>
@@ -12,6 +11,7 @@
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
 export default {
+  name: 'TrainingPlanSplitEditView',
   props: {
     trainingPlan: {
       type: Object,
@@ -20,6 +20,7 @@ export default {
   },
   data() {
     return {
+      origTrainingPlan: this.trainingPlan,
       currentStatus: null
     }
   },
@@ -42,24 +43,24 @@ export default {
   },
   methods: {
     async createTrainingPlan() {
-      const result = await this.$store.dispatch("trainingPlans/create",
+      await this.$store.dispatch("trainingPlans/create",
         {
-          id: this.trainingPlan.id,
-          name: this.trainingPlan.name
+          id: this.origTrainingPlan.id,
+          name: this.origTrainingPlan.name
         }
       );
     },
     async updateTrainingPlan() {
-      const result = await this.$store.dispatch(
+      await this.$store.dispatch(
         "trainingPlans/update",
         {
-          id: this.trainingPlan.id,
-          name: this.trainingPlan.name
+          id: this.origTrainingPlan.id,
+          name: this.origTrainingPlan.name
         }
       );
     },
     async deleteTrainingPlan() {
-      const result = await this.$store.dispatch("trainingPlans/delete", this.trainingPlan.id);
+      await this.$store.dispatch("trainingPlans/delete", this.origTrainingPlan.id);
     },
     reset() {
       // reset form to initial state

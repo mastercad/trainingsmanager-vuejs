@@ -9,7 +9,7 @@
       <div class="col-md-4">
         <img
           style="width: 100%"
-          v-bind:src="'/images/content/dynamic/exercises/'+exercise.id+'/'+exercise.previewPicturePath"
+          :src="'/images/content/dynamic/exercises/'+exercise.id+'/'+exercise.previewPicturePath"
           @error="imageAlternative"
         >
       </div>
@@ -28,8 +28,7 @@
       class="row"
     >
       <div
-        v-for="(image, key) in exerciseImages"
-        v-if="isImagesLoading === false && extractFileName(image) !== exercise.previewPicturePath"
+        v-for="(image, key) in cleanedImages"
         :key="key"
         class="col-3"
       >
@@ -48,6 +47,7 @@
 
 <script>
 export default {
+  name: 'ExerciseView',
   props: {
     exercise: {
       required: true,
@@ -60,6 +60,21 @@ export default {
     },
     isImagesLoading() {
       return this.$store.getters["exercises/isImagesLoading"];
+    },
+    cleanedImages() {
+      if(this.isImagesLoading) {
+        return [];
+      }
+
+      let cleanedImages = [];
+      for(let imagePosition in this.exerciseImages) {
+        let image = this.exerciseImages[imagePosition];
+        if (this.extractFileName(image) !== this.exercise.previewPicturePath) {
+          cleanedImages.push(image);
+        }
+      }
+
+      return cleanedImages;
     }
   },
   created() {
