@@ -60,7 +60,7 @@ final class ApiHelper
     }
 
     /** @param mixed[] $content */
-    public function request(string $method, string $url, array $content = []): ResponseInterface
+    public function request(string $method, string $url, array $content = []): array
     {
         $options = [
             'headers' => ['Content-Type' => $this->contentType],
