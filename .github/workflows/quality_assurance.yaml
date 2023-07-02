@@ -42,9 +42,10 @@ jobs:
         run: docker compose exec php-fpm php bin/phpunit
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v2
         with:
-          gcov: true
+          files: ./coverage/clover.xml
+          verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Make code coverage badge
