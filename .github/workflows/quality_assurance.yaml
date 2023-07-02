@@ -41,6 +41,14 @@ jobs:
       - name: run phpunit tests
         run: docker compose exec php-fpm php bin/phpunit
 
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          gcov: true
+          path: coverage/clover.xml
+          files: coverage/clover.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Make code coverage badge
         uses: timkrase/phpunit-coverage-badge@v1.2.1
         with:

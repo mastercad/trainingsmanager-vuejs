@@ -12,7 +12,6 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\TestContainer;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class ApiHelper
 {
@@ -59,7 +58,11 @@ final class ApiHelper
         return $this;
     }
 
-    /** @param mixed[] $content */
+    /**
+     * @param mixed[] $content
+     *
+     * @return mixed[]
+     */
     public function request(string $method, string $url, array $content = []): array
     {
         $options = [
