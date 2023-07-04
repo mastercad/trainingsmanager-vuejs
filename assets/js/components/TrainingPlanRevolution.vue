@@ -375,24 +375,18 @@ export default {
   },
   methods: {
     onExercisesMove(event) {
-      let newIndex = 0;
-      let oldIndex = 0;
-
       if (event.added) {
         this.$parent.newIndex = event.added.newIndex;
         this.$parent.exerciseMoveTarget = this;
         return;
       } else if (event.removed) {
-        newIndex = this.$parent.newIndex;
-        oldIndex = event.removed.oldIndex;
-        //        this.$parent.exerciseMoveTarget.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
         this.$parent.exerciseMoveTarget.origTrainingPlanExercises.forEach(function(item, index) {
           item.order = index;
         });
         this.$parent.newIndex = 0;
       } else if (event.moved) {
-        oldIndex = event.moved.oldIndex;
-        newIndex = event.moved.newIndex;
+        let oldIndex = event.moved.oldIndex;
+        let newIndex = event.moved.newIndex;
         this.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
         this.origTrainingPlanExercises.forEach(function(item, index) {
           item.order = index;
@@ -549,39 +543,41 @@ export default {
       if (this.selectedExercise === exercise) {
         this.selectedExercise = null;
         this.selectedDevice = null;
-      } else {
-        this.selectedExercise = exercise
-        this.selectDevice(exercise.exerciseXDevice.device);
-        let currentTrainingPlanExerciseOptions = {};
 
-        if (null !== this.selectedTrainingPlanExercise) {
-          for (let key in this.selectedTrainingPlanExercise.trainingPlanXExerciseOptions) {
-            let trainingPlanXExerciseOption = this.selectedTrainingPlanExercise.trainingPlanXExerciseOptions[key];
-            currentTrainingPlanExerciseOptions[trainingPlanXExerciseOption.exerciseOption.id] = trainingPlanXExerciseOption;
-          }
-        }
-
-        let exerciseOptions = {};
-        let possibleExerciseOptions = this.$store.getters['exerciseOptions/exerciseOptions'];
-        for (let key in possibleExerciseOptions) {
-          let possibleExerciseOption = possibleExerciseOptions[key];
-          let defaultValue = !OptionFunctions.isMultipartOption(defaultValue) && 0 < possibleExerciseOption.defaultValue.trim().length;
-          let value = currentTrainingPlanExerciseOptions[possibleExerciseOption.id] ? currentTrainingPlanExerciseOptions[possibleExerciseOption.id].optionValue : null;
-          let trainingPlanXExerciseOption = currentTrainingPlanExerciseOptions[possibleExerciseOption.id] ? currentTrainingPlanExerciseOptions[possibleExerciseOption.id] : null;
-
-          exerciseOptions[possibleExerciseOption.id] = {
-            id: possibleExerciseOption.id,
-            isDefault: null === defaultValue || value === defaultValue ? true : false,
-            value: value,
-            defaultValue: defaultValue,
-            name: possibleExerciseOption.name,
-            origName: possibleExerciseOption.name,
-            origValue: value,
-            trainingPlanXExerciseOption: trainingPlanXExerciseOption
-          }
-        }
-        this.$store.dispatch('trainingPlanExerciseOptions/initSelectedTrainingPlanExerciseOptions', exerciseOptions);
+        return;
       }
+
+      this.selectedExercise = exercise
+      this.selectDevice(exercise.exerciseXDevice.device);
+      let currentTrainingPlanExerciseOptions = {};
+
+      if (null !== this.selectedTrainingPlanExercise) {
+        for (let key in this.selectedTrainingPlanExercise.trainingPlanXExerciseOptions) {
+          let trainingPlanXExerciseOption = this.selectedTrainingPlanExercise.trainingPlanXExerciseOptions[key];
+          currentTrainingPlanExerciseOptions[trainingPlanXExerciseOption.exerciseOption.id] = trainingPlanXExerciseOption;
+        }
+      }
+
+      let exerciseOptions = {};
+      let possibleExerciseOptions = this.$store.getters['exerciseOptions/exerciseOptions'];
+      for (let key in possibleExerciseOptions) {
+        let possibleExerciseOption = possibleExerciseOptions[key];
+        let defaultValue = !OptionFunctions.isMultipartOption(defaultValue) && 0 < possibleExerciseOption.defaultValue.trim().length;
+        let value = currentTrainingPlanExerciseOptions[possibleExerciseOption.id] ? currentTrainingPlanExerciseOptions[possibleExerciseOption.id].optionValue : null;
+        let trainingPlanXExerciseOption = currentTrainingPlanExerciseOptions[possibleExerciseOption.id] ? currentTrainingPlanExerciseOptions[possibleExerciseOption.id] : null;
+
+        exerciseOptions[possibleExerciseOption.id] = {
+          id: possibleExerciseOption.id,
+          isDefault: null === defaultValue || value === defaultValue ? true : false,
+          value: value,
+          defaultValue: defaultValue,
+          name: possibleExerciseOption.name,
+          origName: possibleExerciseOption.name,
+          origValue: value,
+          trainingPlanXExerciseOption: trainingPlanXExerciseOption
+        }
+      }
+      this.$store.dispatch('trainingPlanExerciseOptions/initSelectedTrainingPlanExerciseOptions', exerciseOptions);
     },
     selectDevice(device) {
       console.log(device);

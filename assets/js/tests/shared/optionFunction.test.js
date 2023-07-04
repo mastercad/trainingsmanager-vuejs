@@ -70,7 +70,8 @@ describe("Option function tests", () => {
   });
 
   test('generate hash by params', () => {
-    var result = OptionFunctions.generateOptionPartKey(1, 2, 4);
+    OptionFunctions.identifier = 1;
+    var result = OptionFunctions.generateOptionPartKey(2, 4);
     expect(result).toBe("1_2_4");
   });
 

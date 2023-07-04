@@ -1,32 +1,38 @@
 const OptionFunctions = {
-  // @TODO hier exercise und device übergaben entfernen und an stelle dessen weiter mögliche options kommagetrennt übergeben
-  // current possible options sind alle möglichkeiten die in der db stehen
-  // current selected options sind die optionen die bereits gewählt sind (hier für trainingplan und z.b. exercise)
-  // alle weiteren übergaben sind, absteigend in priorität, die möglichen optionen als default (exercise_x_device_option, device_option)
-  //
+  resultOptions: [],
+  possibleOptions: [],
+  currentSelectedOptions: [],
+  additionalOptions: [],
+  identifier: '',
+  showLabelAndValue: false,
   // übergabe ist:
   // identifier: identifier der aktuellen option
-  // possibileOptions: mögliche optionen (z.b. deviceOptions)
+  // possibleOptions: mögliche optionen (z.b. deviceOptions)
   // currentSelectedOptions: aktuell gewählte optionen (z.b. deviceXDeviceOptions)
   // additionalOptions: weitere mögliche collections in denen sich optionen befinden können (z.b. in den Trainingsplänen, diese werden aber nur als platzhalter angezeigt)
-  generateCurrentOptions: (identifier, showLabelAndValue, possibleOptions, currentSelectedOptions, ...additionalOptions) => {
-    let resultOptions = [];
+  generateCurrentOptions: function(identifier, showLabelAndValue, possibleOptions, currentSelectedOptions, ...additionalOptions) {
+    this.identifier = identifier;
+    this.showLabelAndValue = showLabelAndValue;
+    this.possibleOptions = possibleOptions;
+    this.currentSelectedOptions = currentSelectedOptions;
+    this.additionalOptions = additionalOptions;
+    this.resultOptions = [];
 
-    if (!OptionFunctions.isIterable(possibleOptions)) {
-      return resultOptions;
+    if (!OptionFunctions.isIterable(this.possibleOptions)) {
+      return this.resultOptions;
     }
 
-    for (const key in possibleOptions) {
-      let possibleOption = possibleOptions[key];
-      let value = (undefined !== currentSelectedOptions && undefined !== currentSelectedOptions[possibleOption.id])
-        ? currentSelectedOptions[possibleOption.id].value
-        : undefined !== additionalOptions
-          ? OptionFunctions.investigateCurrentOptionValue(possibleOption.id, false, ...additionalOptions)
-          : null;
+    this.considerPossibleOptions();
 
-      let name = showLabelAndValue ? possibleOption.name : 'None';
+    return this.resultOptions;
+  },
+  considerPossibleOptions: function() {
+    for (const key in this.possibleOptions) {
+      let possibleOption = this.possibleOptions[key];
+      let value = this.retrieveCurrentValue(possibleOption.id);
+      let name = this.showLabelAndValue ? possibleOption.name : 'None';
       let isMultipartOption = OptionFunctions.isMultipartOption(possibleOption.value);
-      let outerKey = identifier+'_'+possibleOption.id;
+      let outerKey = this.identifier+'_'+possibleOption.id;
       let optionInformation = {
         key: outerKey,
         name: name,
@@ -37,50 +43,62 @@ const OptionFunctions = {
       };
 
       if (isMultipartOption) {
-        optionInformation.parts = OptionFunctions.splitOption(possibleOption.value);
-        optionInformation.parts.forEach((partValue, index) => {
-          let key = OptionFunctions.generateOptionPartKey(identifier, possibleOption.id, index);
-          let isActive = partValue == value;
-
-          if (isActive
-            && showLabelAndValue
-          ) {
-            optionInformation.name = optionInformation.name + " ("+partValue+")";
-          } else if (isActive) {
-            optionInformation.name = partValue;
-          }
-
-          optionInformation.parts[index] = {
-            isActive: isActive,
-            key: key,
-            value: partValue
-          };
-        });
+        optionInformation = this.handleMultiPartOptions(optionInformation, possibleOption, value);
       } else {
         optionInformation.placeholder = possibleOption.value;
       }
 
-      resultOptions.push(optionInformation);
+      this.resultOptions.push(optionInformation);
     }
 
-    return resultOptions;
+    return this;
   },
-  splitOption(value) {
+  retrieveCurrentValue: function(possibleOptionId) {
+    return undefined !== this.currentSelectedOptions && undefined !== this.currentSelectedOptions[possibleOptionId]
+      ? this.currentSelectedOptions[possibleOptionId].value
+      : undefined !== this.additionalOptions
+        ? OptionFunctions.investigateCurrentOptionValue(possibleOptionId, false, ...this.additionalOptions)
+        : null;
+  },
+  handleMultiPartOptions: function(optionInformation, possibleOption, value) {
+    optionInformation.parts = OptionFunctions.splitOption(possibleOption.value);
+    optionInformation.parts.forEach((partValue, index) => {
+      let key = OptionFunctions.generateOptionPartKey(possibleOption.id, index);
+      let isActive = partValue == value;
+
+      if (isActive
+        && this.showLabelAndValue
+      ) {
+        optionInformation.name = optionInformation.name + " ("+partValue+")";
+      } else if (isActive) {
+        optionInformation.name = partValue;
+      }
+
+      optionInformation.parts[index] = {
+        isActive: isActive,
+        key: key,
+        value: partValue
+      };
+    });
+
+    return optionInformation;
+  },
+  splitOption: function(value) {
     return value.split('|');
   },
-  isMultipartOption(value) {
+  isMultipartOption: function(value) {
     const regex = /\|/;
     let regexResult = regex.exec(value);
     let result = regexResult && 0 < regexResult.length;
 
     return result ? true : false;
   },
-  generateOptionPartKey(identifier, deviceOptionId, index) {
-    return identifier+'_'+deviceOptionId+'_'+index;
+  generateOptionPartKey: function(deviceOptionId, index) {
+    return this.identifier+'_'+deviceOptionId+'_'+index;
   },
-  investigateCurrentOptionValue(optionId, allowMultipartValue, ...optionCollections) {
+  investigateCurrentOptionValue: function(optionId, allowMultipartValue, ...possibleOptions) {
     var returnValue = null;
-    optionCollections.forEach((optionCollection) => {
+    possibleOptions.forEach((optionCollection) => {
       if (undefined !== optionCollection[optionId]
         && optionCollection[optionId].value
         && (
@@ -94,7 +112,7 @@ const OptionFunctions = {
     });
     return returnValue;
   },
-  prepareOptionCollection(options, extractIdClosure, extractValueClosure)
+  prepareOptionCollection: function(options, extractIdClosure, extractValueClosure)
   {
     var result = {};
     for(let option of options) {
@@ -109,7 +127,7 @@ const OptionFunctions = {
 
     return result;
   },
-  isIterable(input){
+  isIterable: function(input){
     return null !== input
       && (
         typeof input === Array
