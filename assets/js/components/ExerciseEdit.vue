@@ -479,9 +479,7 @@ export default {
       // append the files to FormData
       Array
         .from(Array(fileList.length).keys())
-        .map((x) => {
-          formData.append(fieldName+"[]", fileList[x], fileList[x].name);
-        });
+        .map((x) => (formData.append(fieldName+"[]", fileList[x], fileList[x].name)));
 
       // save it
       this.save(formData);
