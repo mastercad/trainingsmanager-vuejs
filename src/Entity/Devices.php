@@ -34,8 +34,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         'html',
         'jsonhal'
     ],
-    normalizationContext: ['groups' => ['device:read']],
-    denormalizationContext: ['groups' => ['device:write']],
+    normalizationContext: ['groups' => [self::READ_GROUP]],
+    denormalizationContext: ['groups' => [self::WRITE_GROUP]],
     operations: [
         new Get(),
         new Get(
@@ -107,51 +107,54 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(PropertyFilter::class)]
 class Devices
 {
+    private const READ_GROUP = 'device:read';
+    private const WRITE_GROUP = 'device:write';
+
     #[ORM\Column(name: 'id', type: 'integer', nullable: false, options: ['unsigned' => true])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[Groups(['device:read', 'device:write'])]
+    #[Groups([self::READ_GROUP, self::WRITE_GROUP])]
     private int $id;
 
     #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: true)]
     #[Assert\NotBlank]
-    #[Groups(['device:read', 'device:write'])]
+    #[Groups([self::READ_GROUP, self::WRITE_GROUP])]
     private string $name;
 
     #[ORM\Column(name: 'seo_link', type: 'string', length: 250, nullable: false)]
-    #[Groups(['device:read', 'device:write'])]
+    #[Groups([self::READ_GROUP, self::WRITE_GROUP])]
     private string $seoLink;
 
     #[ORM\Column(name: 'preview_picture_path', type: 'string', length: 250, nullable: false)]
-    #[Groups(['device:read', 'device:write'])]
+    #[Groups([self::READ_GROUP, self::WRITE_GROUP])]
     private string $previewPicturePath;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
-    #[Groups(['device:read'])]
+    #[Groups([self::READ_GROUP])]
     private Users $creator;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    #[Groups(['device:read'])]
+    #[Groups([self::READ_GROUP])]
     private DateTime $created;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
-    #[Groups(['device:read'])]
+    #[Groups([self::READ_GROUP])]
     private Users $updater;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    #[Groups(['device:read'])]
+    #[Groups([self::READ_GROUP])]
     private DateTime|null $updated = null;
 
     /** @var Collection|DeviceOption[] */
     #[ORM\OneToMany(targetEntity: DeviceXDeviceOption::class, mappedBy: 'device', cascade: ['ALL'], orphanRemoval: true)]
-    #[Groups(['device:read', 'device:write'])]
+    #[Groups([self::READ_GROUP, self::WRITE_GROUP])]
     private Collection $deviceXDeviceOptions;
 
     /** @var Collection|DeviceOption[] */
     #[ORM\OneToMany(targetEntity: DeviceXDeviceGroup::class, mappedBy: 'device', cascade: ['ALL'], orphanRemoval: true)]
-    #[Groups(['device:read', 'device:write'])]
+    #[Groups([self::READ_GROUP, self::WRITE_GROUP])]
     private Collection $deviceXDeviceGroups;
 
     public function __construct()

@@ -8,6 +8,9 @@ use Symfony\Component\Process\Process;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
+const CONSOLE_CMD = 'bin/console';
+const NO_INTERACTION = '--no-interaction';
+
 if (isset($_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])) {
   // executes the "php bin/console cache:clear" command
     passthru(sprintf(
@@ -23,35 +26,35 @@ if (file_exists(dirname(__DIR__) . '/config/bootstrap.php')) {
     (new Dotenv())->bootEnv(dirname(__DIR__) . '/.env');
 }
 
-$process = new Process(['php', 'bin/console', 'doctrine:database:drop', '--no-interaction', '--if-exists', '--force']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:drop', NO_INTERACTION, '--if-exists', '--force']);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', 'bin/console', 'doctrine:database:create', '--no-interaction']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:create', NO_INTERACTION]);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', 'bin/console', 'doctrine:schema:create', '--no-interaction']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:schema:create', NO_INTERACTION]);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', 'bin/console', 'doctrine:migrations:migrate', '--no-interaction', '--allow-no-migration']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:migrations:migrate', NO_INTERACTION, '--allow-no-migration']);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', 'bin/console', 'doctrine:fixtures:load', '--no-interaction']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:fixtures:load', NO_INTERACTION]);
 $process->run();
 
 if (! $process->isSuccessful()) {

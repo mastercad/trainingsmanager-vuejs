@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 final class DevicesTest extends ApiTestCase
 {
     private ApiHelper $apiHelper;
+    private const DEVICES_GET_ENDPOINT = '/api/devices';
 
     public function setUp(): void
     {
@@ -24,12 +25,12 @@ final class DevicesTest extends ApiTestCase
 
     public function testLogin(): void
     {
-        $this->apiHelper->request(Request::METHOD_GET, '/api/devices');
+        $this->apiHelper->request(Request::METHOD_GET, self::DEVICES_GET_ENDPOINT);
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED, 'request without authorization should result in 401.');
 
         $this->apiHelper->loginUser('test@example.com');
 
-        $this->apiHelper->request(Request::METHOD_GET, '/api/devices');
+        $this->apiHelper->request(Request::METHOD_GET, self::DEVICES_GET_ENDPOINT);
         self::assertResponseIsSuccessful('simple get request with authorization should work without any restrictions or problems.');
     }
 
@@ -37,7 +38,7 @@ final class DevicesTest extends ApiTestCase
     {
         $this->apiHelper->loginUser('test@example.com');
 
-        $response = $this->apiHelper->request(Request::METHOD_POST, '/api/devices', ['Name' => ' ']);
+        $response = $this->apiHelper->request(Request::METHOD_POST, self::DEVICES_GET_ENDPOINT, ['Name' => ' ']);
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
