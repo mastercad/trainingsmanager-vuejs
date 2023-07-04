@@ -7,12 +7,12 @@ global.TextEncoder = TextEncoder;
 
 describe("Option function tests", () => {
   test('Split works with empty parameter', () => {
-    var result = OptionFunctions.splitOption("");
+    let result = OptionFunctions.splitOption("");
     expect(result).toMatchObject(['']);
   });
 
   test('Prepare Option Collection', () => {
-    var collection =
+    let collection =
       [
         {
           id: 1,
@@ -32,7 +32,7 @@ describe("Option function tests", () => {
       identifier = function(option) {return option.id;},
       valueKey = function(option) {return option.currentValue;};
 
-    var expectedResult = {
+    let expectedResult = {
       '1': { id: 1, value: 12, origEntry: { id: 1, currentValue: 12 } },
       '2': {
         id: 2,
@@ -46,7 +46,7 @@ describe("Option function tests", () => {
       }
     };
 
-    var resultCollection = OptionFunctions.prepareOptionCollection(collection, identifier, valueKey);
+    let resultCollection = OptionFunctions.prepareOptionCollection(collection, identifier, valueKey);
     for(const [key, value] of Object.entries(resultCollection)) {
       expect(resultCollection[key]).toEqual(expectedResult[key]);
     }
@@ -55,23 +55,23 @@ describe("Option function tests", () => {
   });
 
   test('check if string is multipart without |', () => {
-    var result = OptionFunctions.isMultipartOption('');
+    let result = OptionFunctions.isMultipartOption('');
     expect(result).toBeFalsy();
   });
 
   test('check if integer is multipart', () => {
-    var result = OptionFunctions.isMultipartOption('');
+    let result = OptionFunctions.isMultipartOption('');
     expect(result).toBeFalsy();
   });
 
   test('check if string is multipart with |', () => {
-    var result = OptionFunctions.isMultipartOption('test|test1');
+    let result = OptionFunctions.isMultipartOption('test|test1');
     expect(result).toBeTruthy();
   });
 
   test('generate hash by params', () => {
     OptionFunctions.identifier = 1;
-    var result = OptionFunctions.generateOptionPartKey(2, 4);
+    let result = OptionFunctions.generateOptionPartKey(2, 4);
     expect(result).toBe("1_2_4");
   });
 
@@ -84,7 +84,7 @@ describe("Option function tests", () => {
   });
 
   test('check expected object is iterable', () => {
-    var possibleOptions = {
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123
@@ -111,12 +111,12 @@ describe("Option function tests", () => {
   });
 
   test('investigate value without any options', () => {
-    var result = OptionFunctions.investigateCurrentOptionValue(2);
+    let result = OptionFunctions.investigateCurrentOptionValue(2);
     expect(result).toBeNull();
   });
 
   test('investigate value with single options collection', () => {
-    var possibleOptions = {
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123
@@ -131,12 +131,12 @@ describe("Option function tests", () => {
       }
     };
 
-    var result = OptionFunctions.investigateCurrentOptionValue(2, true, possibleOptions);
+    let result = OptionFunctions.investigateCurrentOptionValue(2, true, possibleOptions);
     expect(result).toBe(213);
   });
 
   test('investigate value with single options collection but value is multipart and should ignored', () => {
-    var possibleOptions = {
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123
@@ -151,12 +151,12 @@ describe("Option function tests", () => {
       }
     };
 
-    var result = OptionFunctions.investigateCurrentOptionValue(2, false, possibleOptions);
+    let result = OptionFunctions.investigateCurrentOptionValue(2, false, possibleOptions);
     expect(result).toBeNull();
   });
 
   test('investigate value with single options collection with multipart value', () => {
-    var possibleOptions = {
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123
@@ -171,12 +171,12 @@ describe("Option function tests", () => {
       }
     };
 
-    var result = OptionFunctions.investigateCurrentOptionValue(2, true, possibleOptions);
+    let result = OptionFunctions.investigateCurrentOptionValue(2, true, possibleOptions);
     expect(result).toEqual('test|test1|test2');
   });
 
   test('investigate value with single options collection but key not exist', () => {
-    var possibleOptions = {
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123
@@ -191,21 +191,21 @@ describe("Option function tests", () => {
       }
     };
 
-    var result = OptionFunctions.investigateCurrentOptionValue(12, true, possibleOptions);
+    let result = OptionFunctions.investigateCurrentOptionValue(12, true, possibleOptions);
     expect(result).toBeNull();
   });
 
   test('Generate current options without possible options and previous selection', () => {
-    var optionId = 121;
-    var possibleOptions = null;
-    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
+    let optionId = 121;
+    let possibleOptions = null;
+    let result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
 
     expect(result).toMatchObject([]);
   });
 
   test('Generate current options with possible options and without previous selection', () => {
-    var optionId = 312;
-    var possibleOptions = {
+    let optionId = 312;
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123,
@@ -222,7 +222,7 @@ describe("Option function tests", () => {
         name: 'Test Option 41'
       }
     };
-    var expectedResult =
+    let expectedResult =
     [
       {
         bindKey: "312_1_null",
@@ -261,14 +261,14 @@ describe("Option function tests", () => {
         value: null,
       },
     ];
-    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
+    let result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
 
     expect(result).toMatchObject(expectedResult);
   });
 
   test('Generate current options with possible options, multipart entry and without previous selection, with named options', () => {
-    var optionId = 312;
-    var possibleOptions = {
+    let optionId = 312;
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123,
@@ -285,7 +285,7 @@ describe("Option function tests", () => {
         name: 'Test Option 41'
       }
     };
-    var expectedResult =
+    let expectedResult =
     [
       {
         bindKey: "312_1_null",
@@ -336,14 +336,14 @@ describe("Option function tests", () => {
         value: null,
       },
     ];
-    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
+    let result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions);
 
     expect(result).toMatchObject(expectedResult);
   });
 
   test('Generate current options with possible options, multipart entry and single previous selection collection in single value, with named options', () => {
-    var optionId = 312;
-    var possibleOptions = {
+    let optionId = 312;
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123,
@@ -360,13 +360,13 @@ describe("Option function tests", () => {
         name: 'Test Option 41'
       }
     };
-    var firstSelectionCollection = {
+    let firstSelectionCollection = {
       1: {
         id: 1,
         value:"test1"
       }
     };
-    var expectedResult =
+    let expectedResult =
     [
       {
         bindKey: "312_1_test1",
@@ -418,14 +418,14 @@ describe("Option function tests", () => {
         value: null
       },
     ];
-    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions, firstSelectionCollection);
+    let result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions, firstSelectionCollection);
 
     expect(result).toMatchObject(expectedResult);
   });
 
   test('Generate current options with possible options, multipart entry and multiple previous selection collections and multiple values', () => {
-    var optionId = 312;
-    var possibleOptions = {
+    let optionId = 312;
+    let possibleOptions = {
       1: {
         id: 1,
         value: 123,
@@ -442,13 +442,13 @@ describe("Option function tests", () => {
         name: 'Test Option 41'
       }
     };
-    var firstSelectionCollection = {
+    let firstSelectionCollection = {
       2: {
         id: 2,
         value: 'test2'
       }
     };
-    var secondSelectionCollection = {
+    let secondSelectionCollection = {
       1: {
         id: 1,
         value: 10
@@ -462,7 +462,7 @@ describe("Option function tests", () => {
         value: 'test1'
       }
     };
-    var thirdSelectionCollection = {
+    let thirdSelectionCollection = {
       2: {
         id: 2,
         value: 'test'
@@ -472,7 +472,7 @@ describe("Option function tests", () => {
         value: 2
       }
     };
-    var expectedResult =
+    let expectedResult =
     [
       {
         bindKey: "312_1_10",
@@ -524,7 +524,7 @@ describe("Option function tests", () => {
         value: 2,
       },
     ];
-    var result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions, firstSelectionCollection, secondSelectionCollection, thirdSelectionCollection);
+    let result = OptionFunctions.generateCurrentOptions(optionId, true, possibleOptions, firstSelectionCollection, secondSelectionCollection, thirdSelectionCollection);
 
     expect(result).toMatchObject(expectedResult);
   });

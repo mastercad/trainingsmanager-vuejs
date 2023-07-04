@@ -97,7 +97,7 @@ const OptionFunctions = {
     return this.identifier+'_'+deviceOptionId+'_'+index;
   },
   investigateCurrentOptionValue: function(optionId, allowMultipartValue, ...possibleOptions) {
-    var returnValue = null;
+    let returnValue = null;
     possibleOptions.forEach((optionCollection) => {
       if (undefined !== optionCollection[optionId]
         && optionCollection[optionId].value
@@ -114,7 +114,7 @@ const OptionFunctions = {
   },
   prepareOptionCollection: function(options, extractIdClosure, extractValueClosure)
   {
-    var result = {};
+    let result = {};
     for(let option of options) {
       let id = extractIdClosure(option);
       let value = extractValueClosure(option);
