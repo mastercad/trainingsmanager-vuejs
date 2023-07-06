@@ -320,9 +320,6 @@ export default {
         preparedPossibleOptions[exerciseOption.id] = exerciseOption;
       });
 
-      console.debug(this.selectedTrainingPlanExerciseOptions);
-      console.debug(preparedPossibleOptions);
-
       for (let key in this.selectedTrainingPlanExerciseOptions) {
         if (undefined !== preparedPossibleOptions[key]
           && null !== this.selectedTrainingPlanExerciseOptions[key]
@@ -365,29 +362,17 @@ export default {
   },
   methods: {
     onExercisesMove(event) {
-      let newIndex = 0;
-      let oldIndex = 0;
-
-      console.log("reorderExercises");
-      console.log(this.origTrainingPlan.id);
-      window.console.log(event);
-      window.console.log(this);
-
       if (event.added) {
-        this.$parent.newIndex = event.added.newIndex;
         this.$parent.exerciseMoveTarget = this;
         return;
       } else if (event.removed) {
-        newIndex = this.$parent.newIndex;
-        oldIndex = event.removed.oldIndex;
-        //        this.$parent.exerciseMoveTarget.origTrainingPlanExercises.splice(newIndex, 0, this.origTrainingPlanExercises.splice(oldIndex, 1)[0]);
         this.$parent.exerciseMoveTarget.origTrainingPlan.trainingPlanXExercises.forEach(function(item, index) {
           item.order = index;
         });
         this.$parent.newIndex = 0;
       } else if (event.moved) {
-        oldIndex = event.moved.oldIndex;
-        newIndex = event.moved.newIndex;
+        let oldIndex = event.moved.oldIndex;
+        let newIndex = event.moved.newIndex;
         this.origTrainingPlan.trainingPlanXExercises.splice(newIndex, 0, this.origTrainingPlan.trainingPlanXExercises.splice(oldIndex, 1)[0]);
         this.origTrainingPlan.trainingPlanXExercises.forEach(function(item, index) {
           item.order = index;
@@ -473,7 +458,6 @@ export default {
       trainingPlanExercise.id = IdGenerator.generate('training_plan_x_exercise_');
       trainingPlanExercise.order = 0;
       trainingPlanExercise.remark = '';
-      //      trainingPlanExercise.trainingPlan = '/api/training_plan/'+this.id;
       trainingPlanExercise.trainingPlanXExerciseOptions = [];
       trainingPlanExercise.trainingPlanXDeviceOptions = [];
       trainingPlanExercise.trainingPlan = this.origTrainingPlan;
@@ -509,7 +493,6 @@ export default {
       }
     },
     editTrainingPlanExercise(trainingPlanExercise) {
-      console.log("EDIT TRAININGPLAN EXERCISE!");
       this.selectedTrainingPlanExerciseOptions = {};
 
       let preparedCurrentExerciseOptions = {};
@@ -524,8 +507,6 @@ export default {
           this.selectedTrainingPlanExerciseOptions[option.id] = {value: null};
         }
       });
-
-      console.log("SETZE EXERCISE!");
 
       this.currentTrainingPlanExercise = trainingPlanExercise;
       this.currentTrainingPlanExerciseOptions = trainingPlanExercise.trainingPlanXExerciseOptions;

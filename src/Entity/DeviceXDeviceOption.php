@@ -61,9 +61,9 @@ class DeviceXDeviceOption
     private string $deviceOptionValue;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private Users $creator;
+    private Users|null $creator = null;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
@@ -153,7 +153,7 @@ class DeviceXDeviceOption
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }

@@ -52,7 +52,6 @@ export default {
     [CREATING_TRAINING_PLAN_SUCCESS](state, trainingPlan) {
       state.isLoading = false;
       state.error = null;
-      //      state.trainingPlans.unshift(trainingPlan);
       state.trainingPlans.push(trainingPlan);
     },
     [CREATING_TRAINING_PLAN_ERROR](state, error) {

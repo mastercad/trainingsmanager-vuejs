@@ -43,7 +43,8 @@ final class ExerciseImageController extends AbstractController
             }
         }
 
-        $directoryIterator = new DirectoryIterator(__DIR__ . '/../../public/uploads/' . $this->getUser()->getUserIdentifier());
+        $directoryIterator = new DirectoryIterator(__DIR__ . '/../../public/uploads/' .
+            $this->getUser()->getUserIdentifier());
         foreach ($directoryIterator as $file) {
             if (! $file->isFile()) {
                 continue;

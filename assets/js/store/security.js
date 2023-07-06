@@ -68,8 +68,6 @@ export default {
       localStorage.setItem('user', payload.user);
       localStorage.setItem('token', payload.token);
       localStorage.setItem('refreshToken', payload.refresh_token);
-      //      axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token;
-      //      axios.defaults.headers.common['X-Refresh-Token'] = payload.refresh_token;
     },
     [AUTHENTICATING_ERROR](state, error) {
       state.isLoading = false;
@@ -98,8 +96,6 @@ export default {
       localStorage.setItem('user', payload.user);
       localStorage.setItem('token', payload.token);
       localStorage.setItem('refreshToken', payload.refresh_token);
-      //      axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token;
-      //      axios.defaults.headers.common['X-Refresh-Token'] = payload.refresh_token;
     },
     [REGISTRATION_ERROR](state, error) {
       state.isLoading = false;
@@ -120,10 +116,6 @@ export default {
       localStorage.setItem('user', payload.user);
       localStorage.setItem('token', payload.token);
       localStorage.setItem('refreshToken', payload.refresh_token);
-      //      if (payload.token) {
-      //        axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token;
-      //        axios.defaults.headers.common['X-Refresh-Token'] = payload.refresh_token;
-      //      }
     },
     [PROVIDING_RELOAD_SUCCESS](state, payload) {
       state.isLoading = false;
@@ -136,10 +128,6 @@ export default {
       localStorage.setItem('user', payload.user);
       localStorage.setItem('token', payload.token);
       localStorage.setItem('refreshToken', payload.refreshToken);
-      //      if (payload.token) {
-      //        axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token;
-      //        axios.defaults.headers.common['X-Refresh-Token'] = payload.refresh_token;
-      //      }
     },
     [PROVIDING_REFRESH_ERROR](state, error) {
       state.error = error;

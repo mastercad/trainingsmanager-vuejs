@@ -49,19 +49,19 @@ class TrainingPlanLayouts
     #[Groups(['read', 'write'])]
     private string $name;
 
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
+    private Users|null $creator = null;
+
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private DateTime $created;
 
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'updater', nullable: true, referencedColumnName: 'id')]
+    private Users|null $updater = null;
+
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private DateTime|null $updated = null;
-
-    #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
-    private Users $creator;
-
-    #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
-    private Users $updater;
 
     #[ORM\OneToMany(targetEntity: 'TrainingPlans', mappedBy: 'trainingPlanLayout', cascade: ['persist'])]
     private TrainingPlans $trainingPlans;
@@ -141,7 +141,7 @@ class TrainingPlanLayouts
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }

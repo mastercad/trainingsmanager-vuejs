@@ -53,6 +53,11 @@ class ExerciseOptions
     #[Groups(['read', 'write'])]
     private string $defaultValue;
 
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
+    #[Groups(['read'])]
+    private Users|null $creator = null;
+
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
     private DateTime $created;
@@ -60,11 +65,6 @@ class ExerciseOptions
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
     private DateTime|null $updated = null;
-
-    #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
-    #[Groups(['read'])]
-    private Users $creator;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id', nullable: true)]
@@ -164,7 +164,7 @@ class ExerciseOptions
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }

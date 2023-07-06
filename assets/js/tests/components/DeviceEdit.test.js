@@ -13,7 +13,7 @@ localVue.use(DropdownPlugin);
 let actions, store;
 
 beforeEach(() => {
-  actions = [];
+  actions = {};
   actions['devices/loadImages'] = jest.fn();
   actions['devices/create'] = jest.fn();
   actions['devices/update'] = jest.fn();

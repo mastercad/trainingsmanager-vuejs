@@ -450,13 +450,11 @@ export default {
       this.previewPictureKey = key;
     },
     reset() {
-      // reset form to initial state
       this.currentStatus = STATUS_INITIAL;
       this.uploadedFiles = [];
       this.uploadError = null;
     },
     save(formData) {
-      // upload data to the server
       this.currentStatus = STATUS_SAVING;
       let me = this;
 
@@ -471,17 +469,14 @@ export default {
         });
     },
     filesChange(fieldName, fileList) {
-      // handle file changes
       const formData = new FormData();
 
       if (!fileList.length) return;
 
-      // append the files to FormData
       Array
         .from(Array(fileList.length).keys())
-        .map((x) => (formData.append(fieldName+"[]", fileList[x], fileList[x].name)));
+        .forEach(position => formData.append(fieldName+"[]", fileList[position], fileList[position].name));
 
-      // save it
       this.save(formData);
     },
     extractFileName(fileName) {

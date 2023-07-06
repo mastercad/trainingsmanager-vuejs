@@ -60,23 +60,23 @@ class ExerciseXExerciseOption
     #[Groups(['read', 'write'])]
     private string $exerciseOptionValue;
 
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
+    #[Groups(['read'])]
+    private Users|null $creator = null;
+
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
     private DateTime $created;
-
-    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    #[Groups(['read'])]
-    private DateTime|null $updated = null;
-
-    #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
-    #[Groups(['read'])]
-    private Users $creator;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
     #[Groups(['read'])]
     private Users $updater;
+
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
+    #[Groups(['read'])]
+    private DateTime|null $updated = null;
 
     /**
      * Get the value of id
@@ -153,7 +153,7 @@ class ExerciseXExerciseOption
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }

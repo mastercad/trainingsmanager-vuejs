@@ -49,18 +49,18 @@ class TrainingPlanXExercise
     private TrainingPlans $trainingPlan;
 
     #[ORM\ManyToOne(targetEntity: Users::class)]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private Users $creator;
+    private Users|null $creator = null;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
     private DateTime $created;
 
     #[ORM\ManyToOne(targetEntity: Users::class)]
-    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'updater', nullable: true, referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private Users $updater;
+    private Users|null $updater = null;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
@@ -175,7 +175,7 @@ class TrainingPlanXExercise
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }
@@ -229,7 +229,7 @@ class TrainingPlanXExercise
     /**
      * Get the value of updater
      */
-    public function getUpdater(): Users
+    public function getUpdater(): Users|null
     {
         return $this->updater;
     }
@@ -237,7 +237,7 @@ class TrainingPlanXExercise
     /**
      * Set the value of updater
      */
-    public function setUpdater(Users $updater): self
+    public function setUpdater(Users|null $updater): self
     {
         $this->updater = $updater;
 

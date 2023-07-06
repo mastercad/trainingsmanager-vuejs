@@ -74,12 +74,14 @@ final class SecurityController extends AbstractController
     #[Route(path: '/logout', name: 'api_logout')]
     public function logoutAction(): void
     {
-        throw new RuntimeException('This should not be reached!');
     }
 
     #[Route(path: '/register', name: 'user_registration')]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): JsonResponse
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
         $user = new Users();
         $form = $this->createForm(UserType::class, $user);
         $jsonData = json_decode($request->getContent(), true);
@@ -104,6 +106,13 @@ final class SecurityController extends AbstractController
             return new JsonResponse(json_encode($data), Response::HTTP_OK, [], true);
         }
 
-        return new JsonResponse(json_encode(['success' => false, 'errors' => $this->serializer->serialize($form, JsonEncoder::FORMAT)]), Response::HTTP_OK, [], true);
+        return new JsonResponse(
+            json_encode(
+                ['success' => false, 'errors' => $this->serializer->serialize($form, JsonEncoder::FORMAT)]
+            ),
+            Response::HTTP_OK,
+            [],
+            true
+        );
     }
 }

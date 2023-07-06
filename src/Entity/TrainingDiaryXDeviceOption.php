@@ -31,16 +31,16 @@ class TrainingDiaryXDeviceOption
     #[ORM\Column(name: 'option_value', type: 'string', length: 255, nullable: false)]
     private string $optionValue;
 
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private Users $creator;
+    private Users|null $creator = null;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private DateTime $created;
 
-    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'updater', nullable: true, referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    private Users $updater;
+    private Users|null $updater = null;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     private DateTime|null $updated = null;
@@ -124,7 +124,7 @@ class TrainingDiaryXDeviceOption
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }

@@ -42,9 +42,9 @@ class TrainingPlanXExerciseOption
     private TrainingPlanXExercise $trainingPlanXExercise;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
     #[Groups(['read', 'write'])]
-    private Users $creator;
+    private Users|null $creator = null;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
     #[Groups(['read', 'write'])]
@@ -53,7 +53,7 @@ class TrainingPlanXExerciseOption
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id', nullable: true)]
     #[Groups(['read', 'write'])]
-    private Users $updater;
+    private Users|null $updater = null;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read', 'write'])]
@@ -134,7 +134,7 @@ class TrainingPlanXExerciseOption
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }
@@ -170,7 +170,7 @@ class TrainingPlanXExerciseOption
     /**
      * Get the value of updater
      */
-    public function getUpdater(): Users
+    public function getUpdater(): Users|null
     {
         return $this->updater;
     }

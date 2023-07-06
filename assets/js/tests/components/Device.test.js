@@ -8,7 +8,7 @@ localVue.use(Vuex);
 let actions, store;
 
 beforeEach(() => {
-  actions = [];
+  actions = {};
   actions['devices/loadImages'] = jest.fn();
 
   store = new Vuex.Store({

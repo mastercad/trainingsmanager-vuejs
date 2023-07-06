@@ -45,7 +45,6 @@ export default {
     [CREATING_CONTACT_SUCCESS](state, contact) {
       state.isLoading = false;
       state.error = null;
-      //      state.contacts.unshift(contact);
       state.contacts.push(contact);
     },
     [CREATING_CONTACT_ERROR](state, error) {

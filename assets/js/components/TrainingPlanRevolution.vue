@@ -315,7 +315,7 @@ export default {
     sortTrainingPlanExercises() {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return this.origTrainingPlanExercises.sort(
-        (a, b) => { // sort using this.orderBy
+        (a, b) => {
           if (null === a
             || null === b
           ) {
@@ -392,12 +392,6 @@ export default {
           item.order = index;
         });
       }
-    },
-    onExerciseUpdate(event) {
-      window.console.log(event);
-    },
-    onExerciseClone(event) {
-      window.console.log(event);
     },
     onFormWizardChanged(prevIndex, currentIndex) {
       this.activeTabIndex = 0 <= currentIndex ? currentIndex : 1;
@@ -478,7 +472,6 @@ export default {
           && 0 < selectedTrainingPlanExerciseOption.value.trim().length
           && selectedTrainingPlanExerciseOption.value !== selectedTrainingPlanExerciseOption.defaultValue
         ) {
-          console.log("CREATE!: ");
         // update trainingPlanExerciseOption
         } else if (null !== selectedTrainingPlanExerciseOption.trainingPlanXExerciseOption
           && undefined !== selectedTrainingPlanExerciseOption.trainingPlanXExerciseOption
@@ -487,7 +480,6 @@ export default {
           && selectedTrainingPlanExerciseOption.value !== selectedTrainingPlanExerciseOption.defaultValue
           && selectedTrainingPlanExerciseOption.value !== selectedTrainingPlanExerciseOption.origValue
         ) {
-          console.log("UPDATE!: ");
           this.$store.dispatch("trainingPlanExerciseOptions/update", {
             trainingPlanXExerciseOption: selectedTrainingPlanExerciseOption.trainingPlanXExerciseOption,
             optionValue: selectedTrainingPlanExerciseOption.value,
@@ -503,11 +495,11 @@ export default {
             || selectedTrainingPlanExerciseOption.value === selectedTrainingPlanExerciseOption.defaultValue
           )
         ) {
-          console.log("DELETE!: ");
+          this.$store.dispatch("trainingPlanExerciseOptions/delete", selectedTrainingPlanExerciseOption.trainingPlanXExerciseOption);
         }
       }
     },
-    // function considers possible changed exercise with existing in current trainingplan
+    // function considers possible changed exercise with existing in current training-plan
     considerCurrentSelectedExercise() {
       if (this.selectedTrainingPlanExercise
         && undefined !== this.selectedTrainingPlanExercise.exercise
@@ -609,7 +601,6 @@ export default {
       this.selectedDevice = null;
       this.selectedTrainingPlanExercise = trainingPlanExercise;
       this.selectExercise(trainingPlanExercise.exercise);
-      //      this.selectDevice(null !== trainingPlanExercise.exercise.exerciseXDevice ? trainingPlanExercise.exercise.exerciseXDevice.device : null);
 
       this.showModal();
     },
@@ -623,7 +614,6 @@ export default {
       this.$root.$emit('bv::hide::modal', 'modal-'+this.origId, '#btnShow')
     },
     toggleModal() {
-      console.log("TOGGLE MODAL!");
       this.$root.$emit('bv::toggle::modal', 'modal-'+this.origId, '#btnToggle')
     },
     back() {
@@ -633,8 +623,6 @@ export default {
       this.$refs.formWiz.nextTab();
     },
     cancel() {
-      //      this.selectedTrainingPlanExerciseOptions = {};
-      //      this.selectedTrainingPlanDeviceOptions = {};
       this.selectedTrainingPlanExercise = null;
       this.$refs.formWiz.reset();
 

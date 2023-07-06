@@ -54,11 +54,15 @@ const OptionFunctions = {
     return this;
   },
   retrieveCurrentValue: function(possibleOptionId) {
-    return undefined !== this.currentSelectedOptions && undefined !== this.currentSelectedOptions[possibleOptionId]
-      ? this.currentSelectedOptions[possibleOptionId].value
-      : undefined !== this.additionalOptions
-        ? OptionFunctions.investigateCurrentOptionValue(possibleOptionId, false, ...this.additionalOptions)
-        : null;
+    if (undefined !== this.currentSelectedOptions && undefined !== this.currentSelectedOptions[possibleOptionId]) {
+      return this.currentSelectedOptions[possibleOptionId].value;
+    }
+
+    if (undefined !== this.additionalOptions) {
+      return OptionFunctions.investigateCurrentOptionValue(possibleOptionId, false, ...this.additionalOptions);
+    }
+
+    return null;
   },
   handleMultiPartOptions: function(optionInformation, possibleOption, value) {
     optionInformation.parts = OptionFunctions.splitOption(possibleOption.value);
@@ -130,7 +134,7 @@ const OptionFunctions = {
   isIterable: function(input){
     return null !== input
       && (
-        typeof input === Array
+        typeof input == Array
         || typeof input === 'object'
         || Symbol.iterator in Object(input)
       );
@@ -138,5 +142,3 @@ const OptionFunctions = {
 };
 
 module.exports = OptionFunctions;
-
-//export default OptionFunctions;

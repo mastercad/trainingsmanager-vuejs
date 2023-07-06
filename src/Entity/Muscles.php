@@ -56,23 +56,23 @@ class Muscles
     #[Groups(['read', 'write'])]
     private string $seoLink;
 
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
+    #[Groups(['read'])]
+    private Users|null $creator = null;
+
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
     private DateTime $created;
 
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'updater', nullable: true, referencedColumnName: 'id')]
+    #[Groups(['read'])]
+    private Users|null $updater = null;
+
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
     private DateTime|null $updated = null;
-
-    #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
-    #[Groups(['read'])]
-    private Users $creator;
-
-    #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
-    #[Groups(['read'])]
-    private Users $updater;
 
     /** @var Collection|MuscleGroups[] */
     #[ORM\OneToMany(targetEntity: MuscleXMuscleGroup::class, mappedBy: 'muscle', cascade: ['ALL'], orphanRemoval: true)]
@@ -182,7 +182,7 @@ class Muscles
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }

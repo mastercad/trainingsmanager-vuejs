@@ -73,59 +73,6 @@
     </div>
 
     <router-view />
-    <!--
-    <li
-      v-if="isAuthenticated==true"
-      class="nav-item"
-    >
-      <a
-        class="nav-link"
-        href="/logout"
-      >Logout</a>
-    </li>
--->
-    <!--
-    <button class="btn">
-      Notification
-      <span class="badge badge-primary" />
-    </button>
-    <b-alert
-      v-bind:show="showAlert"
-      variant="success"
-    >
-      You clicked the button!
-    </b-alert>
-    <b-btn
-      v-b-tooltip.hover
-      title="This button triggers the alert"
-      variant="primary"
-      @click="showAlert = true"
-    >
-      Click
-    </b-btn>
-
-    <div>
-      <h2 class="center">
-        My Application
-      </h2>
-      <div v-text="message" />
-      <ul>
-        <li
-          v-for="word in words"
-          :key="word.id"
-        >
-          {{ word }}
-        </li>
-      </ul>
-      <h2>another test</h2>
-      <span class="counter">
-        {{ counter }}
-      </span>
-      <button @click="incrementCounter">
-        +
-      </button>
-    </div>
--->
   </b-container>
 </template>
 
@@ -146,14 +93,6 @@ export default {
     routes() {
       return router.options.routes;
     }
-  },
-  mounted() {
-    /*
-    let el = document.querySelector("div[data-words]");
-    let myWords = el.dataset.words.split(",");
-
-    this.words.push.apply(this.words, myWords);
-    */
   },
   created() {
     let payload = {
@@ -181,28 +120,6 @@ export default {
         }
       ]
     );
-
-    //    router.beforeEach((to, from, next) => {
-    //      if (to.name !== 'Login' && !this.isAuthenticated) next({ name: 'Login' })
-    //      else next()
-    //    })
-
-    //router.replace(router.currentRoute.value.fullPath)
-
-    /*
-    axios.interceptors.response.use(undefined, (err) => {
-      return new Promise(() => {
-        if (401 === err.response.status) {
-          this.$router.push({path: "/login"})
-        } else if (500 === err.response.status) {
-          document.open();
-          document.write(err.response.data);
-          document.close();
-        }
-        throw err;
-      });
-    });
-*/
   },
   methods: {
     incrementCounter() {

@@ -57,18 +57,18 @@ class MuscleGroups
     private string $color;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private Users $creator;
+    private Users|null $creator = null;
 
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
     private DateTime $created;
 
     #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'updater', nullable: true, referencedColumnName: 'id')]
     #[Groups(['read'])]
-    private Users $updater;
+    private Users|null $updater = null;
 
     #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
     #[Groups(['read'])]
@@ -175,7 +175,7 @@ class MuscleGroups
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }

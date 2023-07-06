@@ -81,7 +81,6 @@ class ExerciseListener implements EventSubscriberInterface
         $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
 
         $entity->setCreator($user);
-        //        $args->getObject()->setCreator($this->tokenStorage->getToken()->getUser());
         $entity->setCreated(new DateTime('now'));
 
         if (
@@ -113,7 +112,6 @@ class ExerciseListener implements EventSubscriberInterface
         $user = $this->tokenStorage->getToken()->getUser() instanceof Users ?
         $this->tokenStorage->getToken()->getUser() :
         $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
-        //          $user = $this->tokenStorage->getToken()->getUser();
         $entity->setUpdater($user);
         $entity->setUpdated(new DateTime('now'));
 
@@ -124,7 +122,6 @@ class ExerciseListener implements EventSubscriberInterface
         $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
 
         $entity->setUpdater($user);
-//        $args->getObject()->setCreator($this->tokenStorage->getToken()->getUser());
         $entity->setUpdated(new DateTime('now'));
 
         if (

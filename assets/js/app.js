@@ -15,9 +15,6 @@ import App from './components/App.vue';
 import router from './router/index.js';
 import store from "./store/index.js";
 import './../styles/app.css';
-//import VueJsonLD from 'vue-jsonld';
-// Alert, Button, Carousel, Collapse, Dropdown, Modal, Offcanvas, Popover, ScrollSpy, Tab, Toast, Tooltip
-//import { Button, Dropdown, Modal, Tooltip } from "bootstrap";
 import { BootstrapVue, IconsPlugin, DropdownPlugin } from 'bootstrap-vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -35,20 +32,10 @@ library.add(faPlus, faJs, faVuejs);
 Vue.component('VueSimpleContextMenu', VueSimpleContextMenu);
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 
-// Vue.use(VueJsonLD);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(DropdownPlugin);
 Vue.use(VueFormWizard);
-
-/*
-Uncaught TypeError: class constructors must be invoked with 'new'
-
-Vue.use(Button);
-Vue.use(Dropdown);
-Vue.use(Modal);
-Vue.use(Tooltip);
-*/
 
 axios.defaults.withCredentials = true;
 

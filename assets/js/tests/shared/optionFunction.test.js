@@ -3,8 +3,6 @@ import { TextEncoder } from 'util';
 
 global.TextEncoder = TextEncoder;
 
-//import OptionsFunctions from "../shared/optionFunctions.js";
-
 describe("Option function tests", () => {
   test('Split works with empty parameter', () => {
     let result = OptionFunctions.splitOption("");
@@ -47,7 +45,7 @@ describe("Option function tests", () => {
     };
 
     let resultCollection = OptionFunctions.prepareOptionCollection(collection, identifier, valueKey);
-    for(const [key, value] of Object.entries(resultCollection)) {
+    for(const key of Object.entries(resultCollection)) {
       expect(resultCollection[key]).toEqual(expectedResult[key]);
     }
     expect(resultCollection).toMatchObject(expectedResult);

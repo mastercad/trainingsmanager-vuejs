@@ -62,48 +62,11 @@ const routes = [
   }
 ];
 
-/*
-//if (true === store.getters["security/isAuthenticated"]) {
-  console.log("LOGOUT!");
-  routes.push({
-    path: '/users',
-    name: 'User',
-    component: Admin,
-    children: [
-      { path: '/logout', name: 'Logout', beforeEnter() { store.dispatch('security/logout'); } }
-    ]
-  });
-//} else {
-  console.log("LOGIN!");
-  routes.push({
-    path: '/users',
-    name: 'User',
-    component: Admin,
-    children: [
-      { path: '/login', name: 'Login', component: Login }
-    ]
-  });
-//}
-*/
-
 let router = new VueRouter({
   base: '/', // process.env.BASE_URL,
   mode: "history",
   routes: routes
 });
-
-/*
-Vue.mixin({
-  beforeRouteUpdate(to, from, next) {
-    if (to.matched.some(record => record.meta.openBlank)) {
-      window.open(to.fullPath, '_blank');
-      next(false);
-    } else {
-      next();
-    }
-  }
-});
-*/
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {

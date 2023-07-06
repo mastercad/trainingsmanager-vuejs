@@ -86,23 +86,23 @@ class TrainingPlans
     #[Groups(['read', 'write'])]
     private Collection $trainingPlanExercises;
 
+    #[ORM\ManyToOne(targetEntity: 'Users')]
+    #[ORM\JoinColumn(name: 'creator', nullable: false, referencedColumnName: 'id')]
+    #[Groups(['read'])]
+    private Users|null $creator = null;
+
     #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['read'])]
     private DateTime $created;
 
-    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
-    #[Groups(['read'])]
-    private DateTime|null $updated = null;
-
-    #[ORM\ManyToOne(targetEntity: 'Users')]
-    #[ORM\JoinColumn(name: 'creator', referencedColumnName: 'id')]
-    #[Groups(['read'])]
-    private Users $creator;
-
     #[ORM\ManyToOne(targetEntity: 'Users')]
     #[ORM\JoinColumn(name: 'updater', referencedColumnName: 'id', nullable: true)]
     #[Groups(['read'])]
-    private Users $updater;
+    private Users|null $updater = null;
+
+    #[ORM\Column(name: 'updated', type: 'datetime', nullable: true)]
+    #[Groups(['read'])]
+    private DateTime|null $updated = null;
 
     public function __construct()
     {
@@ -221,7 +221,7 @@ class TrainingPlans
     /**
      * Get the value of creator
      */
-    public function getCreator(): Users
+    public function getCreator(): Users|null
     {
         return $this->creator;
     }
@@ -275,7 +275,7 @@ class TrainingPlans
     /**
      * Get the value of updater
      */
-    public function getUpdater(): Users
+    public function getUpdater(): Users|null
     {
         return $this->updater;
     }
@@ -283,7 +283,7 @@ class TrainingPlans
     /**
      * Set the value of updater
      */
-    public function setUpdater(Users $updater): self
+    public function setUpdater(Users|null $updater): self
     {
         $this->updater = $updater;
 
