@@ -21,8 +21,12 @@ class FileUploader
 {
     private string $relativeUploadsDir;
 
-    public function __construct(string $publicPath, private string $uploadPath, private SluggerInterface $slugger, private UrlHelper $urlHelper)
-    {
+    public function __construct(
+        string $publicPath,
+        private string $uploadPath,
+        private SluggerInterface $slugger,
+        private UrlHelper $urlHelper
+    ) {
         // get uploads directory relative to public path //  "/uploads/"
         $this->relativeUploadsDir = str_replace($publicPath, '', $this->uploadPath) . '/';
     }

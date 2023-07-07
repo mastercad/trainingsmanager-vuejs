@@ -253,7 +253,7 @@ class ExerciseListener implements EventSubscriberInterface
 
     private function incrementSeoLink(string $seoLink): string
     {
-        if (preg_match('/(.*?)_([0-9]+)$/', $seoLink, $matches)) {
+        if (preg_match('/(.*?)_(\d+)$/', $seoLink, $matches)) {
             return $matches[1] . '_' . (++$matches[2]);
         }
 

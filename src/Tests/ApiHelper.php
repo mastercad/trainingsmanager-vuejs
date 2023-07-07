@@ -8,9 +8,7 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Symfony\Bundle\Test\Client;
 use App\Entity\Users;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\TestContainer;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class ApiHelper
@@ -19,15 +17,15 @@ final class ApiHelper
 
     private EntityManagerInterface $entityManager;
 
-    private ApiTestCase|WebTestCase $testCase;
+    private ApiTestCase $testCase;
 
-    private Client|KernelBrowser $client;
+    private Client $client;
 
     private string|null $token = null;
 
     private string $contentType = 'application/json';
 
-    public function init(ApiTestCase|WebTestCase $testCase, TestContainer $container, Client|KernelBrowser $client): void
+    public function init(ApiTestCase $testCase, TestContainer $container, Client $client): void
     {
         $this->testCase = $testCase;
         $this->client = $client;

@@ -364,13 +364,20 @@ export default {
     onExercisesMove(event) {
       if (event.added) {
         this.$parent.exerciseMoveTarget = this;
+
         return;
-      } else if (event.removed) {
+      }
+
+      if (event.removed) {
         this.$parent.exerciseMoveTarget.origTrainingPlan.trainingPlanXExercises.forEach(function(item, index) {
           item.order = index;
         });
         this.$parent.newIndex = 0;
-      } else if (event.moved) {
+
+        return;
+      }
+
+      if (event.moved) {
         let oldIndex = event.moved.oldIndex;
         let newIndex = event.moved.newIndex;
         this.origTrainingPlan.trainingPlanXExercises.splice(newIndex, 0, this.origTrainingPlan.trainingPlanXExercises.splice(oldIndex, 1)[0]);

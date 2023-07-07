@@ -20,7 +20,8 @@ final class ExerciseImageDeleteController extends AbstractController
     public function __invoke(Request $request, FileUploader $fileUploader, string $fileName): Response
     {
         $id = (int) $request->get('id');
-        $filePathName = __DIR__ . '/../../public/images/content/dynamic/exercises/' . $id . '/' . base64_decode($fileName);
+        $filePathName =
+            __DIR__ . '/../../public/images/content/dynamic/exercises/' . $id . '/' . base64_decode($fileName);
 
         if (! file_exists($filePathName)) {
             return $this->json([

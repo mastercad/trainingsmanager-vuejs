@@ -196,7 +196,7 @@ export default {
       }
     },
     async logout({commit}) {
-      //      commit(LOGOUT);
+      commit(LOGOUT);
       try {
         let response = await SecurityAPI.logout();
         commit (LOGOUT_SUCCESS, response.data);

@@ -23,7 +23,6 @@ final class ExerciseNormalizer implements NormalizerInterface, NormalizerAwareIn
     /** @param mixed[] $context */
     public function supportsNormalization(mixed $data, string|null $format = null, array $context = []): bool
     {
-//      return !isset($context[self::ALREADY_CALLED]) && $data instanceof Exercises;
         return ! isset($context[self::ALREADY_CALLED]);
     }
 
@@ -31,8 +30,6 @@ final class ExerciseNormalizer implements NormalizerInterface, NormalizerAwareIn
     public function normalize(mixed $object, string|null $format = null, array $context = []): mixed
     {
         $context[self::ALREADY_CALLED] = true;
-
-//        $object->setPreviewPicturePath($this->fileUploader->retrieveUrl($object->getPreviewPicturePath()) ?? '');
 
         return $this->normalizer->normalize($object, $format, $context);
     }
