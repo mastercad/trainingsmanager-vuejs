@@ -116,7 +116,7 @@ class UserState
 
     /**
      * Get the value of creator
-     */p
+     */
     public function getCreator(): Users
     {
         return $this->creator;
