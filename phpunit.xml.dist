@@ -6,6 +6,7 @@
     <ini name="error_reporting" value="-1"/>
     <env name="BOOTSTRAP_CLEAR_CACHE_ENV" value="test"/>
     <env name="APP_ENV" value="test" force="true"/>
+    <env name="APP_DEBUG" value="false"/>
     <env name="SHELL_VERBOSITY" value="-1"/>
     <env name="SYMFONY_PHPUNIT_REMOVE" value=""/>
     <env name="SYMFONY_PHPUNIT_VERSION" value="9.5"/>
@@ -13,7 +14,7 @@
   </php>
 
   <testsuites>
-    <testsuite name="Project Test Suite">
+    <testsuite name="Trainingsmanager Test Suite">
       <directory>tests</directory>
     </testsuite>
   </testsuites>

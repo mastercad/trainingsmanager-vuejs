@@ -1,4 +1,6 @@
 doctrine:
     dbal:
         # "TEST_TOKEN" is typically set by ParaTest
-        dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+        # i had to remove following line because database:schema:create tryed to work without suffix, all other commands does not
+#        dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+        logging: false

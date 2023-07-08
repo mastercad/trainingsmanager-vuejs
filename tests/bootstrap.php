@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -10,6 +11,8 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 const CONSOLE_CMD = 'bin/console';
 const NO_INTERACTION = '--no-interaction';
+
+(new Filesystem())->remove([__DIR__ . '/../var/cache/test']);
 
 if (isset($_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])) {
   // executes the "php bin/console cache:clear" command
@@ -26,35 +29,35 @@ if (file_exists(dirname(__DIR__) . '/config/bootstrap.php')) {
     (new Dotenv())->bootEnv(dirname(__DIR__) . '/.env');
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:drop', NO_INTERACTION, '--if-exists', '--force']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:drop', NO_INTERACTION, '--if-exists', '--force', '--env=test']);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:create', NO_INTERACTION]);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:create', NO_INTERACTION, '--env=test']);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:schema:create', NO_INTERACTION]);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:schema:create', NO_INTERACTION, '--env=test']);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:migrations:migrate', NO_INTERACTION, '--allow-no-migration']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:migrations:migrate', NO_INTERACTION, '--allow-no-migration', '--env=test']);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:fixtures:load', NO_INTERACTION]);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:fixtures:load', NO_INTERACTION, '--env=test']);
 $process->run();
 
 if (! $process->isSuccessful()) {
