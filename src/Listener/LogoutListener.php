@@ -9,6 +9,9 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class LogoutListener implements EventSubscriberInterface
 {
+    /**
+     * @return mixed[]
+     */
     public static function getSubscribedEvents(): array
     {
         return [LogoutEvent::class => 'onLogout'];
