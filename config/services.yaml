@@ -49,3 +49,8 @@ services:
     App\Service\FileUploader:
         arguments:
             $uploadPath: '%uploads_directory%'
+
+    App\Listener\LogoutListener:
+        class: App\Listener\LogoutListener
+        tags:
+            - { name: app.logout_listener, event: kernel.event_logout}

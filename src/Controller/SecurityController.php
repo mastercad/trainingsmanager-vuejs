@@ -72,11 +72,11 @@ final class SecurityController extends AbstractController
 
     /** @throws RuntimeException */
     #[Route(path: '/logout', name: 'api_logout')]
-    public function logoutAction(): void
+    public function logoutAction(): never
     {
     }
 
-    #[Route(path: '/register', name: 'user_registration')]
+    #[Route(path: '/register', name: 'user_registration', methods: ['POST'])]
     public function register(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
