@@ -23,6 +23,7 @@
         <exclude name="Generic.Formatting.MultipleStatementAlignment" />
         <exclude name="SlevomatCodingStandard.Arrays.TrailingArrayComma.MissingTrailingComma" />
         <exclude name="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall.MissingTrailingComma" />
+        <exclude name="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration.MissingTrailingComma" />
     </rule>
 
     <!-- Do not align assignments -->
