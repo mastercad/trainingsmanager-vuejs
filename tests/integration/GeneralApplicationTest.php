@@ -25,11 +25,16 @@ class GeneralApplicationTest extends ApiTestCase
     public function testLogin(): void
     {
         $this->apiHelper->request(Request::METHOD_GET, '/api/devices');
-        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED, 'request without authorization should result in 401.');
+        self::assertResponseStatusCodeSame(
+            Response::HTTP_UNAUTHORIZED,
+            'request without authorization should result in 401.'
+        );
 
         $this->apiHelper->loginUser('test@example.com');
 
         $this->apiHelper->request(Request::METHOD_GET, '/api/devices');
-        self::assertResponseIsSuccessful('simple get request with authorization should work without any restrictions or problems.');
+        self::assertResponseIsSuccessful(
+            'simple get request with authorization should work without any restrictions or problems.'
+        );
     }
 }

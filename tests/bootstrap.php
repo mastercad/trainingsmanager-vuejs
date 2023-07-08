@@ -15,7 +15,6 @@ const NO_INTERACTION = '--no-interaction';
 (new Filesystem())->remove([__DIR__ . '/../var/cache/test']);
 
 if (isset($_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])) {
-  // executes the "php bin/console cache:clear" command
     passthru(sprintf(
         'APP_ENV=%s php "%s/../bin/console" cache:clear --no-warmup',
         $_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'],
@@ -29,35 +28,35 @@ if (file_exists(dirname(__DIR__) . '/config/bootstrap.php')) {
     (new Dotenv())->bootEnv(dirname(__DIR__) . '/.env');
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:drop', NO_INTERACTION, '--if-exists', '--force', '--env=test']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:drop', NO_INTERACTION, '--if-exists', '--force']);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:create', NO_INTERACTION, '--env=test']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:database:create', NO_INTERACTION]);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:schema:create', NO_INTERACTION, '--env=test']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:schema:create', NO_INTERACTION]);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:migrations:migrate', NO_INTERACTION, '--allow-no-migration', '--env=test']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:migrations:migrate', NO_INTERACTION, '--allow-no-migration']);
 $process->run();
 
 if (! $process->isSuccessful()) {
     throw new ProcessFailedException($process);
 }
 
-$process = new Process(['php', CONSOLE_CMD, 'doctrine:fixtures:load', NO_INTERACTION, '--env=test']);
+$process = new Process(['php', CONSOLE_CMD, 'doctrine:fixtures:load', NO_INTERACTION]);
 $process->run();
 
 if (! $process->isSuccessful()) {
