@@ -7,7 +7,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 const CONSOLE_CMD = 'bin/console';
 const NO_INTERACTION = '--no-interaction';
@@ -23,7 +23,7 @@ if (isset($_ENV['BOOTSTRAP_CLEAR_CACHE_ENV'])) {
 }
 
 if (file_exists(dirname(__DIR__) . '/config/bootstrap.php')) {
-    require dirname(__DIR__) . '/config/bootstrap.php';
+    require_once dirname(__DIR__) . '/config/bootstrap.php';
 } elseif (method_exists(Dotenv::class, 'bootEnv')) {
     (new Dotenv())->bootEnv(dirname(__DIR__) . '/.env');
 }

@@ -181,6 +181,7 @@
         <img
           class="img-thumbnail"
           :src="image"
+          :alt="image"
           style="max-height: 200px;"
         >
         <button
@@ -193,6 +194,7 @@
       </div>
       <img
         v-if="isImagesLoading"
+        alt="Content loading..."
         src="/images/content/static/spinner.gif"
       >
     </b-card>

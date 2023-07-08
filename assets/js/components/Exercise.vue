@@ -8,6 +8,7 @@
     <div class="row">
       <div class="col-md-4">
         <img
+          alt="Exercise preview picture"
           style="width: 100%"
           :src="'/images/content/dynamic/exercises/'+exercise.id+'/'+exercise.previewPicturePath"
           @error="imageAlternative"
@@ -35,11 +36,13 @@
         <img
           class="img-thumbnail"
           :src="image"
+          :alt="image"
         >
       </div>
     </div>
     <img
       v-if="isImagesLoading"
+      alt="Content loading ..."
       src="/images/content/static/spinner.gif"
     >
   </div>

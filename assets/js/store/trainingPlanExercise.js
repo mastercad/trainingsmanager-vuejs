@@ -57,7 +57,6 @@ export default {
       state.selectedTrainingPlanExercise[data.id].value = data.value;
       state.selectedTrainingPlanExercise[data.id].defaultValue = data.defaultValue;
       state.selectedTrainingPlanExercise[data.id].isDefault = data.isDefault;
-      state.exerciseKey = Math.random();
     },
     [DELETE_TRAINING_PLAN_EXERCISE](state, id) {
       state.isLoading = true;

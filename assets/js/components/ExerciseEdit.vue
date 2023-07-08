@@ -249,6 +249,7 @@
         <img
           class="img-thumbnail"
           :src="image"
+          :alt="image"
         >
         <button
           type="button"

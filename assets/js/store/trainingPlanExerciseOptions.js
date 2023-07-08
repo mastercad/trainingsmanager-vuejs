@@ -74,7 +74,6 @@ export default {
       state.selectedTrainingPlanExerciseOptions[data.id].value = data.value;
       state.selectedTrainingPlanExerciseOptions[data.id].defaultValue = data.defaultValue;
       state.selectedTrainingPlanExerciseOptions[data.id].isDefault = data.isDefault;
-      state.exerciseOptionKey = Math.random();
     },
     [UPDATE_TRAINING_PLAN_EXERCISE_OPTION](state) {
       state.isLoading = true;
@@ -110,7 +109,6 @@ export default {
       state.selectedTrainingPlanDeviceOptions[data.id].value = data.value;
       state.selectedTrainingPlanDeviceOptions[data.id].defaultValue = data.defaultValue;
       state.selectedTrainingPlanDeviceOptions[data.id].isDefault = data.isDefault;
-      state.exerciseOptionKey = Math.random();
     },
     [FETCHING_TRAINING_PLAN_EXERCISE_OPTIONS](state) {
       state.isLoading = true;
