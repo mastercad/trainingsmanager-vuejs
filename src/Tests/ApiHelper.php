@@ -39,6 +39,7 @@ final class ApiHelper
 
         $this->client->loginUser($user);
 
+        // load token
         $json = $this->request(
             'POST',
             '/api/login_check',
@@ -73,6 +74,25 @@ final class ApiHelper
         }
 
         return $this->client->request($method, $url, $options)->toArray(false);
+    }
+
+    /**
+     * @param mixed[] $files
+     *
+     * @return mixed[]
+     */
+    public function upload(string $url, array $files): array
+    {
+        $options = [
+            'headers' => ['Content-Disposition: form-data'],
+            'extra' => ['files' => $files]
+        ];
+
+        if ($this->token !== null) {
+            $options['auth_bearer'] = $this->token;
+        }
+
+        return $this->client->request('POST', $url, $options)->toArray(false);
     }
 
     public function setContentType(string $contentType): self

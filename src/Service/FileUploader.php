@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 use function file_exists;
+use function mkdir;
 use function pathinfo;
 use function str_replace;
 use function uniqid;
@@ -22,13 +24,14 @@ class FileUploader
     private string $relativeUploadsDir;
 
     public function __construct(
-        string $publicPath,
-        private string $uploadPath,
+        private string $publicDirectory,
+        private string $uploadsDirectory,
         private SluggerInterface $slugger,
-        private UrlHelper $urlHelper
+        private UrlHelper $urlHelper,
+        private LoggerInterface $logger
     ) {
-        // get uploads directory relative to public path //  "/uploads/"
-        $this->relativeUploadsDir = str_replace($publicPath, '', $this->uploadPath) . '/';
+        // set uploads directory relative to public path //  "/uploads/"
+        $this->relativeUploadsDir = str_replace($publicDirectory, '', $this->uploadsDirectory) . '/';
     }
 
     public function upload(UploadedFile $file, string $userIdentifier): string
@@ -37,10 +40,12 @@ class FileUploader
         $safeFilename = $this->slugger->slug($originalFilename);
         $fileName = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
+        mkdir($this->uploadsDirectory . '/' . $userIdentifier, 0777, true);
+
         try {
-            $file->move($this->getUploadPath() . '/' . $userIdentifier, $fileName);
-        } catch (FileException) {
-            // ... handle exception if something happens during file upload
+            $result = $file->move($this->uploadsDirectory . '/' . $userIdentifier, $fileName);
+        } catch (FileException $exception) {
+            $this->logger->critical($exception->getMessage());
         }
 
         return $fileName;
@@ -48,17 +53,12 @@ class FileUploader
 
     public function delete(string $fileName, string $userIdentifier): bool
     {
-        $absoluteFilePath = $this->getUploadPath() . '/' . $userIdentifier . '/' . $fileName;
+        $absoluteFilePath = $this->uploadsDirectory . '/' . $userIdentifier . '/' . $fileName;
         if (! file_exists($absoluteFilePath)) {
             return true;
         }
 
         return unlink($absoluteFilePath);
-    }
-
-    public function getUploadPath(): string
-    {
-        return $this->uploadPath;
     }
 
     public function retrieveUrl(string|null $fileName, bool $absolute = true): string

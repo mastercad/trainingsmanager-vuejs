@@ -1,9 +1,9 @@
-services:
-  _defaults:
-    autowire: true      # Automatically injects dependencies in your services.
-    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-    public: true
+parameters:
+    public_directory: 'vfs://public'
+    uploads_directory: '%public_directory%/uploads'
+    dynamic_content_directory: '%public_directory%/images/content/dynamic'
 
-  App\Tests\ApiHelper:
-    class: App\Tests\ApiHelper
-    public: true
+services:
+    App\Tests\ApiHelper:
+        class: App\Tests\ApiHelper
+        public: true

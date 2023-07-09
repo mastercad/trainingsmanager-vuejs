@@ -18,7 +18,7 @@ use function preg_replace;
 #[AsController]
 final class DeviceImageController extends AbstractController
 {
-    public function __invoke(EntityManagerInterface $entityManager, int $id = 0): JsonResponse
+    public function __invoke(EntityManagerInterface $entityManager, string $dynamicContentDirectory, string $uploadsDirectory, int $id = 0): JsonResponse
     {
         $images = [];
 
@@ -29,7 +29,7 @@ final class DeviceImageController extends AbstractController
                 throw $this->createNotFoundException('Resource not found');
             }
 
-            $imageDir = __DIR__ . '/../../public/images/content/dynamic/devices/' . $device->getId();
+            $imageDir = $dynamicContentDirectory . '/devices/' . $device->getId();
 
             if (is_dir($imageDir)) {
                 $directoryIterator = new DirectoryIterator($imageDir);
@@ -43,9 +43,7 @@ final class DeviceImageController extends AbstractController
             }
         }
 
-        $directoryIterator = new DirectoryIterator(
-            __DIR__ . '/../../public/uploads/' . $this->getUser()->getUserIdentifier()
-        );
+        $directoryIterator = new DirectoryIterator($uploadsDirectory . '/' . $this->getUser()->getUserIdentifier());
         foreach ($directoryIterator as $file) {
             if (! $file->isFile()) {
                 continue;

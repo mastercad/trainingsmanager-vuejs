@@ -12,11 +12,14 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\OpenApi\Model\Operation;
+use ApiPlatform\OpenApi\Model\RequestBody;
 use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Controller\DeviceImageController;
 use App\Controller\DeviceImageDeleteController;
 use App\Controller\DeviceImageUploadController;
 use App\Controller\UploadImageDeleteController;
+use ArrayObject;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -37,9 +40,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => [self::READ_GROUP]],
     denormalizationContext: ['groups' => [self::WRITE_GROUP]],
     operations: [
-        new Get(),
         new Get(
-            uriTemplate: '/api/devices/{id}/images',
+            uriTemplate: '/devices/{id}/images',
             requirements: ['id' => '\d+'],
             controller: DeviceImageController::class,
             read: false,
@@ -56,17 +58,17 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ]
             ]
         ),
+        new Get(),
         new GetCollection(),
-        new Post(),
         new Post(
-            uriTemplate: '/api/devices/images',
+            uriTemplate: '/devices/images',
             controller: DeviceImageUploadController::class,
             deserialize: false,
-            openapiContext: [
-                'requestBody' => [
-                    'description' => 'File upload to an existing resource (device)',
-                    'required' => true,
-                    'content' => [
+            openapi: new Operation(
+                requestBody: new RequestBody(
+                    description:  'File upload to an existing resource (device)',
+                    required: true,
+                    content: new ArrayObject([
                         'multipart/form-data' => [
                             'schema' => [
                                 'type' => 'object',
@@ -74,24 +76,25 @@ use Symfony\Component\Validator\Constraints as Assert;
                                     'file' => [
                                         'type' => 'string',
                                         'format' => 'binary',
-                                        'description' => 'image path name for device',
+                                        'description' => 'image path for image',
                                     ],
                                 ],
                             ],
                         ],
-                    ],
-                ],
-            ],
+                    ]),
+                ),
+            ),
         ),
+        new Post(),
         new Patch(),
         new Put(),
         new Delete(),
         new Delete(
-            uriTemplate: '/api/uploads/image/{fileName}',
+            uriTemplate: '/uploads/image/{fileName}',
             controller: UploadImageDeleteController::class,
         ),
         new Delete(
-            uriTemplate: '/api/devices/{id}/image/{fileName}',
+            uriTemplate: '/devices/{id}/image/{fileName}',
             controller: DeviceImageDeleteController::class,
         ),
     ],

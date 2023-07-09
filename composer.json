@@ -49,6 +49,7 @@
         "doctrine/coding-standard": "*",
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "friendsoftwig/twigcs": "*",
+        "mikey179/vfsstream": "^1.6",
         "phpstan/phpstan": "*",
         "rector/rector": "*",
         "squizlabs/php_codesniffer": "*",
