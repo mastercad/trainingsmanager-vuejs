@@ -17,3 +17,6 @@ bin/console doctrine:schema:create
 
 # build frontend
 npm run build
+
+# validate codecov file:
+curl --data-binary @codecov.yml https://codecov.io/validate

@@ -1,6 +1,7 @@
 codecov:
   max_report_age: 24
-  ignore:
-    - "src/Entity"
-    - "src/DataFixtures"
-    - "src/Form"
+
+ignore:
+  - "src/Entity"
+  - "src/DataFixtures"
+  - "src/Form"
