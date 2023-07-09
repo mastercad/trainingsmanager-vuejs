@@ -69,7 +69,7 @@
     "sass-loader": "^13.3.1",
     "unplugin-vue-components": "^0.25.0",
     "vitest": "^0.32.2",
-    "vue-jest": "^3.0.7",
+    "vue-jest": "^4.0.1",
     "vue-template-compiler": "2.6.14",
     "vuex-mock-store": "^0.1.0",
     "webpack": "^5.85.0",
