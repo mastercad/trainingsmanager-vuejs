@@ -14,10 +14,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use function file_get_contents;
 
-final class DeviceImageUploadControllerTest extends ApiTestCase
+final class ExerciseImageUploadControllerTest extends ApiTestCase
 {
     private ApiHelper $apiHelper;
-    private const DEVICES_ENDPOINT = '/api/devices/images';
+    private const EXERCISES_ENDPOINT = '/api/exercises/images';
 
     private vfsStreamDirectory $virtualFileSystem;
 
@@ -38,7 +38,7 @@ final class DeviceImageUploadControllerTest extends ApiTestCase
                 'images' => [
                     'content' => [
                         'dynamic' => [
-                            'devices' => []
+                            'exercises' => []
                         ]
                     ]
                 ],
@@ -54,7 +54,7 @@ final class DeviceImageUploadControllerTest extends ApiTestCase
     /** this test is just to ensure environment is like expected */
     public function testImageFoldersAreEmpty(): void
     {
-        self::assertTrue($this->virtualFileSystem->hasChild('images/content/dynamic/devices'), 'dynamic image folder for devices should exists!');
+        self::assertTrue($this->virtualFileSystem->hasChild('images/content/dynamic/exercises'), 'dynamic image folder for exercises should exists!');
         self::assertTrue($this->virtualFileSystem->hasChild('uploads'), 'uploads folder should exists!');
     }
 
@@ -68,7 +68,7 @@ final class DeviceImageUploadControllerTest extends ApiTestCase
         $file = $this->generateUploadFile();
 
         $response = $this->apiHelper->upload(
-            self::DEVICES_ENDPOINT,
+            self::EXERCISES_ENDPOINT,
             [
                 'wrongKey' => [$file]
             ]
@@ -92,9 +92,9 @@ final class DeviceImageUploadControllerTest extends ApiTestCase
         $file = $this->generateUploadFile();
 
         $this->apiHelper->upload(
-            self::DEVICES_ENDPOINT,
+            self::EXERCISES_ENDPOINT,
             [
-                'deviceImage' => [$file]
+                'exerciseImage' => [$file]
             ]
         );
 
