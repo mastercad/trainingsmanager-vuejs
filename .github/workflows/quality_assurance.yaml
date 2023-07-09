@@ -36,7 +36,13 @@ jobs:
         run: docker compose exec php-fpm php bin/console lexik:jwt:generate-keypair --overwrite -n
 
       - name: run frontend tests
-        run: npm test
+        run: npm test -- --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+
+      - name: Cleanup coverages
+        run: rm -r coverage
 
       - name: run phpunit tests
         run: docker compose exec php-fpm php bin/phpunit

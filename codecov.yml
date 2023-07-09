@@ -1,7 +1,31 @@
 codecov:
   max_report_age: 24
 
+coverage:
+  round: nearest
+  range: "50...90"
+  status:
+    project:
+      backend:
+        flags:
+          - backend
+        paths:
+          - src
+      frontend:
+        paths:
+          - assets/js
+        flags:
+          - frontend
+
 ignore:
   - "src/Entity"
   - "src/DataFixtures"
   - "src/Form"
+
+flags:
+  backend:
+    paths:
+      - src
+  frontend:
+    paths:
+      - assets/js
