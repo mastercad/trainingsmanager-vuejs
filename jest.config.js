@@ -1,14 +1,19 @@
 const jestConfig = {
   setupFilesAfterEnv: ['<rootDir>jest.setup.js'],
   testEnvironment: "jsdom",
+  moduleFileExtensions: [
+    "js",
+    "json",
+    "vue"
+  ],
+  coverageProvider: 'v8',
+  collectCoverageFrom: ["assets/js/**/*.(vue|ts|js)"],
   verbose: true,
-  'transform': {
-//    '^.+\\.js?$': 'babel-jest',
-    "^[^.]+.vue$": "vue-jest",
-    "^.+\\.js$": "babel-jest"
+  transform: {
+    "^.+\\.vue$": "<rootDir>/node_modules/vue-jest",
+    "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
   },
   testMatch: [
-    '<rootDir>/assets/js/tests/*.test.js?',
     '<rootDir>/assets/**/*.test.js'
   ],
 };

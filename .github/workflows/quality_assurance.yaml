@@ -38,7 +38,7 @@ jobs:
       - name: run frontend tests
         run: npm test -- --coverage
 
-      - name: Upload coverage to Codecov
+      - name: Upload jest coverage reports to Codecov
         uses: codecov/codecov-action@v3
 
       - name: Cleanup coverages
@@ -47,7 +47,7 @@ jobs:
       - name: run phpunit tests
         run: docker compose exec php-fpm php bin/phpunit
 
-      - name: Upload coverage reports to Codecov
+      - name: Upload phpunit coverage reports to Codecov
         uses: codecov/codecov-action@v2
         with:
           files: ./coverage/clover.xml
