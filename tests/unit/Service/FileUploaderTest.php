@@ -116,7 +116,7 @@ final class FileUploaderTest extends TestCase
         ];
 
         yield 'test delete existing file' => [
-            'filePathName' => 'some_existing_file',
+            'filePathName' => 'some_existing_file.txt',
             'expectation' => true
         ];
     }
