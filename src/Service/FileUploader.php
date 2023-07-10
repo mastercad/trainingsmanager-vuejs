@@ -6,6 +6,7 @@ namespace App\Service;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -44,7 +45,7 @@ class FileUploader
 
         try {
             $result = $file->move($this->uploadsDirectory . '/' . $userIdentifier, $fileName);
-        } catch (FileException $exception) {
+        } catch (FileException | FileNotFoundException $exception) {
             $this->logger->critical($exception->getMessage());
         }
 
@@ -61,14 +62,14 @@ class FileUploader
         return unlink($absoluteFilePath);
     }
 
-    public function retrieveUrl(string|null $fileName, bool $absolute = true): string
+    public function retrieveUrl(string|null $fileName, bool $absolute = true): string|null
     {
         if (empty($fileName)) {
             return null;
         }
 
         if ($absolute) {
-            return $this->urlHelper->getAbsoluteUrl($this->relativeUploadsDir . $fileName);
+            return $this->urlHelper->getAbsoluteUrl($this->uploadsDirectory . '/' . $fileName);
         }
 
         return $this->urlHelper->getRelativePath($this->relativeUploadsDir . $fileName);

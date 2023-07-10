@@ -43,7 +43,7 @@ final class ExerciseImageUploadControllerTest extends ApiTestCase
                     ]
                 ],
                 'uploads' => [],
-                'dummyImage.png' => file_get_contents(__DIR__ . '/../fixtures/dummyImage.png')
+                'dummyImage.png' => file_get_contents(__DIR__ . '/../../fixtures/dummyImage.png')
             ],
             $this->virtualFileSystem
         );
