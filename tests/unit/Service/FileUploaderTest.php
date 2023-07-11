@@ -96,8 +96,15 @@ final class FileUploaderTest extends TestCase
 
         $result = $this->fileUploader->upload($uploadedFile, 'TEST_IDENTIFIER');
 
-        self::assertMatchesRegularExpression('/^dummyImage-[a-z0-9]+.png$/i', $result, 'Filename should unified with orig name prefixed!');
-        self::assertFileExists($this->virtualFileSystem->getChild('uploads')->url() . '/TEST_IDENTIFIER/' . $result, 'New file should exist after upload!');
+        self::assertMatchesRegularExpression(
+            '/^dummyImage-[a-z0-9]+.png$/i',
+            $result,
+            'Filename should unified with orig name prefixed!'
+        );
+        self::assertFileExists(
+            $this->virtualFileSystem->getChild('uploads')->url() . '/TEST_IDENTIFIER/' . $result,
+            'New file should exist after upload!'
+        );
         self::assertNull($this->virtualFileSystem->getChild('dummyImage.png'), 'Orig file should removed!');
     }
 

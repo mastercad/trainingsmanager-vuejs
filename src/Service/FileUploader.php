@@ -44,7 +44,7 @@ class FileUploader
         mkdir($this->uploadsDirectory . '/' . $userIdentifier, 0777, true);
 
         try {
-            $result = $file->move($this->uploadsDirectory . '/' . $userIdentifier, $fileName);
+            $file->move($this->uploadsDirectory . '/' . $userIdentifier, $fileName);
         } catch (FileException | FileNotFoundException $exception) {
             $this->logger->critical($exception->getMessage());
         }

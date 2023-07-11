@@ -18,7 +18,12 @@ use function preg_replace;
 #[AsController]
 final class DeviceImageController extends AbstractController
 {
-    public function __invoke(EntityManagerInterface $entityManager, string $dynamicContentDirectory, string $uploadsDirectory, int $id = 0): JsonResponse
+    public function __invoke(
+        EntityManagerInterface $entityManager,
+        string $dynamicContentDirectory,
+        string $uploadsDirectory,
+        int $id = 0
+    ): JsonResponse
     {
         $images = [];
 

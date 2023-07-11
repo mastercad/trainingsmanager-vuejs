@@ -54,8 +54,14 @@ final class ExerciseImageUploadControllerTest extends ApiTestCase
     /** this test is just to ensure environment is like expected */
     public function testImageFoldersAreEmpty(): void
     {
-        self::assertTrue($this->virtualFileSystem->hasChild('images/content/dynamic/exercises'), 'dynamic image folder for exercises should exists!');
-        self::assertTrue($this->virtualFileSystem->hasChild('uploads'), 'uploads folder should exists!');
+        self::assertTrue(
+            $this->virtualFileSystem->hasChild('images/content/dynamic/exercises'),
+            'dynamic image folder for exercises should exists!'
+        );
+        self::assertTrue(
+            $this->virtualFileSystem->hasChild('uploads'),
+            'uploads folder should exists!'
+        );
     }
 
     #[Depends('testImageFoldersAreEmpty')]
@@ -79,7 +85,10 @@ final class ExerciseImageUploadControllerTest extends ApiTestCase
         self::assertArrayHasKey('error', $response);
         self::assertSame('"file" is required', $response['error']);
 
-        self::assertFileExists($this->virtualFileSystem->getChild('dummyImage.png')->url(), 'This file should not moved!');
+        self::assertFileExists(
+            $this->virtualFileSystem->getChild('dummyImage.png')->url(),
+            'This file should not moved!'
+        );
     }
 
     #[Depends('testImageFoldersAreEmpty')]
@@ -100,9 +109,19 @@ final class ExerciseImageUploadControllerTest extends ApiTestCase
 
         self::assertResponseIsSuccessful('response should successfully after upload new image!');
 
-        self::assertTrue($this->virtualFileSystem->hasChild('uploads/test@example.com'), 'user specific uploads folder should exists!');
-        self::assertCount(1, $this->virtualFileSystem->getChild('uploads/test@example.com')->getChildren(), 'user specific uploads folder should not empty!');
-        self::assertNull($this->virtualFileSystem->getChild('dummyImage.png'), 'This file should moved!');
+        self::assertTrue(
+            $this->virtualFileSystem->hasChild('uploads/test@example.com'),
+            'user specific uploads folder should exists!'
+        );
+        self::assertCount(
+            1,
+            $this->virtualFileSystem->getChild('uploads/test@example.com')->getChildren(),
+            'user specific uploads folder should not empty!'
+        );
+        self::assertNull(
+            $this->virtualFileSystem->getChild('dummyImage.png'),
+            'This file should moved!'
+        );
     }
 
     private function generateUploadFile(): UploadedFile
