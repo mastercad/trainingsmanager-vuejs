@@ -23,8 +23,7 @@ final class DeviceImageController extends AbstractController
         string $dynamicContentDirectory,
         string $uploadsDirectory,
         int $id = 0
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $images = [];
 
         if (is_numeric($id)) {
