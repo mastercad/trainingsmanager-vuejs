@@ -150,15 +150,16 @@ class ExerciseListener implements EventSubscriberInterface
         $object = $args->getObject();
 
         if (
-            ! $object instanceof Exercises
-            && ! $object instanceof Devices
+            (! $object instanceof Exercises
+            && ! $object instanceof Devices)
+            || $this->tokenStorage->getToken() === null
         ) {
             return;
         }
 
         $user = $this->tokenStorage->getToken()->getUser() instanceof Users ?
-        $this->tokenStorage->getToken()->getUser() :
-        $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
+            $this->tokenStorage->getToken()->getUser() :
+            $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
 
         $targetPathPart = '';
         if (0 < strpos($object::class, 'Exercises')) {

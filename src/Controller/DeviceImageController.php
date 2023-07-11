@@ -47,13 +47,15 @@ final class DeviceImageController extends AbstractController
             }
         }
 
-        $directoryIterator = new DirectoryIterator($uploadsDirectory . '/' . $this->getUser()->getUserIdentifier());
-        foreach ($directoryIterator as $file) {
-            if (! $file->isFile()) {
-                continue;
-            }
+        $uploadsDirectory .= '/' . $this->getUser()->getUserIdentifier();
+        if (is_dir($uploadsDirectory)) {
+            foreach (new DirectoryIterator($uploadsDirectory) as $file) {
+                if (! $file->isFile()) {
+                    continue;
+                }
 
-            $images[] = '/' . preg_replace('/^.*\/public\//', '', $file->getPathname());
+                $images[] = '/' . preg_replace('/^.*\/public\//', '', $file->getPathname());
+            }
         }
 
         return $this->json($images);

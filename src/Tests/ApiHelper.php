@@ -33,9 +33,9 @@ final class ApiHelper
         $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
     }
 
-    public function loginUser(string $login): self
+    public function loginUser(string $email): self
     {
-        $user = $this->entityManager->getRepository(Users::class)->findOneBy(['login' => $login]);
+        $user = $this->entityManager->getRepository(Users::class)->findOneBy(['email' => $email]);
 
         $this->client->loginUser($user);
 
@@ -44,7 +44,7 @@ final class ApiHelper
             'POST',
             '/api/login_check',
             [
-                'email' => 'test@example.com',
+                'email' => $email,
                 'password' => '$3CR3T'
             ]
         );

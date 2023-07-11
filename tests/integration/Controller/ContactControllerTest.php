@@ -33,7 +33,7 @@ final class ContactControllerTest extends ApiTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         // test that sending a correct message will result to a created HTTP code.
-        $response = $this->apiHelper->request(Request::METHOD_POST, self::CONTACTS_GET_ENDPOINT, [
+        $this->apiHelper->request(Request::METHOD_POST, self::CONTACTS_GET_ENDPOINT, [
             'firstName' => 'Test First Name',
             'lastName' => 'Test Last Name',
             'emailAddress' => 'Test@email.de'

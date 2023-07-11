@@ -18,8 +18,12 @@ use function preg_replace;
 #[AsController]
 final class ExerciseImageController extends AbstractController
 {
-    public function __invoke(EntityManagerInterface $entityManager, int $id = 0): JsonResponse
-    {
+    public function __invoke(
+        EntityManagerInterface $entityManager,
+        string $dynamicContentDirectory,
+        string $uploadsDirectory,
+        int $id = 0
+    ): JsonResponse {
         $images = [];
 
         if (is_numeric($id)) {
@@ -29,7 +33,7 @@ final class ExerciseImageController extends AbstractController
                 throw $this->createNotFoundException('Resource not found');
             }
 
-            $imageDir = __DIR__ . '/../../public/images/content/dynamic/exercises/' . $exercise->getId();
+            $imageDir = $dynamicContentDirectory . '/exercises/' . $exercise->getId();
 
             if (is_dir($imageDir)) {
                 $directoryIterator = new DirectoryIterator($imageDir);
@@ -43,14 +47,15 @@ final class ExerciseImageController extends AbstractController
             }
         }
 
-        $directoryIterator = new DirectoryIterator(__DIR__ . '/../../public/uploads/' .
-            $this->getUser()->getUserIdentifier());
-        foreach ($directoryIterator as $file) {
-            if (! $file->isFile()) {
-                continue;
-            }
+        $uploadsDirectory .= '/' . $this->getUser()->getUserIdentifier();
+        if (is_dir($uploadsDirectory)) {
+            foreach (new DirectoryIterator($uploadsDirectory) as $file) {
+                if (! $file->isFile()) {
+                    continue;
+                }
 
-            $images[] = '/' . preg_replace('/^.*\/public\//', '', $file->getPathname());
+                $images[] = '/' . preg_replace('/^.*\/public\//', '', $file->getPathname());
+            }
         }
 
         return $this->json($images);
