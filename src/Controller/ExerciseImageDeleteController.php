@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 
@@ -16,11 +15,9 @@ use function unlink;
 #[AsController]
 final class ExerciseImageDeleteController extends AbstractController
 {
-    public function __invoke(Request $request, string $fileName): Response
+    public function __invoke(int $id, string $fileName, string $dynamicContentDirectory): Response
     {
-        $id = (int) $request->get('id');
-        $filePathName =
-            __DIR__ . '/../../public/images/content/dynamic/exercises/' . $id . '/' . base64_decode($fileName);
+        $filePathName = $dynamicContentDirectory . '/exercises/' . $id . '/' . base64_decode($fileName);
 
         if (! file_exists($filePathName)) {
             return $this->json([
