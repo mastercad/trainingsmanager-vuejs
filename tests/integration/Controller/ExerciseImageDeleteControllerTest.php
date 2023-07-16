@@ -82,6 +82,7 @@ final class ExerciseImageDeleteControllerTest extends ApiTestCase
         self::assertTrue($response['success']);
         self::assertArrayHasKey('message', $response);
         self::assertSame('File does not exists!', $response['message']);
+        self::assertFileExists($this->virtualFileSystem->getChild('images/content/dynamic/exercises/1/imageForExercise1_2.png')->url());
     }
 
     public function testDeleteExistingImageFromCorrectExercise(): void
@@ -98,6 +99,7 @@ final class ExerciseImageDeleteControllerTest extends ApiTestCase
         self::assertCount(1, $response);
         self::assertArrayHasKey('success', $response);
         self::assertTrue($response['success']);
+        self::assertNull($this->virtualFileSystem->getChild('images/content/dynamic/exercises/4/imageForExercise1_2.png'));
     }
 
     public function testDeleteNotExistingImage(): void
