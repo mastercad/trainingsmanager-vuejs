@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 use function file_exists;
-use function mkdir;
 use function pathinfo;
 use function str_replace;
 use function uniqid;
@@ -40,8 +39,6 @@ class FileUploader
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
         $fileName = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
-
-        mkdir($this->uploadsDirectory . '/' . $userIdentifier, 0777, true);
 
         try {
             $file->move($this->uploadsDirectory . '/' . $userIdentifier, $fileName);

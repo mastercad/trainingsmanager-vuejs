@@ -88,15 +88,41 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(),
         new Patch(),
         new Put(),
-        new Delete(),
         new Delete(
             uriTemplate: '/uploads/image/{fileName}',
+            requirements: ['fileName' => '[a-zA-Z0-9=]+'],
             controller: UploadImageDeleteController::class,
+            read: false
         ),
         new Delete(
+            name: 'deleteDeviceImage',
             uriTemplate: '/devices/{id}/image/{fileName}',
             controller: DeviceImageDeleteController::class,
+            read: false,
+            openapiContext: [
+                'parameters' => [
+                    [
+                        'name' => 'id',
+                        'in' => 'path',
+                        'description' => 'id of device',
+                        'type' => 'integer',
+                        'required' => true,
+                        'example' => 1
+                    ],
+                    [
+                        'name' => 'fileName',
+                        'in' => 'path',
+                        'description' => 'fileName of image',
+                        'schema' => [
+                            'type' => 'string'
+                        ],
+                        'required' => true,
+                        'example' => 'a25pZWJldWdlLW11c2tlbGdydXBwZW4tMzg3NTM5LW0tbi02NGFkYTc4MDkwNzI2LmpwZw=='
+                    ]
+                ]
+            ]
         ),
+        new Delete()
     ],
 )]
 #[ORM\Table(name: 'devices')]
