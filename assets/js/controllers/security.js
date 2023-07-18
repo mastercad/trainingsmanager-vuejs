@@ -14,7 +14,6 @@ export default {
     });
   },
   login(login, password) {
-    //    return axios.post("/login", {
     return axios.post("/api/login_check", {
       email: login,
       password: password

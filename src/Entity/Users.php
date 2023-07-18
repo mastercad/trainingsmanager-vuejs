@@ -9,6 +9,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -26,6 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'UN_users_email', columns: ['email'])]
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields:['email'], message:'This value is already used.')]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Column(name: 'id', type: 'uuid', unique: true, nullable: false, options: ['unsigned' => true])]
@@ -33,9 +35,11 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private UuidInterface $id;
 
     #[ORM\Column(name: 'first_name', type: 'string', length: 250, nullable: false)]
+    #[Assert\NotBlank]
     private string $firstName;
 
     #[ORM\Column(name: 'last_name', type: 'string', length: 250, nullable: false)]
+    #[Assert\NotBlank]
     private string $lastName;
 
     #[ORM\Column(name: 'email', type: 'string', length: 250, nullable: false)]
@@ -43,6 +47,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private string $email;
 
     #[ORM\Column(name: 'login', type: 'string', length: 250, nullable: false)]
+    #[Assert\NotBlank]
     private string $login;
 
     #[ORM\Column(name: 'profile_picture_path', type: 'string', length: 255, nullable: true)]
@@ -53,7 +58,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private string|null $plainPassword = null;
 
     #[ORM\Column(name: 'password', type: 'string', length: 250, nullable: false)]
-    private string $password;
+    private string|null $password;
 
     /** @var string[] */
     #[ORM\Column(name: 'roles', type: 'json', nullable: false)]
