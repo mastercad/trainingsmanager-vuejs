@@ -31,6 +31,60 @@ final class SecurityControllerTest extends ApiTestCase
     {
         $this->client->request(
             Request::METHOD_POST,
+            '/login',
+            [
+                'headers' => ['CONTENT_TYPE' => 'application/json'],
+                'body' => json_encode([
+                    'email' => 'test@example.com',
+                    'password' => '$3CR3T'
+                ])
+            ]
+        );
+
+        self::assertResponseStatusCodeSame(200);
+        self::assertResponseHeaderSame('content-type', 'application/json');
+        self::assertResponseFormatSame('json');
+
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        self::assertIsArray($response);
+        self::assertCount(3, $response);
+        self::assertArrayHasKey('isAuthenticated', $response);
+        self::assertTrue($response['isAuthenticated']);
+        self::assertArrayHasKey('token', $response);
+        self::assertIsString($response['token']);
+        self::assertArrayHasKey('user', $response);
+        self::assertIsString($response['user']);
+    }
+
+    public function testLoginWithWrongCredentials(): void
+    {
+        $this->client->request(
+            Request::METHOD_POST,
+            '/login',
+            [
+                'headers' => ['CONTENT_TYPE' => 'application/json'],
+                'body' => json_encode([
+                    'email' => 'test@example.com',
+                    'password' => 'WrongPassword'
+                ])
+            ]
+        );
+
+        self::assertResponseStatusCodeSame(401);
+        self::assertResponseHeaderSame('content-type', 'application/json');
+        self::assertResponseFormatSame('json');
+
+        $response = json_decode($this->client->getResponse()->getContent(false), true);
+        self::assertIsArray($response);
+        self::assertCount(1, $response);
+        self::assertArrayHasKey('error', $response);
+        self::assertSame('Invalid credentials.', $response['error']);
+    }
+
+    public function testLoginCheckWorks(): void
+    {
+        $this->client->request(
+            Request::METHOD_POST,
             '/api/login_check',
             [
                 'headers' => ['CONTENT_TYPE' => 'application/json'],
@@ -51,7 +105,7 @@ final class SecurityControllerTest extends ApiTestCase
         self::assertArrayHasKey('refresh_token', $response);
     }
 
-    public function testLoginWithWrongUser(): void
+    public function testLoginCheckWithWrongUser(): void
     {
         $this->client->request(
             Request::METHOD_POST,
