@@ -40,7 +40,6 @@ services:
 
     listener.exercise:
         class: App\Listener\ExerciseListener
-        arguments: [ "@security.token_storage" ]
         tags:
             - { name: doctrine.event_subscriber, connection: default, lazy: true }
 

@@ -64,6 +64,7 @@ final class FileUploaderTest extends TestCase
         $this->fileUploader = new FileUploader(
             $this->virtualFileSystem->url(),
             $this->virtualFileSystem->getChild('uploads')->url(),
+            $this->virtualFileSystem->getChild('images/content/dynamic')->url(),
             $this->sluggerMock,
             $this->urlHelper,
             $this->loggerMock

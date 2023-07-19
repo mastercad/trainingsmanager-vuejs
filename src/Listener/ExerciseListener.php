@@ -8,36 +8,34 @@ use App\Entity\Devices;
 use App\Entity\Exercises;
 use App\Entity\Users;
 use App\Service\FileUploader;
+use App\Service\SeoLinkHandler;
+use App\Service\UserProvider;
 use DateTime;
-use DirectoryIterator;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use function is_dir;
-use function is_object;
 use function method_exists;
-use function mkdir;
 use function preg_match;
-use function preg_replace;
 use function strpos;
-use function strtolower;
 
 class ExerciseListener implements EventSubscriberInterface
 {
     /**
      * CTOR of exerciseListener class.
      */
-    public function __construct(private TokenStorageInterface $tokenStorage, private EntityManagerInterface $entityManager, private FileUploader $fileUploader)
-    {
+    public function __construct(
+        private UserProvider $userProvider,
+        private EntityManagerInterface $entityManager,
+        private FileUploader $fileUploader,
+        private SeoLinkHandler $seoLinkHandler
+    ) {
     }
 
     /**
@@ -58,7 +56,7 @@ class ExerciseListener implements EventSubscriberInterface
     /**
      * Function for prePersist event.
      */
-    public function prePersist(LifecycleEventArgs $args): void
+    public function prePersist(PrePersistEventArgs $args): void
     {
         $entity = $args->getObject();
 
@@ -74,11 +72,9 @@ class ExerciseListener implements EventSubscriberInterface
             $entity->setId(Uuid::uuid4());
         }
 
-        $this->handleSeoLinkForCreate($entity);
+        $this->seoLinkHandler->handleSeoLinkForCreate($entity);
 
-        $user = $this->tokenStorage->getToken() !== null && $this->tokenStorage->getToken()->getUser() instanceof Users ?
-        $this->tokenStorage->getToken()->getUser() :
-        $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
+        $user = $this->userProvider->provide();
 
         $entity->setCreator($user);
         $entity->setCreated(new DateTime('now'));
@@ -109,20 +105,11 @@ class ExerciseListener implements EventSubscriberInterface
             return;
         }
 
-        $user = $this->tokenStorage->getToken()->getUser() instanceof Users ?
-        $this->tokenStorage->getToken()->getUser() :
-        $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
+        $user = $this->userProvider->provide();
         $entity->setUpdater($user);
         $entity->setUpdated(new DateTime('now'));
 
-        $this->handleSeoLinkForUpdate($entity);
-
-        $user = $this->tokenStorage->getToken() !== null && $this->tokenStorage->getToken()->getUser() instanceof Users ?
-        $this->tokenStorage->getToken()->getUser() :
-        $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
-
-        $entity->setUpdater($user);
-        $entity->setUpdated(new DateTime('now'));
+        $this->seoLinkHandler->handleSeoLinkForUpdate($entity);
 
         if (
             ! ($entity instanceof Exercises)
@@ -137,29 +124,26 @@ class ExerciseListener implements EventSubscriberInterface
 
     public function postPersist(PostPersistEventArgs $args): void
     {
-        $this->moveUploadedImagesToExerciseFolder($args);
+        $this->moveUploadedImages($args);
     }
 
     public function postUpdate(PostUpdateEventArgs $args): void
     {
-        $this->moveUploadedImagesToExerciseFolder($args);
+        $this->moveUploadedImages($args);
     }
 
-    private function moveUploadedImagesToExerciseFolder(LifecycleEventArgs $args): void
+    private function moveUploadedImages(LifecycleEventArgs $args): int
     {
         $object = $args->getObject();
+        $user = $this->userProvider->provide();
 
         if (
             (! $object instanceof Exercises
             && ! $object instanceof Devices)
-            || $this->tokenStorage->getToken() === null
+            || ! $user instanceof Users
         ) {
-            return;
+            return 0;
         }
-
-        $user = $this->tokenStorage->getToken()->getUser() instanceof Users ?
-            $this->tokenStorage->getToken()->getUser() :
-            $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
 
         $targetPathPart = '';
         if (0 < strpos($object::class, 'Exercises')) {
@@ -168,96 +152,6 @@ class ExerciseListener implements EventSubscriberInterface
             $targetPathPart = 'devices';
         }
 
-        $uploadDir = __DIR__ . '/../../public/uploads/' . $user->getUserIdentifier();
-        $imageDir = __DIR__ . '/../../public/images/content/dynamic/' . $targetPathPart . '/' . $object->getId();
-
-        if (! is_dir($imageDir)) {
-            mkdir($imageDir, 0777, true);
-        }
-
-        $directoryIterator = new DirectoryIterator($uploadDir);
-        foreach ($directoryIterator as $uploadedFile) {
-            if (! $uploadedFile->isFile()) {
-                continue;
-            }
-
-            $file = new File($uploadedFile->getPathname());
-            $file->move($imageDir, $file->getFilename());
-        }
-    }
-
-    /**
-     * Load user by given jwt token user.
-     */
-    private function loadUserByToken(JWTUser $jWTUser): Users
-    {
-        return $this->entityManager->getRepository(Users::class)->findOneBy(
-            ['email' => $jWTUser->getUserIdentifier()],
-        );
-    }
-
-    private function handleSeoLinkForCreate(mixed $entity): mixed
-    {
-        if (
-            ! is_object($entity)
-            || ! method_exists($entity, 'getSeoLink')
-            || ! method_exists($entity, 'setSeoLink')
-        ) {
-            return null;
-        }
-
-        if (empty($entity->getSeoLink())) {
-            $entity->setSeoLink($this->convertToSnakeCase($entity->getName()));
-        }
-
-        $repository = $this->entityManager->getRepository($entity::class);
-
-        $existingSeoLink = $repository->findOneBy(['seoLink' => $entity->getSeoLink()]);
-        if ($existingSeoLink) {
-            $entity->setSeoLink($this->incrementSeoLink($entity->getSeoLink()));
-
-            return $this->handleSeoLinkForCreate($entity);
-        }
-
-        return $entity;
-    }
-
-    private function handleSeoLinkForUpdate(mixed $entity): mixed
-    {
-        if (
-            ! is_object($entity)
-            || ! method_exists($entity, 'getSeoLink')
-            || ! method_exists($entity, 'setSeoLink')
-        ) {
-            return null;
-        }
-
-        $repository = $this->entityManager->getRepository($entity::class);
-
-        $newSeoLink = $this->convertToSnakeCase($entity->getName());
-        if ($newSeoLink !== $entity->getSeoLink()) {
-            $existingSeoLink = $repository->findOneBy(['seoLink' => $entity->getSeoLink()]);
-            if ($existingSeoLink) {
-                $entity->setSeoLink($this->incrementSeoLink($entity->getSeoLink()));
-
-                return $this->handleSeoLinkForCreate($entity);
-            }
-        }
-
-        return $entity;
-    }
-
-    private function convertToSnakeCase(string $name): string
-    {
-        return preg_replace('/[^\p{L}0-9\s]+/u', '_', strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)));
-    }
-
-    private function incrementSeoLink(string $seoLink): string
-    {
-        if (preg_match('/(.*?)_(\d+)$/', $seoLink, $matches)) {
-            return $matches[1] . '_' . (++$matches[2]);
-        }
-
-        return $seoLink . '_1';
+        return $this->fileUploader->moveAllUploadedFiles($user->getUserIdentifier(), $targetPathPart, $object->getId());
     }
 }
