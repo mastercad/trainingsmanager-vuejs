@@ -12,7 +12,7 @@ use function preg_match;
 use function preg_replace;
 use function strtolower;
 
-final class SeoLinkHandler
+class SeoLinkHandler
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {

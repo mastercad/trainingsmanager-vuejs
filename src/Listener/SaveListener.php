@@ -12,27 +12,25 @@ use App\Service\SeoLinkHandler;
 use App\Service\UserProvider;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Ramsey\Uuid\Uuid;
 
 use function method_exists;
 use function preg_match;
+use function preg_quote;
 use function strpos;
 
-class ExerciseListener implements EventSubscriberInterface
+class SaveListener implements EventSubscriberInterface
 {
     /**
      * CTOR of exerciseListener class.
      */
     public function __construct(
         private UserProvider $userProvider,
-        private EntityManagerInterface $entityManager,
         private FileUploader $fileUploader,
         private SeoLinkHandler $seoLinkHandler
     ) {
@@ -68,10 +66,6 @@ class ExerciseListener implements EventSubscriberInterface
             return;
         }
 
-        if ($entity instanceof Users) {
-            $entity->setId(Uuid::uuid4());
-        }
-
         $this->seoLinkHandler->handleSeoLinkForCreate($entity);
 
         $user = $this->userProvider->provide();
@@ -82,12 +76,14 @@ class ExerciseListener implements EventSubscriberInterface
         if (
             ! ($entity instanceof Exercises)
             && ! ($entity instanceof Devices)
-            || ! preg_match('/\/uploads\/.*?\/(.*?\..*)$/', $entity->getPreviewPicturePath(), $matches)
+            || ! preg_match('/\/uploads\/' . preg_quote($user->getEmail()) . '\/(.*?\..*)$/', $entity->getPreviewPicturePath(), $matches)
         ) {
             return;
         }
 
         $entity->setPreviewPicturePath($matches[1]);
+
+        return;
     }
 
     /**

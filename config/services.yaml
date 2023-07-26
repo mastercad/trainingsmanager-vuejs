@@ -39,7 +39,7 @@ services:
         arguments: ['@.inner']
 
     listener.exercise:
-        class: App\Listener\ExerciseListener
+        class: App\Listener\SaveListener
         tags:
             - { name: doctrine.event_subscriber, connection: default, lazy: true }
 

@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-final class UserProvider
+class UserProvider
 {
     public function __construct(private TokenStorageInterface $tokenStorage, private EntityManagerInterface $entityManager)
     {
