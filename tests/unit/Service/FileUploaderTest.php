@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -48,6 +49,12 @@ final class FileUploaderTest extends TestCase
                 'uploads' => [
                     'some_folder' => [
                         'some_existing_file.txt' => ''
+                    ],
+                    'test@example.com' => [
+                        'test_file_01.txt' => '',
+                        'test_file_02.txt' => '',
+                        'test_image_01.png' => '',
+                        'test_image_02.jpg' => ''
                     ]
                 ],
                 'dummyImage.png' => file_get_contents(__DIR__ . '/../../fixtures/dummyImage.png')
@@ -83,6 +90,20 @@ final class FileUploaderTest extends TestCase
         $this->fileUploader->upload(new UploadedFile('vfs://uploads/file/does/not/exists.here', ''), 'TEST_IDENTIFIER');
     }
 
+    public function testUploadFileWithMissingFileThrowsException(): void
+    {
+        $uploadFileMock = $this->createMock(UploadedFile::class);
+        $uploadFileMock->expects(self::once())
+            ->method('move')
+            ->willThrowException(new FileException('File Not found!'));
+
+        $this->loggerMock->expects(self::once())
+            ->method('critical')
+            ->with('File Not found!');
+
+        self::assertMatchesRegularExpression('/^-[a-z0-9]+\.$/i', $this->fileUploader->upload($uploadFileMock, 'IDENTIFIER'));
+    }
+
     public function testUploadExistingFile(): void
     {
         self::assertFileExists($this->virtualFileSystem->getChild('dummyImage.png')->url());
@@ -107,6 +128,15 @@ final class FileUploaderTest extends TestCase
             'New file should exist after upload!'
         );
         self::assertNull($this->virtualFileSystem->getChild('dummyImage.png'), 'Orig file should removed!');
+    }
+
+    public function testModeAllUploadedFiles(): void
+    {
+        self::assertSame(4, $this->fileUploader->moveAllUploadedFiles('test@example.com', 'exercises', 1));
+
+        self::assertCount(0, $this->virtualFileSystem->getChild('uploads/test@example.com')->getChildren());
+        self::assertTrue($this->virtualFileSystem->hasChild('images/content/dynamic/exercises/1'));
+        self::assertCount(4, $this->virtualFileSystem->getChild('images/content/dynamic/exercises/1')->getChildren());
     }
 
     /** @dataProvider deleteDataProvider */
