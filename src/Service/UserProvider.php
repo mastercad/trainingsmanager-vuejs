@@ -12,8 +12,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class UserProvider
 {
-    public function __construct(private TokenStorageInterface $tokenStorage, private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private TokenStorageInterface $tokenStorage,
+        private EntityManagerInterface $entityManager
+    ) {
     }
 
     public function provide(): Users|null

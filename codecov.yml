@@ -21,6 +21,7 @@ ignore:
   - "src/Entity"
   - "src/DataFixtures"
   - "src/Form"
+  - "src/OpenApi/JwtDecorator.php"
 
 flags:
   backend:
