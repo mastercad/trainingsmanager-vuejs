@@ -54,10 +54,15 @@ class SeoLinkHandler
             return null;
         }
 
+        if (empty($entity->getSeoLink())) {
+            return $this->handleSeoLinkForCreate($entity);
+        }
+
         $repository = $this->entityManager->getRepository($entity::class);
 
         $newSeoLink = $this->convertToSnakeCase($entity->getName());
         if ($newSeoLink !== $entity->getSeoLink()) {
+            $entity->setSeoLink($newSeoLink);
             $existingSeoLink = $repository->findOneBy(['seoLink' => $entity->getSeoLink()]);
             if ($existingSeoLink) {
                 $entity->setSeoLink($this->incrementSeoLink($entity->getSeoLink()));
@@ -71,7 +76,21 @@ class SeoLinkHandler
 
     private function convertToSnakeCase(string $name): string
     {
-        return preg_replace('/[^\p{L}0-9\s]+/u', '_', strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)));
+        return preg_replace(
+            '/[^\p{L}0-9\s ]+/u',
+            '_',
+            strtolower(
+                preg_replace(
+                    '/(?<!^)[A-Z]/',
+                    '_$0',
+                    preg_replace(
+                        '/[ ]+/',
+                        '_',
+                        $name
+                    )
+                )
+            )
+        );
     }
 
     private function incrementSeoLink(string $seoLink): string

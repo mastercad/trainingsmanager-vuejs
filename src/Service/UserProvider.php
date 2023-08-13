@@ -8,6 +8,7 @@ use App\Entity\Users;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class UserProvider
 {
@@ -17,19 +18,26 @@ class UserProvider
 
     public function provide(): Users|null
     {
-        if ($this->tokenStorage->getToken() === null) {
+        $token = $this->tokenStorage->getToken();
+        if (
+            ! $token instanceof TokenInterface
+            || (
+                ! $token->getUser() instanceof Users
+                && ! $token->getUser() instanceof JWTUser
+            )
+        ) {
             return null;
         }
 
-        return $this->tokenStorage->getToken() !== null && $this->tokenStorage->getToken()->getUser() instanceof Users ?
-            $this->tokenStorage->getToken()->getUser() :
-            $this->loadUserByToken($this->tokenStorage->getToken()->getUser());
+        $user = $token->getUser();
+
+        return $user instanceof Users ? $user : $this->loadUserByToken($user);
     }
 
     /**
      * Load user by given jwt token user.
      */
-    private function loadUserByToken(JWTUser $jWTUser): Users
+    private function loadUserByToken(JWTUser $jWTUser): Users|null
     {
         return $this->entityManager->getRepository(Users::class)->findOneBy(
             ['email' => $jWTUser->getUserIdentifier()]
