@@ -2,11 +2,16 @@
   <div class="w-100">
     <div class="row">
       <div class="col-md-12">
-        <h1>{{ origDeviceOption.name }}</h1>
+        <h1 id="device_option_name">
+          {{ origDeviceOption.name }}
+        </h1>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-4">
+      <div
+        id="device_option_default_value"
+        class="col-md-4"
+      >
         {{ origDeviceOption.defaultValue }}
       </div>
     </div>

@@ -10,7 +10,7 @@ localVue.use(BootstrapVue);
 localVue.use(IconsPlugin);
 localVue.use(DropdownPlugin);
 
-let actions, store;
+let actions, store, storeParams;
 
 beforeEach(() => {
   actions = {};
@@ -28,40 +28,16 @@ beforeEach(() => {
 
 describe('DeviceEdit.vue', () => {
   let wrapper;
-  beforeEach(() => {
-    wrapper = mount(
-      DeviceEdit, {
-        $store: {store},
-        propsData: {
-          device: {
-            id: 'device_1687282039594',
-            name: '',
-            seoLink: '',
-            previewPicturePath: '',
-            deviceXDeviceOptions: [],
-            deviceXDeviceGroups: []
-          },
-          possibleDeviceOptions: []
-        },
-        store,
-        localVue
-      });
-  });
 
-  test('Create new entry without required entries', () => {
+  test('Try create new entry without required entries => not possible', () => {
+    mountView('device_1687282039594');
+
     expect(wrapper.find('#device_name').text()).toBe('');
     expect(actions['deviceGroups/findAll']).toBeCalledTimes(1);
 
     expect(actions['devices/loadImages']).toBeCalledTimes(1);
     expect(actions['devices/loadImages']).toHaveBeenCalledWith(
-      {
-        commit: store.commit,
-        dispatch: store.dispatch,
-        getters: store.getters,
-        rootGetters: store.getters,
-        rootState: store.state,
-        state: store.state
-      },
+      storeParams,
       'device_1687282039594'
     );
 
@@ -77,19 +53,14 @@ describe('DeviceEdit.vue', () => {
   });
 
   test('Create new entry with minimal required entries', async () => {
+    mountView('device_1687282039594');
+
     expect(wrapper.find('#device_name').text()).toBe('');
     expect(actions['deviceGroups/findAll']).toBeCalledTimes(1);
 
     expect(actions['devices/loadImages']).toBeCalledTimes(1);
     expect(actions['devices/loadImages']).toHaveBeenCalledWith(
-      {
-        commit: store.commit,
-        dispatch: store.dispatch,
-        getters: store.getters,
-        rootGetters: store.getters,
-        rootState: store.state,
-        state: store.state
-      },
+      storeParams,
       'device_1687282039594'
     );
 
@@ -108,14 +79,7 @@ describe('DeviceEdit.vue', () => {
 
     expect(actions['devices/create']).toBeCalledTimes(1);
     expect(actions['devices/create']).toBeCalledWith(
-      {
-        commit: store.commit,
-        dispatch: store.dispatch,
-        getters: store.getters,
-        rootGetters: store.getters,
-        rootState: store.state,
-        state: store.state
-      },
+      storeParams,
       {
         id: 'device_1687282039594',
         name: 'Name New Test Device',
@@ -128,4 +92,108 @@ describe('DeviceEdit.vue', () => {
     expect(actions['devices/update']).toBeCalledTimes(0);
     expect(actions['devices/delete']).toBeCalledTimes(0);
   });
+
+  test('Update entry', async () => {
+    mountView('12312');
+
+    expect(wrapper.find('#device_name').text()).toBe('');
+    expect(actions['deviceGroups/findAll']).toBeCalledTimes(1);
+
+    expect(actions['devices/loadImages']).toBeCalledTimes(1);
+    expect(actions['devices/loadImages']).toHaveBeenCalledWith(
+      storeParams,
+      '12312'
+    );
+
+    let nameInput = wrapper.find('#device_name');
+    await nameInput.setValue('Name Test Device');
+
+    let buttonSave = wrapper.find('#button_save');
+    expect(buttonSave.text()).toBe('Update');
+    expect(buttonSave.exists()).toBeTruthy();
+    expect(buttonSave.attributes().disabled).toBe(undefined);
+
+    await buttonSave.trigger('click');
+
+    let buttonDelete = wrapper.find('#button_delete');
+    expect(buttonDelete.exists()).toBeTruthy();
+
+    expect(actions['devices/update']).toBeCalledTimes(1);
+    expect(actions['devices/update']).toBeCalledWith(
+      storeParams,
+      {
+        id: '12312',
+        name: 'Name Test Device',
+        seoLink: '',
+        previewPicturePath: '',
+        deviceXDeviceOptions: [],
+        deviceXDeviceGroups: []
+      }
+    );
+    expect(actions['devices/create']).toBeCalledTimes(0);
+    expect(actions['devices/delete']).toBeCalledTimes(0);
+  });
+
+  test('Delete entry', async () => {
+    mountView('12312');
+
+    expect(wrapper.find('#device_name').text()).toBe('');
+    expect(actions['deviceGroups/findAll']).toBeCalledTimes(1);
+
+    expect(actions['devices/loadImages']).toBeCalledTimes(1);
+    expect(actions['devices/loadImages']).toHaveBeenCalledWith(
+      storeParams,
+      '12312'
+    );
+
+    let nameInput = wrapper.find('#device_name');
+    await nameInput.setValue('Name Test Device');
+
+    let buttonSave = wrapper.find('#button_save');
+    expect(buttonSave.text()).toBe('Update');
+    expect(buttonSave.exists()).toBeTruthy();
+    expect(buttonSave.attributes().disabled).toBe(undefined);
+
+    let buttonDelete = wrapper.find('#button_delete');
+    expect(buttonDelete.exists()).toBeTruthy();
+
+    await buttonDelete.trigger('click');
+
+    expect(actions['devices/delete']).toBeCalledTimes(1);
+    expect(actions['devices/delete']).toBeCalledWith(
+      storeParams,
+      '12312'
+    );
+    expect(actions['devices/create']).toBeCalledTimes(0);
+    expect(actions['devices/update']).toBeCalledTimes(0);
+  });
+
+  function mountView(deviceId){
+    wrapper = mount(
+      DeviceEdit, {
+        $store: {store},
+        propsData: {
+          device: {
+            id: deviceId,
+            name: '',
+            seoLink: '',
+            previewPicturePath: '',
+            deviceXDeviceOptions: [],
+            deviceXDeviceGroups: []
+          },
+          possibleDeviceOptions: []
+        },
+        store,
+        localVue
+      });
+
+    storeParams = {
+      commit: store.commit,
+      dispatch: store.dispatch,
+      getters: store.getters,
+      rootGetters: store.getters,
+      rootState: store.state,
+      state: store.state
+    };
+  }
 });

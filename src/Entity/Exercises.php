@@ -20,6 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Exercises
@@ -149,6 +150,7 @@ class Exercises
     private int $id;
 
     #[ORM\Column(name: 'name', type: 'string', length: 250, nullable: false)]
+    #[Assert\NotBlank]
     #[Groups(['read', 'write'])]
     private string $name;
 

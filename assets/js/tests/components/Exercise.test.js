@@ -1,6 +1,6 @@
 import Vuex from 'vuex';
 import { mount, createLocalVue } from '@vue/test-utils';
-import Device from '../../components/Device.vue';
+import Exercise from '../../components/Exercise.vue';
 
 const localVue = createLocalVue();
 localVue.use(Vuex);
@@ -9,25 +9,25 @@ let actions, store, storeParams;
 
 beforeEach(() => {
   actions = {};
-  actions['devices/loadImages'] = jest.fn();
+  actions['exercises/loadImages'] = jest.fn();
 
   store = new Vuex.Store({
     actions
   });
 });
 
-describe('Device.vue', () => {
+describe('Exercise.vue', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(
-      Device, {
+      Exercise, {
         $store: {store},
         propsData: {
-          device: {
+          exercise: {
             id: 1234,
-            name: "Test Device"
+            name: "Test Exercise"
           },
-          possibleDeviceOptions: []
+          possibleExerciseOptions: []
         },
         store,
         localVue
@@ -45,9 +45,9 @@ describe('Device.vue', () => {
   });
 
   test('Test component is loaded', () => {
-    expect(wrapper.find('#device_name').text()).toBe('Test Device');
-    expect(actions['devices/loadImages']).toBeCalledTimes(1);
-    expect(actions['devices/loadImages']).toHaveBeenCalledWith(
+    expect(wrapper.find('#exercise_name').text()).toBe('Test Exercise');
+    expect(actions['exercises/loadImages']).toBeCalledTimes(1);
+    expect(actions['exercises/loadImages']).toHaveBeenCalledWith(
       storeParams,
       1234
     );

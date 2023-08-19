@@ -2,11 +2,16 @@
   <div class="w-100">
     <div class="row">
       <div class="col-md-12">
-        <h1>{{ origDeviceGroup.name }}</h1>
+        <h1 id="device_group_name">
+          {{ origDeviceGroup.name }}
+        </h1>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-4">
+      <div
+        id="device_group_seo_link"
+        class="col-md-4"
+      >
         {{ deviceGroup.seoLink }}
       </div>
     </div>
