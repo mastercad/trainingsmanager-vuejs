@@ -66,7 +66,7 @@
         </button>
       </b-card>
 
-      <b-car
+      <b-card
         v-if="isGenericId(origExerciseOption.id)"
         class="shadow p-2 mb-3 bg-white rounded"
       >
@@ -78,7 +78,7 @@
         >
           Create
         </button>
-      </b-car>
+      </b-card>
 
       <b-card class="shadow p-2 mb-3 bg-white rounded">
         <button

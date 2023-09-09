@@ -2,7 +2,11 @@
   <div class="row p-2 border rounded">
     <div class="row">
       <div class="col-11">
-        <h1>{{ origTrainingPlan.name }}</h1>
+        <h1
+          id="training_plan_name"
+        >
+          {{ origTrainingPlan.name }}
+        </h1>
       </div>
       <div class="col-1">
         <b-button v-b-modal.modal="'modal-'+trainingPlan.id">

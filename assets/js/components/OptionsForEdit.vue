@@ -4,6 +4,7 @@
     class="mt-2 shadow p-2 mb-3 bg-white rounded"
   >
     <b-form-group
+      :id="type+'_options'"
       label-cols-lg="3"
       :label="capitalizeFirstLetter(type)+' Options'"
       label-size="lg"
@@ -13,8 +14,9 @@
     >
       <b-row
         v-for="option in prepareOptions"
-        :id="option.key"
+        :id="type+'_option_container_'+option.key"
         :key="option.key"
+        :class="type+'_option'"
       >
         <b-col
           sm="5"
@@ -32,7 +34,7 @@
         <b-col sm="7">
           <b-dropdown
             v-if="option.isMultipartOption"
-            :id="option.key"
+            :id="type+'_option_'+option.key"
             split-variant="outline-primary"
             variant="primary"
             class="m-md-2"
@@ -80,7 +82,12 @@ import OptionFunctions from "../shared/optionFunctions.js";
 export default {
   name: "OptionsForEdit",
   props: {
-    // value of id for device or exercise (current type)
+    // exercise or device, is used to get correct source for options from collection
+    type: {
+      type: String,
+      required: true
+    },
+    // value of id for device or exercise
     identifier: {
       type: [Number, String],
       required: true
@@ -96,11 +103,6 @@ export default {
     additionalOptions: {
       type: Array,
       default: () => { return new Array(); }
-    },
-    type: {
-      // exercise or device, is used to get correct source for options from collection
-      type: String,
-      required: true
     },
     description: {
       type: String,
@@ -125,19 +127,32 @@ export default {
       if (this.additionalOptions) {
         preparedAdditionalOptions = OptionFunctions.prepareOptionCollection(this.additionalOptions, function(option) {return option.id;}, function(option) {return option.defaultValue;})
       }
-      return OptionFunctions.generateCurrentOptions(
+
+      let generatedOptions = OptionFunctions.generateCurrentOptions(
         this.identifier,
         this.showLabelAndValue,
         OptionFunctions.prepareOptionCollection(this.possibleOptions, function(option) {return option.id;}, function(option) {return option.defaultValue;}),
+        // OptionFunctions.prepareOptionCollection(this.currentOptions, function(option) {return option.id;}, function(option) {return option.defaultValue;}),
         this.currentSelectedOptions,
         preparedAdditionalOptions
       );
+
+      console.log(generatedOptions);
+
+      return generatedOptions;
     }
   },
   created() {
     this.currentSelectedOptions = {};
     for (let currentOptionPosition in this.currentOptions) {
-      this.currentSelectedOptions[this.currentOptions[currentOptionPosition][this.type+"Option"].id] = this.currentOptions[currentOptionPosition][this.type+"OptionValue"];
+      let currentOption = this.currentOptions[currentOptionPosition][this.type+"Option"];
+      let id = currentOption.id;
+//      this.currentSelectedOptions[this.currentOptions[currentOptionPosition][this.type+"Option"].id] = this.currentOptions[currentOptionPosition][this.type+"OptionValue"];
+      this.currentSelectedOptions[id] = {
+        id: id,
+        value: this.currentOptions[currentOptionPosition][this.type+"OptionValue"],
+        origEntry: currentOption
+      };
     }
   },
   methods: {
